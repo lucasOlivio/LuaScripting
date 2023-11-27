@@ -2,6 +2,8 @@
 #include "components/Script.h"
 #include "common/utils.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 LuaBrain* LuaBrain::m_pInstance = nullptr;
 
@@ -92,7 +94,7 @@ void LuaBrain::Update(float deltaTime)
 		std::string curLuaScript = itScript->second;
 
 		int error = luaL_loadstring(m_pLuaState,
-			curLuaScript.c_str());
+									curLuaScript.c_str());
 
 		if (error != 0 /*no error*/)
 		{
@@ -107,9 +109,9 @@ void LuaBrain::Update(float deltaTime)
 		// execute funtion in "protected mode", where problems are 
 		//  caught and placed on the stack for investigation
 		error = lua_pcall(m_pLuaState,	/* lua state */
-			0,	/* nargs: number of arguments pushed onto the lua stack */
-			0,	/* nresults: number of results that should be on stack at end*/
-			0);	/* errfunc: location, in stack, of error function. 
+						  0,	/* nargs: number of arguments pushed onto the lua stack */
+						  0,	/* nresults: number of results that should be on stack at end*/
+						  0);	/* errfunc: location, in stack, of error function. 
 					if 0, results are on top of stack. */
 		if (error != 0 /*no error*/)
 		{
@@ -208,5 +210,22 @@ std::string LuaBrain::m_DecodeLuaErrorToString(int error)
 
 std::string LuaBrain::m_ReadLuaScriptFile(std::string scriptName)
 {
-	return std::string();
+	// Open the file
+	std::ifstream file(m_baseScriptsPath + scriptName);
+
+	// Check if the file is opened successfully
+	if (!file.is_open()) {
+		CheckEngineError(("Error opening file: " + scriptName).c_str());
+		return std::string(); // Return an empty string to indicate an error
+	}
+
+	// Read the contents of the file into a string
+	std::stringstream buffer;
+	buffer << file.rdbuf();
+
+	// Close the file
+	file.close();
+
+	// Return the contents as a string
+	return buffer.str();
 }

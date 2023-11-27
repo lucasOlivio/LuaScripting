@@ -148,9 +148,6 @@ bool Engine::Initialize(const std::string& sceneName)
 	m_isInitialized = true;
 	printf("Scene '%s' created scussesfully!\n", sceneName.c_str());
 
-	std::string testlua = "print(\"Hello World\")";
-	m_pLuaBrain->RunScriptImmediately(testlua);
-
     return true;
 }
 
@@ -189,6 +186,7 @@ void Engine::Update(double fixedDeltaTime)
 	}
 	else
 	{
+		m_pLuaBrain->Update(fixedDeltaTime);
 		m_pMediaPlayer->Update(fixedDeltaTime);
 		m_pPhysics->Update(fixedDeltaTime);
 	}
