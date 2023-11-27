@@ -12,6 +12,7 @@ std::string sceneFilePath = "";
 std::string baseShadersPath = "assets/shaders/";
 std::string baseModelPath = "assets/models/";
 std::string baseAudioPath = "assets/audios/";
+std::string baseScriptsPath = "assets/scripts/";
 std::string baseTexturesPath = "assets/textures/";
 std::string shaderProgramName = "Shader01";
 uint windowWidth = 1080;
@@ -76,6 +77,7 @@ bool Engine::Initialize(const std::string& sceneName)
 	m_pPhysics = new Physics(m_pScene, m_pCollisionEvent);
 	m_pInput = new Input(m_pKeyEvent, m_pMouseEvent);
 	m_pMediaPlayer = MediaPlayer::Get();
+	m_pLuaBrain = LuaBrain::Get();
 	m_pDebugSystem = DebugSystem::Get();
 
 	printf("Initializing systems...\n");
@@ -121,6 +123,13 @@ bool Engine::Initialize(const std::string& sceneName)
 		return false;
 	}
 
+	bool isLuaInit = m_pLuaBrain->Initialize(baseScriptsPath, m_pScene);
+	if (!isMediaInit)
+	{
+		CheckEngineError("Engine lua brain initialization");
+		return false;
+	}
+
 	bool sceneLoaded = LoadScene();
 	if (!sceneLoaded)
 	{
@@ -138,6 +147,9 @@ bool Engine::Initialize(const std::string& sceneName)
 
 	m_isInitialized = true;
 	printf("Scene '%s' created scussesfully!\n", sceneName.c_str());
+
+	std::string testlua = "print(\"Hello World\")";
+	m_pLuaBrain->RunScriptImmediately(testlua);
 
     return true;
 }
@@ -381,6 +393,13 @@ bool Engine::LoadScene(std::string filePath)
 	if (!isLoaded)
 	{
 		Exit("Media loading error\n\n");
+		return false;
+	}
+
+	isLoaded = m_pLuaBrain->LoadScene();
+	if (!isLoaded)
+	{
+		Exit("Lua brain loading error\n\n");
 		return false;
 	}
 

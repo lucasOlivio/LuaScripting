@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scene/iScene.h"
 #include "drawInfo.h"
 #include "EngineRenderer/ShaderManager.h"
 #include "EngineRenderer/VAOManager.h"

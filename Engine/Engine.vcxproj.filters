@@ -181,6 +181,9 @@
     <ClCompile Include="src\components\Material.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\EngineScripting\LuaBrain.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\EngineRenderer\CameraSystem.h">
@@ -330,6 +333,7 @@
     <ClInclude Include="include\TextureManager\cBasicTextureManager.h" />
     <ClInclude Include="include\TextureManager\CTextureFromBMP.h" />
     <ClInclude Include="include\EngineRenderer\TextureProperties.h" />
+    <ClInclude Include="include\EngineScripting\LuaBrain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scene\SceneView.tpp">

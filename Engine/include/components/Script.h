@@ -5,19 +5,8 @@
 
 class ScriptComponent : public Component
 {
-	std::string m_scriptName;
-	bool m_isActive;
-
-	std::map<std::string, std::string> m_mapVariables;
 public:
-	void SetActive(bool isActive);
-	bool IsActive();
-
-	// Get the given variable from the map, if variable not found them returns empty string
-	std::string GetVariable(std::string key);
-
-	void SetScriptName(std::string value);
-	std::string GetScriptName();
+	std::string scriptName;
 
 	virtual void GetInfo(sComponentInfo& compInfoOut);
 	virtual void SetParameter(sParameterInfo& parameterIn);

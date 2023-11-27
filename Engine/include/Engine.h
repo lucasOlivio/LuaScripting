@@ -6,6 +6,7 @@
 #include "EngineEditor/Editor.h"
 #include "EnginePhysics/Physics.h"
 #include "EngineMedia/MediaPlayer.h"
+#include "EngineScripting/LuaBrain.h"
 #include "events/KeyEvent.h"
 #include "events/MouseEvent.h"
 #include "events/CollisionEvent.h"
@@ -61,10 +62,13 @@ protected:
 	double m_lastTime;
 	std::vector<double> m_frameTimes;
 
+	// TODO: All this should be "systems" with an interface and be 
+	// able to attach itself to the engine to be started and updated
 	Renderer* m_pRenderer;
 	Editor* m_pEditor;
 	Physics* m_pPhysics;
 	MediaPlayer* m_pMediaPlayer;
+	LuaBrain* m_pLuaBrain;
 
 	DebugSystem* m_pDebugSystem;
 	WindowSystem* m_pWindowSystem;
