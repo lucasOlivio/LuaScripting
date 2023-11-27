@@ -1,0 +1,122 @@
+[
+    {
+        "light": {
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "direction": [
+                1.0,
+                -0.0,
+                -0.0,
+                1.0
+            ],
+            "distanceOffset": 0.0,
+            "positionOffset": [
+                0.0,
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "directionOffset": [
+                -2.0,
+                -1.0,
+                -0.5,
+                0.0
+            ],
+            "diffuse": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "params": [
+                2.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "status": true
+        },
+        "tag": {
+            "name": "directionallight"
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 0.0,
+            "orientation": [
+                -0.0,
+                -0.0,
+                -0.0
+            ]
+        }
+    },
+    {
+        "camera": {
+            "upVector": [
+                0.0,
+                1.0,
+                0.0
+            ]
+        },
+        "force": {
+            "inverseMass": 0.10000000149011612,
+            "restitution": 0.800000011920929,
+            "acceleration": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "velocity": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "isActive": true,
+            "adjustTowards": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "adjustValue": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        "tag": {
+            "name": "camera"
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                7.975009918212891,
+                -5.874989986419678,
+                -0.0
+            ]
+        }
+    }
+]
