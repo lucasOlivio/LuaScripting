@@ -1,5 +1,4 @@
 #include "Application.h"
-#include "GameObjects/GameObjectFactory.h"
 
 Application::Application()
 	: Engine::Engine()
