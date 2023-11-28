@@ -6,12 +6,13 @@
 #include "EngineEditor/Editor.h"
 #include "EnginePhysics/Physics.h"
 #include "EngineMedia/MediaPlayer.h"
-#include "EngineScripting/LuaBrain.h"
 #include "events/KeyEvent.h"
 #include "events/MouseEvent.h"
 #include "events/CollisionEvent.h"
 #include "common/Input.h"
 #include "EngineDebug/DebugSystem.h"
+#include "EngineScripting/ScriptingSystem.h"
+#include "EngineScripting/commands/CommandManager.h"
 
 class Engine :
 	public iSceneDirector
@@ -68,8 +69,7 @@ protected:
 	Editor* m_pEditor;
 	Physics* m_pPhysics;
 	MediaPlayer* m_pMediaPlayer;
-	LuaBrain* m_pLuaBrain;
-
+	ScriptingSystem* m_pScriptingSystem;
 	DebugSystem* m_pDebugSystem;
 	WindowSystem* m_pWindowSystem;
 	ShaderManager* m_pShaderManager;

@@ -43,6 +43,7 @@ void LuaBrain::Destroy()
 
 bool LuaBrain::LoadScene()
 {
+	m_mapScripts.clear();
 	printf("Loading scripts...\n");
 	
 	// Lua functions bindings

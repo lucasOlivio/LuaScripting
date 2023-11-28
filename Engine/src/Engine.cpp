@@ -77,8 +77,8 @@ bool Engine::Initialize(const std::string& sceneName)
 	m_pPhysics = new Physics(m_pScene, m_pCollisionEvent);
 	m_pInput = new Input(m_pKeyEvent, m_pMouseEvent);
 	m_pMediaPlayer = MediaPlayer::Get();
-	m_pLuaBrain = LuaBrain::Get();
 	m_pDebugSystem = DebugSystem::Get();
+	m_pScriptingSystem = ScriptingSystem::Get();
 
 	printf("Initializing systems...\n");
 	// Initializes all systems
@@ -123,10 +123,10 @@ bool Engine::Initialize(const std::string& sceneName)
 		return false;
 	}
 
-	bool isLuaInit = m_pLuaBrain->Initialize(baseScriptsPath, m_pScene);
-	if (!isMediaInit)
+	bool isScriptInit = m_pScriptingSystem->Initialize(baseScriptsPath, m_pScene);
+	if (!isScriptInit)
 	{
-		CheckEngineError("Engine lua brain initialization");
+		CheckEngineError("Engine scripting initialization");
 		return false;
 	}
 
@@ -186,7 +186,7 @@ void Engine::Update(double fixedDeltaTime)
 	}
 	else
 	{
-		m_pLuaBrain->Update(fixedDeltaTime);
+		m_pScriptingSystem->Update(fixedDeltaTime);
 		m_pMediaPlayer->Update(fixedDeltaTime);
 		m_pPhysics->Update(fixedDeltaTime);
 	}
@@ -262,6 +262,7 @@ void Engine::Exit()
 	delete m_pKeyEvent;
 	delete m_pDebugSystem;
 	delete m_pMediaPlayer;
+	delete m_pScriptingSystem;
 
 	return;
 }
@@ -394,10 +395,10 @@ bool Engine::LoadScene(std::string filePath)
 		return false;
 	}
 
-	isLoaded = m_pLuaBrain->LoadScene();
+	isLoaded = m_pScriptingSystem->LoadScene();
 	if (!isLoaded)
 	{
-		Exit("Lua brain loading error\n\n");
+		Exit("Scripting system loading error\n\n");
 		return false;
 	}
 

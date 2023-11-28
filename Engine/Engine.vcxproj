@@ -20,12 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="src\EngineScripting\ScriptingSystem.cpp" />
+    <ClCompile Include="src\EngineScripting\commands\CommandManager.cpp" />
     <ClCompile Include="src\components\Material.cpp" />
     <ClCompile Include="src\EngineDebug\DebugSystem.cpp" />
     <ClCompile Include="src\EngineRenderer\MaterialManager.cpp" />
     <ClCompile Include="src\EngineRenderer\TextureManager\C24BitBMPpixel.cpp" />
     <ClCompile Include="src\EngineRenderer\TextureManager\cBasicTextureManager.cpp" />
     <ClCompile Include="src\EngineRenderer\TextureManager\CTextureFromBMP.cpp" />
+    <ClCompile Include="src\EngineScripting\commands\CommandGroup.cpp" />
     <ClCompile Include="src\EngineScripting\LuaBrain.cpp" />
     <ClCompile Include="src\events\MouseEvent.cpp" />
     <ClCompile Include="src\components\AudioOcclusion.cpp" />
@@ -105,7 +108,11 @@
     <ClInclude Include="include\EngineRenderer\TextureManager\C24BitBMPpixel.h" />
     <ClInclude Include="include\EngineRenderer\TextureManager\cBasicTextureManager.h" />
     <ClInclude Include="include\EngineRenderer\TextureManager\CTextureFromBMP.h" />
+    <ClInclude Include="include\EngineScripting\commands\CommandGroup.h" />
+    <ClInclude Include="include\EngineScripting\commands\CommandManager.h" />
+    <ClInclude Include="include\EngineScripting\commands\iCommand.h" />
     <ClInclude Include="include\EngineScripting\LuaBrain.h" />
+    <ClInclude Include="include\EngineScripting\ScriptingSystem.h" />
     <ClInclude Include="include\events\iCollisionListener.h" />
     <ClInclude Include="include\events\MouseEvent.h" />
     <ClInclude Include="include\events\sCollisionData.h" />

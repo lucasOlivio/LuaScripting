@@ -184,6 +184,15 @@
     <ClCompile Include="src\EngineScripting\LuaBrain.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\EngineScripting\commands\CommandGroup.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineScripting\commands\CommandManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineScripting\ScriptingSystem.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\EngineRenderer\CameraSystem.h">
@@ -334,6 +343,10 @@
     <ClInclude Include="include\TextureManager\CTextureFromBMP.h" />
     <ClInclude Include="include\EngineRenderer\TextureProperties.h" />
     <ClInclude Include="include\EngineScripting\LuaBrain.h" />
+    <ClInclude Include="include\EngineScripting\commands\iCommand.h" />
+    <ClInclude Include="include\EngineScripting\commands\CommandGroup.h" />
+    <ClInclude Include="include\EngineScripting\commands\CommandManager.h" />
+    <ClInclude Include="include\EngineScripting\ScriptingSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scene\SceneView.tpp">
