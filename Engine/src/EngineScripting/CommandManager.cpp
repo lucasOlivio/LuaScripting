@@ -1,8 +1,21 @@
-#include "EngineScripting/commands/CommandManager.h"
+#include "EngineScripting/CommandManager.h"
 
 CommandManager::CommandManager()
 {
 	m_itNextGroup = m_vecCommandGroups.begin();
+}
+
+CommandManager::~CommandManager()
+{
+	// Command manager responsible for deleting all these command groups
+	for (CommandGroup* pCommand : m_vecCommandGroups)
+	{
+		delete pCommand;
+	}
+	for (CommandGroup* pCommand : m_vecForeverCommands)
+	{
+		delete pCommand;
+	}
 }
 
 void CommandManager::AddSerialCommandGroup(CommandGroup* pNewCommand)

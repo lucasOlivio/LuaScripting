@@ -9,7 +9,7 @@ class CommandGroup : public iCommand
 {
 public:
 	CommandGroup();
-	virtual ~CommandGroup() {};
+	virtual ~CommandGroup();
 
 	std::string friendlyName;
 	unsigned int UniqueID;

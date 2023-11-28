@@ -7,6 +7,7 @@ class CommandManager
 {
 public:
 	CommandManager();
+	~CommandManager();
 
 	// Commands groups to run every frame until complete
 	// Every command here will run every frame until complete then deleted

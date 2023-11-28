@@ -12,7 +12,6 @@
 #include "common/Input.h"
 #include "EngineDebug/DebugSystem.h"
 #include "EngineScripting/ScriptingSystem.h"
-#include "EngineScripting/commands/CommandManager.h"
 
 class Engine :
 	public iSceneDirector

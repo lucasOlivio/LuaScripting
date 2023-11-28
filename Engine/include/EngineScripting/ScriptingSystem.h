@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scene/SceneView.h"
-#include "commands/CommandManager.h"
+#include "CommandManager.h"
 #include "LuaBrain.h"
 #include <glm/mat4x4.hpp>
 
@@ -30,4 +30,6 @@ private:
 	ScriptingSystem();
 
 	static ScriptingSystem* m_pInstance;
+	
+	
 };

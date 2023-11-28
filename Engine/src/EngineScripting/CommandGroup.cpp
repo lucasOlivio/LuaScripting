@@ -1,9 +1,22 @@
-#include "EngineScripting/commands/CommandGroup.h"
+#include "EngineScripting/CommandGroup.h"
 
 CommandGroup::CommandGroup()
 {
 	//std::vector< iCommand*>::iterator m_itNextCommand;
 	m_itNextSerialCommand = m_vecSerialCommands.begin();
+}
+
+CommandGroup::~CommandGroup()
+{
+	// Command groups should be responsible for deleting their commands
+	for (iCommand* pCommand : m_vecSerialCommands)
+	{
+		delete pCommand;
+	}
+	for (iCommand* pCommand : m_vecParallelCommands)
+	{
+		delete pCommand;
+	}
 }
 
 bool CommandGroup::IsDone(void)

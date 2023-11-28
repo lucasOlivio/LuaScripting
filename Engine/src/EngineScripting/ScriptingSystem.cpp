@@ -1,4 +1,5 @@
 #include "EngineScripting/ScriptingSystem.h"
+#include "EngineScripting/CommandFactory.h"
 #include "common/utils.h"
 
 ScriptingSystem* ScriptingSystem::m_pInstance = nullptr;
@@ -37,6 +38,8 @@ bool ScriptingSystem::Initialize(std::string baseScriptsPath, SceneView* pScene)
 
     // Initializes command manager
     m_pCommandManager = new CommandManager();
+
+    iCommand* pComm = CommandFactory::CreateCommand("MoveTo", 5, 0, 0.0, 0.0, 0.0, 0.0);
 
     return true;
 }

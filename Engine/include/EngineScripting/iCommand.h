@@ -7,7 +7,6 @@ class iCommand
 public:
 	virtual ~iCommand() {};
 
-	virtual void Initialize(std::string initParams) = 0;
 	// Called every frame/step:
 	// Returns true when command is done
 	virtual bool Update(double deltaTime) = 0;
