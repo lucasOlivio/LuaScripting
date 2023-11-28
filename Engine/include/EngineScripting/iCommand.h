@@ -11,7 +11,7 @@ public:
 	// Returns true when command is done
 	virtual bool Update(double deltaTime) = 0;
 
-	virtual bool isDone(void) = 0;
+	virtual bool IsDone(void) = 0;
 
 	// Optional: Called before the 1st Update
 	virtual bool PreStart(void) = 0;

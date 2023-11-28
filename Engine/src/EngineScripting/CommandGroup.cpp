@@ -102,7 +102,7 @@ bool CommandGroup::m_UpdateParallel(double deltaTime)
 		iCommand* pThisCommand = *itCurCommand;
 
 		// Is this done? 
-		if (pThisCommand->isDone())
+		if (pThisCommand->IsDone())
 		{
 			continue;
 		}
@@ -127,7 +127,7 @@ bool CommandGroup::m_IsDoneParallel(void)
 		iCommand* pThisCommand = *itCurCommand;
 
 		// Is this done? 
-		if (!pThisCommand->isDone())
+		if (!pThisCommand->IsDone())
 		{
 			// This isn't done
 			isDone = false;
@@ -185,7 +185,7 @@ bool CommandGroup::m_UpdateSerial(double deltaTime)
 	// Yes, there's a current command 
 	pCurrentCommand->Update(deltaTime);
 
-	if (!pCurrentCommand->isDone())
+	if (!pCurrentCommand->IsDone())
 	{
 		// This command is not done yet
 		return false;

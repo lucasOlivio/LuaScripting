@@ -2,43 +2,36 @@
 
 CommandManager::CommandManager()
 {
-	m_itNextGroup = m_vecCommandGroups.begin();
+	m_itNextGroup = m_vecCommands.begin();
 }
 
 CommandManager::~CommandManager()
 {
 	// Command manager responsible for deleting all these command groups
-	for (CommandGroup* pCommand : m_vecCommandGroups)
-	{
-		delete pCommand;
-	}
-	for (CommandGroup* pCommand : m_vecForeverCommands)
-	{
-		delete pCommand;
-	}
+	ClearCommands();
 }
 
-void CommandManager::AddSerialCommandGroup(CommandGroup* pNewCommand)
+void CommandManager::AddCommand(iCommand* pNewCommand)
 {
 	pNewCommand->PreStart();
-	m_vecCommandGroups.push_back(pNewCommand);
+	m_vecCommands.push_back(pNewCommand);
 	return;
 }
 
-void CommandManager::AddForeverCommand(CommandGroup* pNewCommand)
+void CommandManager::AddForeverCommand(iCommand* pNewCommand)
 {
 	pNewCommand->PreStart();
 	m_vecForeverCommands.push_back(pNewCommand);
 	return;
 }
 
-void CommandManager::DeleteForeverCommand(CommandGroup* pNewCommand)
+void CommandManager::DeleteForeverCommand(iCommand* pNewCommand)
 {
-	for (std::vector< CommandGroup* >::iterator itCurCommand = m_vecForeverCommands.begin();
+	for (std::vector< iCommand* >::iterator itCurCommand = m_vecForeverCommands.begin();
 		itCurCommand != m_vecForeverCommands.end();
 		itCurCommand++)
 	{
-		CommandGroup* pGroup = *itCurCommand;
+		iCommand* pGroup = *itCurCommand;
 		if (pNewCommand != pGroup)
 		{
 			continue;
@@ -61,13 +54,28 @@ void CommandManager::Update(double deltaTime)
 	return;
 }
 
+void CommandManager::ClearCommands()
+{
+	for (iCommand* pCommand : m_vecCommands)
+	{
+		delete pCommand;
+	}
+	for (iCommand* pCommand : m_vecForeverCommands)
+	{
+		delete pCommand;
+	}
+
+	m_vecCommands.clear();
+	m_vecForeverCommands.clear();
+}
+
 void CommandManager::m_UpdateGroups(double deltaTime)
 {
-	for (std::vector< CommandGroup* >::iterator itCurCommand = m_vecCommandGroups.begin();
-		itCurCommand != m_vecCommandGroups.end();)
+	for (std::vector< iCommand* >::iterator itCurCommand = m_vecCommands.begin();
+		itCurCommand != m_vecCommands.end();)
 	{
 
-		CommandGroup* pGroup = *itCurCommand;
+		iCommand* pGroup = *itCurCommand;
 
 		bool isDone = pGroup->Update(deltaTime);
 
@@ -76,7 +84,7 @@ void CommandManager::m_UpdateGroups(double deltaTime)
 			// Found the command, delete pointer, rm from vector
 			delete pGroup;
 
-			itCurCommand = m_vecCommandGroups.erase(itCurCommand);
+			itCurCommand = m_vecCommands.erase(itCurCommand);
 		}
 		else
 		{
@@ -90,12 +98,12 @@ void CommandManager::m_UpdateGroups(double deltaTime)
 
 void CommandManager::m_UpdateForeverGroups(double deltaTime)
 {
-	for (std::vector< CommandGroup* >::iterator itCurCommand = m_vecForeverCommands.begin();
+	for (std::vector< iCommand* >::iterator itCurCommand = m_vecForeverCommands.begin();
 		itCurCommand != m_vecForeverCommands.end();
 		itCurCommand++)
 	{
 		// No need to check for done in forever commands
-		CommandGroup* pGroup = *itCurCommand;
+		iCommand* pGroup = *itCurCommand;
 
 		pGroup->Update(deltaTime);
 	}

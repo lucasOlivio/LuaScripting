@@ -96,11 +96,11 @@ void main()
 
 	// Use model vertex as default
 	vec4 vertexRGBA = colour;
-	vertexRGBA.a = alphaValue;
 	
 	if (bUseColorTexture)
 	{
 		vertexRGBA.rgb = calculateColorTextures(UVFinal);
+		vertexRGBA.a = alphaValue;
 	}
 
 	if (bUseDiscardTexture)

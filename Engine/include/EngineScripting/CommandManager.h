@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CommandGroup.h"
+#include "iCommand.h"
 #include <vector>
 
 class CommandManager
@@ -11,23 +11,25 @@ public:
 
 	// Commands groups to run every frame until complete
 	// Every command here will run every frame until complete then deleted
-	void AddSerialCommandGroup(CommandGroup* pNewCommand);
+	void AddCommand(iCommand* pNewCommand);
 
 	// Commands groups that will run forever or until explicitly deleted
-	void AddForeverCommand(CommandGroup* pNewCommand);
-	void DeleteForeverCommand(CommandGroup* pNewCommand);
+	void AddForeverCommand(iCommand* pNewCommand);
+	void DeleteForeverCommand(iCommand* pNewCommand);
 
-	// ONLY does serial command group.
-	// The parallel is handled by the Command Group
+	// Update all commands in lists
 	void Update(double deltaTime);
+
+	// Deletes all commands from all the lists
+	void ClearCommands();
 
 private:
 	// Serial commands. Run until isDone(), then remove or ignore
-	std::vector< CommandGroup* > m_vecCommandGroups;
-	std::vector< CommandGroup* >::iterator m_itNextGroup;
+	std::vector< iCommand* > m_vecCommands;
+	std::vector< iCommand* >::iterator m_itNextGroup;
 	void m_UpdateGroups(double deltaTime);
 
-	std::vector< CommandGroup* > m_vecForeverCommands;
+	std::vector< iCommand* > m_vecForeverCommands;
 	void m_UpdateForeverGroups(double deltaTime);
 
 };

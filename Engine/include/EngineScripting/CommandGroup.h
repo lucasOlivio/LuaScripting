@@ -24,6 +24,7 @@ public:
 	virtual bool IsDone(void);
 
 private:
+
 	// Serial commands
 	std::vector< iCommand* > m_vecSerialCommands;
 	// Points to the next command we're going to run

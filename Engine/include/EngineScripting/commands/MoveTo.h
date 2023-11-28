@@ -2,25 +2,35 @@
 
 #include "common/types.h"
 #include "EngineScripting/iCommand.h"
+#include "scene/SceneView.h"
+#include "components/Transform.h"
+#include "components/Force.h"
 #include <glm/vec3.hpp>
 
 class MoveTo : public iCommand
 {
 public:
-	MoveTo(EntityID entity, float x, float y, float z, float sec);
+	MoveTo(SceneView* pScene, EntityID entity, glm::vec3 location, float time);
 	virtual ~MoveTo() {};
 
 	// Called every frame/step:
 	// Returns true when command is done
 	virtual bool Update(double deltaTime);
 
-	virtual bool isDone(void);
+	virtual bool IsDone(void);
 
-	// Optional: Called before the 1st Update
+	// Calculate the velocity it should reach
 	virtual bool PreStart(void);
-	// Optional: Called after isDone() returns true
+
 	virtual bool PostEnd(void);
 
 private:
 	glm::vec3 m_finalPos;
+	float m_lastDistance;
+
+	float m_elapsedTime;
+	float m_maxTime;
+
+	TransformComponent* m_pTransform;
+	ForceComponent* m_pForce;
 };

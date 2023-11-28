@@ -1,5 +1,61 @@
 [
     {
+        "force": {
+            "inverseMass": 0.10000000149011612,
+            "restitution": 0.800000011920929,
+            "acceleration": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "velocity": [
+                -66.66665649414063,
+                0.0,
+                0.0
+            ],
+            "isActive": true,
+            "adjustTowards": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "adjustValue": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        "model": {
+            "models": [
+                "debugmodels/sphere.ply"
+            ],
+            "collisionName": "",
+            "material": "matgrey",
+            "friendlyName": "",
+            "parentTagName": "",
+            "isWireframe": false,
+            "doNotLight": true,
+            "useColorTexture": true,
+            "isActive": true
+        },
+        "tag": {
+            "name": "ball"
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 10.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ]
+        }
+    },
+    {
         "light": {
             "position": [
                 0.0,
@@ -102,11 +158,54 @@
                 0.0
             ]
         },
-        "script": {
-            "scriptName": "player.lua"
-        },
         "tag": {
             "name": "camera"
+        },
+        "transform": {
+            "position": [
+                -510.4505310058594,
+                48.95178985595703,
+                1357.230712890625
+            ],
+            "scale": 1.0,
+            "orientation": [
+                -72.44824981689453,
+                -1.7255300283432007,
+                -0.00011999999696854502
+            ]
+        }
+    },
+    {
+        "material": {
+            "materialName": "matgrey",
+            "offsetMove": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "colorTextures": [
+                "textgrey"
+            ],
+            "colorTexturesRatios": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "useHeightMap": false,
+            "heightMapTexture": "",
+            "heightScale": 0.0,
+            "useNormalTexture": false,
+            "normalTexture": "",
+            "useSpecularTexture": false,
+            "specularTexture": "",
+            "useDiscardTexture": false,
+            "discardTexture": "",
+            "useCubeTexture": false,
+            "cubeTexture": "",
+            "alphaValue": 1.0
+        },
+        "tag": {
+            "name": "matgrey"
         },
         "transform": {
             "position": [
@@ -116,9 +215,32 @@
             ],
             "scale": 1.0,
             "orientation": [
-                7.949999809265137,
-                -5.599989891052246,
-                -0.0
+                0.0,
+                -0.0,
+                0.0
+            ]
+        }
+    },
+    {
+        "tag": {
+            "name": "textgrey"
+        },
+        "texture": {
+            "fileName": "grey.bmp",
+            "textureType": 0,
+            "vecTextures": []
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
             ]
         }
     }

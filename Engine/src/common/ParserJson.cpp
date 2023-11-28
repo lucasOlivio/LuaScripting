@@ -37,7 +37,7 @@ bool ParserJSON::GetFloat(rapidjson::Value& jsonObject, float& valueOut)
 {
     using namespace rapidjson;
 
-    if (!jsonObject.IsFloat()) {
+    if (!jsonObject.IsNumber()) {
         return false;
     }
 
@@ -355,14 +355,14 @@ bool ParserJSON::GetValue(rapidjson::Value& jsonObject, sParameterInfo& valueOut
         valueOut.parameterType = "string";
         return true;
     }
-    if (GetFloat(jsonObject, valueOut.parameterFloatValue))
-    {
-        valueOut.parameterType = "float";
-        return true;
-    }
     if (GetInt(jsonObject, valueOut.parameterIntValue))
     {
         valueOut.parameterType = "int";
+        return true;
+    }
+    if (GetFloat(jsonObject, valueOut.parameterFloatValue))
+    {
+        valueOut.parameterType = "float";
         return true;
     }
     if (GetBool(jsonObject, valueOut.parameterBoolValue))
