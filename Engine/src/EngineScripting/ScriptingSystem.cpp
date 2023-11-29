@@ -64,6 +64,11 @@ void ScriptingSystem::Destroy()
     delete m_pCommandManager;
 }
 
+void ScriptingSystem::OnStart()
+{
+    m_pLuaBrain->OnStart();
+}
+
 void ScriptingSystem::Update(double deltaTime)
 {
     m_pLuaBrain->Update(deltaTime);

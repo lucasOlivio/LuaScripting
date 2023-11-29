@@ -317,9 +317,12 @@ void Engine::ChangeMode()
 		m_pScene->SetPlaying(true);
 
 		isLoaded = LoadScene();
+
+		m_pScriptingSystem->OnStart();
 	}
 	else
 	{
+		// Entering editor mode
 		m_pPhysics->SetRunning(false);
 		m_pScene->SetPlaying(false);
 

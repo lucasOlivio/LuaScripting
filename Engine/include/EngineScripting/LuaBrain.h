@@ -25,11 +25,14 @@ public:
 
 	bool LoadScene();
 
-	bool LoadScript(std::string scriptName);
-	void DeleteScript(std::string scriptName);
+	bool LoadScript(EntityID entityID, std::string scriptName);
+	void DeleteScript(EntityID entityID);
 
 	// Call all the active scripts that are loaded
 	void Update(float deltaTime);
+
+	// Call all onstart for each script
+	void OnStart();
 
 	// Runs a script, but doesn't save it (originally used to set the ObjectID)
 	void RunScriptImmediately(std::string script);
@@ -42,7 +45,7 @@ private:
 	std::string m_baseScriptsPath;
 	SceneView* m_pScene;
 
-	std::map< std::string /*scriptName*/,
+	std::map< EntityID,
 		      std::string /*scriptSource*/ > m_mapScripts;
 
 	lua_State* m_pLuaState;

@@ -59,6 +59,65 @@
         }
     },
     {
+        "force": {
+            "inverseMass": 0.10000000149011612,
+            "restitution": 0.800000011920929,
+            "acceleration": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "velocity": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "isActive": true,
+            "adjustTowards": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "adjustValue": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        "model": {
+            "models": [
+                "debugmodels/sphere.ply"
+            ],
+            "collisionName": "",
+            "material": "matgrey",
+            "friendlyName": "",
+            "parentTagName": "",
+            "isWireframe": false,
+            "doNotLight": true,
+            "useColorTexture": true,
+            "isActive": true
+        },
+        "script": {
+            "scriptName": "sphere2.lua"
+        },
+        "tag": {
+            "name": "ball2"
+        },
+        "transform": {
+            "position": [
+                0.0,
+                36.0,
+                0.0
+            ],
+            "scale": 10.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ]
+        }
+    },
+    {
         "light": {
             "position": [
                 0.0,
@@ -172,8 +231,8 @@
             ],
             "scale": 1.0,
             "orientation": [
-                -86.42288208007813,
-                -1.675570011138916,
+                -86.42285919189453,
+                -1.6255700588226318,
                 -0.00013000000035390258
             ]
         }

@@ -9,7 +9,7 @@ MoveTo::MoveTo() :
 
 bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
 {
-    int entity;
+    float entity;
     bool isValid = true;
 
     // Initialize default command variables
@@ -19,7 +19,7 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
     ParserJSON parser = ParserJSON();
 
     rapidjson::Value& objEntt = document["entity"];
-    isValid &= parser.GetInt(objEntt, entity);
+    isValid &= parser.GetFloat(objEntt, entity);
     rapidjson::Value& objLoc = document["location"];
     isValid &= parser.GetVec3(objLoc, m_location);
     rapidjson::Value& objTime = document["time"];

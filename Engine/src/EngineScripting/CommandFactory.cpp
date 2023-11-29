@@ -55,33 +55,6 @@ iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document)
         m_errorMsg += "Invalid json structure\n";
         return nullptr;
     }
-
-    CommandGroup* pCommandGroup = new CommandGroup();
-
-    // Check if it's a serial or parallel group
-    if (document.HasMember("serial")) 
-    {
-        // Array of serial commands to be executed
-        Value& serialArray = document["serial"].GetArray();
-        for (SizeType i = 0; i < serialArray.Size(); ++i) 
-        {
-            iCommand* pSerial = m_DeserializeCommand(serialArray[i]);
-
-            pCommandGroup->AddSerialCommand(pSerial);
-        }
-    }
-
-    if (document.HasMember("parallel"))
-    {
-        // Array of parallel commands to be executed
-        Value& parallelArray = document["parallel"].GetArray();
-        for (SizeType i = 0; i < parallelArray.Size(); ++i)
-        {
-            iCommand* pParallel = m_DeserializeCommand(parallelArray[i]);
-
-            pCommandGroup->AddParallelCommand(pParallel);
-        }
-    }
     
     // If have a command member then its a final command (the leaf of the structure)
     if (document.HasMember("command"))
@@ -100,6 +73,35 @@ iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document)
         }
 
         return pCommand;
+    }
+
+    // Should be a command group then
+    CommandGroup* pCommandGroup = new CommandGroup();
+
+    // Check if it's a serial or parallel group
+    // (Empty vectors come as objects so we must check)
+    if (document.HasMember("serial") && document["serial"].IsArray())
+    {
+        // Array of serial commands to be executed
+        Value& serialArray = document["serial"].GetArray();
+        for (SizeType i = 0; i < serialArray.Size(); ++i)
+        {
+            iCommand* pSerial = m_DeserializeCommand(serialArray[i]);
+
+            pCommandGroup->AddSerialCommand(pSerial);
+        }
+    }
+    
+    if (document.HasMember("parallel") && document["parallel"].IsArray())
+    {
+        // Array of parallel commands to be executed
+        Value& parallelArray = document["parallel"].GetArray();
+        for (SizeType i = 0; i < parallelArray.Size(); ++i)
+        {
+            iCommand* pParallel = m_DeserializeCommand(parallelArray[i]);
+
+            pCommandGroup->AddParallelCommand(pParallel);
+        }
     }
 
     pCommandGroup->Initialize(m_pScene, document);

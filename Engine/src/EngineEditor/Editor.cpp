@@ -144,6 +144,7 @@ void Editor::DrawSelectedEntity()
 
 	// Bounding box and gizmo to selected element
 	iComponent* pModelComp = m_pSceneView->GetComponent(m_selectedEntity, "model");
+
 	TransformComponent* pTransform = m_pSceneView->GetComponent<TransformComponent>(m_selectedEntity, "transform");
 
 	if (pModelComp != nullptr)

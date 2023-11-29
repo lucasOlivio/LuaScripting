@@ -56,7 +56,7 @@ bool LuaBrain::LoadScene()
 		EntityID entityId = m_pScene->CurrentKey();
 		ScriptComponent* pScript = m_pScene->CurrentValue<ScriptComponent>();
 
-		bool isLoaded = LoadScript(pScript->scriptName);
+		bool isLoaded = LoadScript(entityId, pScript->scriptName);
 		if (!isLoaded)
 		{
 			CheckEngineError(("Not able to load " + pScript->scriptName).c_str());
@@ -70,7 +70,7 @@ bool LuaBrain::LoadScene()
 
 // Saves (and overwrites) any script
 // scriptName is just so we can delete them later
-bool LuaBrain::LoadScript(std::string scriptName)
+bool LuaBrain::LoadScript(EntityID entityID, std::string scriptName)
 {
 	std::string scriptSource = m_ReadLuaScriptFile(scriptName);
 	if (scriptSource == "")
@@ -78,65 +78,95 @@ bool LuaBrain::LoadScript(std::string scriptName)
 		return false;
 	}
 
-	m_mapScripts[scriptName] = scriptSource;
+	m_mapScripts[entityID] = scriptSource;
 	return true;
 }
 
 
-void LuaBrain::DeleteScript(std::string scriptName)
+void LuaBrain::DeleteScript(EntityID entityID)
 {
-	m_mapScripts.erase(scriptName);
+	m_mapScripts.erase(entityID);
 	return;
 }
 
-
-// Call all the active scripts that are loaded
-void LuaBrain::Update(float deltaTime)
+void LuaBrain::OnStart()
 {
-	for (std::map< std::string /*name*/, std::string /*source*/>::iterator itScript =
+	for (std::map< EntityID, std::string /*source*/>::iterator itScript =
 		m_mapScripts.begin(); itScript != m_mapScripts.end(); itScript++)
 	{
+		EntityID entityID = itScript->first;
 		std::string curLuaScript = itScript->second;
 
-		int error = luaL_loadstring(m_pLuaState,
-									curLuaScript.c_str());
-
+		int error = luaL_dostring(m_pLuaState,
+								  curLuaScript.c_str());
 		if (error != 0 /*no error*/)
 		{
 			std::cout << "-------------------------------------------------------" << std::endl;
 			std::cout << "Error running Lua script: ";
-			std::cout << itScript->first << std::endl;
+			std::cout << "Entity: " << entityID << std::endl;
 			std::cout << m_DecodeLuaErrorToString(error) << std::endl;
 			std::cout << "-------------------------------------------------------" << std::endl;
 			continue;
 		}
 
-		// execute funtion in "protected mode", where problems are 
-		//  caught and placed on the stack for investigation
-		error = lua_pcall(m_pLuaState,	/* lua state */
-						  0,	/* nargs: number of arguments pushed onto the lua stack */
-						  0,	/* nresults: number of results that should be on stack at end*/
-						  0);	/* errfunc: location, in stack, of error function. 
-					if 0, results are on top of stack. */
-		if (error != 0 /*no error*/)
-		{
-			std::cout << "Lua: There was an error..." << std::endl;
-			std::cout << m_DecodeLuaErrorToString(error) << std::endl;
-
+		// Call the onstart function for each object
+		lua_getglobal(m_pLuaState, "onstart");
+		lua_pushnumber(m_pLuaState, entityID);
+		int result = lua_pcall(m_pLuaState, 1, 0, 0);
+		if (result != LUA_OK) {
 			std::string luaError;
 			// Get error information from top of stack (-1 is top)
 			luaError.append(lua_tostring(m_pLuaState, -1));
 
-			// Make error message a little more clear
 			std::cout << "-------------------------------------------------------" << std::endl;
-			std::cout << "Error running Lua script: ";
-			std::cout << itScript->first << std::endl;
+			std::cout << "Error running onstart: ";
+			std::cout << "Entity: " << entityID << std::endl;
 			std::cout << luaError << std::endl;
 			std::cout << "-------------------------------------------------------" << std::endl;
-			// We passed zero (0) as errfunc, so error is on stack)
-			lua_pop(m_pLuaState, 1);  /* pop error message from the stack */
+			lua_pop(m_pLuaState, 1); // Pop the function from the stack
+		}
 
+	}
+
+	return;
+}
+
+// Call all the active scripts that are loaded
+void LuaBrain::Update(float deltaTime)
+{
+	for (std::map< EntityID, std::string /*source*/>::iterator itScript =
+		m_mapScripts.begin(); itScript != m_mapScripts.end(); itScript++)
+	{
+		EntityID entityID = itScript->first;
+		std::string curLuaScript = itScript->second;
+
+		int error = luaL_dostring(m_pLuaState,
+			curLuaScript.c_str());
+		if (error != 0 /*no error*/)
+		{
+			std::cout << "-------------------------------------------------------" << std::endl;
+			std::cout << "Error running Lua script: ";
+			std::cout << "Entity: " << entityID << std::endl;
+			std::cout << m_DecodeLuaErrorToString(error) << std::endl;
+			std::cout << "-------------------------------------------------------" << std::endl;
 			continue;
+		}
+
+		// Call the update function for each object
+		lua_getglobal(m_pLuaState, "update");
+		lua_pushnumber(m_pLuaState, deltaTime);
+		int result = lua_pcall(m_pLuaState, 1, 0, 0);
+		if (result != LUA_OK) {
+			std::string luaError;
+			// Get error information from top of stack (-1 is top)
+			luaError.append(lua_tostring(m_pLuaState, -1));
+
+			std::cout << "-------------------------------------------------------" << std::endl;
+			std::cout << "Error running update: ";
+			std::cout << "Entity: " << entityID << std::endl;
+			std::cout << luaError << std::endl;
+			std::cout << "-------------------------------------------------------" << std::endl;
+			lua_pop(m_pLuaState, 1); // Pop the function from the stack
 		}
 
 	}
@@ -147,7 +177,6 @@ void LuaBrain::Update(float deltaTime)
 // Runs a script, but doesn't save it (originally used to set the ObjectID)
 void LuaBrain::RunScriptImmediately(std::string script)
 {
-
 	int error = luaL_loadstring(m_pLuaState,
 		script.c_str());
 
@@ -163,10 +192,10 @@ void LuaBrain::RunScriptImmediately(std::string script)
 	// execute funtion in "protected mode", where problems are 
 	//  caught and placed on the stack for investigation
 	error = lua_pcall(m_pLuaState,	/* lua state */
-		0,	/* nargs: number of arguments pushed onto the lua stack */
-		0,	/* nresults: number of results that should be on stack at end*/
-		0);	/* errfunc: location, in stack, of error function.
-				if 0, results are on top of stack. */
+	                  0,	/* nargs: number of arguments pushed onto the lua stack */
+	                  0,	/* nresults: number of results that should be on stack at end*/
+	                  0);	/* errfunc: location, in stack, of error function.
+								if 0, results are on top of stack. */
 	if (error != 0 /*no error*/)
 	{
 		std::cout << "Lua: There was an error..." << std::endl;
@@ -194,6 +223,9 @@ std::string LuaBrain::m_DecodeLuaErrorToString(int error)
 	{
 	case 0:
 		return "Lua: no error";
+		break;
+	case LUA_YIELD:
+		return "Lua: Lua yield";
 		break;
 	case LUA_ERRSYNTAX:
 		return "Lua: syntax error";

@@ -15,13 +15,15 @@ public:
 
 	// Where we really start/destroy everything that could go wrong
 	bool Initialize(std::string baseScriptsPath, SceneView* pScene);
-	bool LoadScene();
+	bool LoadScene(); 
 	void Destroy();
 
+	// Lua commands
+	void OnStart();
 	void Update(double deltaTime);
 
 	/**
-	 * Creeates and send the new command to the command manager.
+	 * Creates and send the new command to the command manager.
 	 *
 	 * @param json. A serialized batch of commands to be executed (See docs).
 	 * @param isForever. If this command should run forever without a check

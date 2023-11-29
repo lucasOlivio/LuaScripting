@@ -9,7 +9,7 @@ function onstart(thisEntity)
     print("startn entity: " .. entity)
     
     -- Example usage:
-    local moveCommand1 = MoveCommand(entity, {-200.0, 0.0, 0.0}, 3)
+    local moveCommand1 = MoveCommand(entity, {200.0, 0.0, 0.0}, 3)
 
     -- Create the main command group
     local mainCommandGroup = CommandGroup:new("movegroup")
