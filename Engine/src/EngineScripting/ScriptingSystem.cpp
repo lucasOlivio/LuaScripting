@@ -75,7 +75,7 @@ void ScriptingSystem::Update(double deltaTime)
     m_pCommandManager->Update(deltaTime);
 }
 
-bool ScriptingSystem::AddCommand(const char* json, bool isForever, uint64_t UUIDOut)
+bool ScriptingSystem::AddCommand(const char* json, bool isForever, uint16_t& UUIDOut)
 {
     using namespace std;
 

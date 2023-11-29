@@ -1,5 +1,6 @@
 #include "EngineScripting/LuaBindings/LuaCommandDispatcher.h"
 #include "EngineScripting/ScriptingSystem.h"
+#include <iostream>
 
 int lua_SendCommands(lua_State* L)
 {
@@ -8,7 +9,7 @@ int lua_SendCommands(lua_State* L)
 	bool isForever = lua_toboolean(L, 2);
 
 	// Send to system
-	uint64_t UUID = 0;
+	uint16_t UUID = 0;
 	bool isValid = ScriptingSystem::Get()->AddCommand(json, isForever, UUID);
 
 	if (!isValid)
@@ -19,6 +20,7 @@ int lua_SendCommands(lua_State* L)
 		return 1;
 	}
 
+	std::cout << "UUID C++: " << UUID << std::endl;
 	lua_pushboolean(L, true);
 	lua_pushnumber(L, UUID);
 

@@ -256,12 +256,12 @@ glm::vec3 myutils::CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float
     return velocity;
 }
 
-uint64_t myutils::GenerateUUID()
+uint16_t myutils::GenerateUUID()
 {
     // Based on Hazel engine "Hazel/Core/UUID.h"
     static std::random_device s_RandomDevice;
-    static std::mt19937_64 s_Engine(s_RandomDevice());
-    static std::uniform_int_distribution<uint64_t> s_UniformDistribution;
+    static std::mt19937 s_Engine(s_RandomDevice());
+    static std::uniform_int_distribution<uint16_t> s_UniformDistribution;
 
     return s_UniformDistribution(s_Engine);
 }

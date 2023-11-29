@@ -30,7 +30,7 @@ public:
 	 * 
 	 * @return If batch was valid and added
 	 */
-	bool AddCommand(const char* json, bool isForever, uint64_t UUIDOut);
+	bool AddCommand(const char* json, bool isForever, uint16_t& UUIDOut);
 
 private:
 	LuaBrain* m_pLuaBrain;

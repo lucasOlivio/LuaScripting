@@ -8,7 +8,7 @@ bool Command::Initialize()
     return true;
 }
 
-uint64_t Command::GetUUID()
+uint16_t Command::GetUUID()
 {
     return m_UUID;
 }

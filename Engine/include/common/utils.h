@@ -57,5 +57,6 @@ namespace myutils
     glm::vec3 CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float time);
 
     // Generates an unique UUID using random lib and uniform dist
-    uint64_t GenerateUUID();
+    // 16 bits to simplify and be able to use with Lua scripts
+    uint16_t GenerateUUID();
 }

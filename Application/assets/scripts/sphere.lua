@@ -1,6 +1,6 @@
-local json = require("assets/scripts/json")
 local CommandGroup = require("assets/scripts/commands/commandgroup")
 local MoveCommand = require("assets/scripts/commands/commands")
+local DisptachCommands = require("assets/scripts/commands/utils")
 
 local entity = -1
 
@@ -15,12 +15,15 @@ function onstart(thisEntity)
     local mainCommandGroup = CommandGroup:new("movegroup")
     mainCommandGroup:addCommand(moveCommand1, false)  -- Add moveCommand1 to serial
 
-    -- Convert the serialized result to a JSON string
-    print("serializing...\n")
-    local jsonString = json.stringify(mainCommandGroup, false)
+    success, commandsUUID = DisptachCommands(mainCommandGroup)
 
-    print("sending...")
-    SendCommands(jsonString)
+    print("After command")
+
+    if success then
+        print("UUID: " .. commandsUUID)
+    else
+        print("Failed to run move")
+    end
 end
 
 function update(deltatime)

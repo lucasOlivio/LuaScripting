@@ -29,6 +29,6 @@ public:
 	// Called after IsDone() returns true
 	virtual bool PostEnd(void) = 0;
 
-	virtual uint64_t GetUUID() = 0;
+	virtual uint16_t GetUUID() = 0;
 };
 

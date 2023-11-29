@@ -11,12 +11,12 @@ public:
 	virtual bool Initialize();
 
 	// Unique command ID to retrieve state
-	virtual uint64_t GetUUID();
+	virtual uint16_t GetUUID();
 
 	// Friendly name for command or group
 	virtual std::string GetName();
 
 protected:
 	std::string m_name;
-	uint64_t m_UUID;
+	uint16_t m_UUID;
 };
