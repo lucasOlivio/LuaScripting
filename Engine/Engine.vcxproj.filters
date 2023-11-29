@@ -199,6 +199,12 @@
     <ClCompile Include="src\EngineScripting\commands\MoveTo.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\EngineScripting\luaBindings\LuaCommandDispatcher.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineScripting\commands\Command.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\EngineRenderer\CameraSystem.h">
@@ -349,13 +355,15 @@
     <ClInclude Include="include\TextureManager\CTextureFromBMP.h" />
     <ClInclude Include="include\EngineRenderer\TextureProperties.h" />
     <ClInclude Include="include\EngineScripting\LuaBrain.h" />
-    <ClInclude Include="include\EngineScripting\iCommand.h" />
+    <ClInclude Include="include\EngineScripting\commands\iCommand.h" />
     <ClInclude Include="include\EngineScripting\CommandGroup.h" />
     <ClInclude Include="include\EngineScripting\CommandManager.h" />
     <ClInclude Include="include\EngineScripting\ScriptingSystem.h" />
     <ClInclude Include="include\EngineScripting\CommandFactory.h" />
     <ClInclude Include="include\EngineScripting\commands.h" />
     <ClInclude Include="include\EngineScripting\commands\MoveTo.h" />
+    <ClInclude Include="include\EngineScripting\luaBindings\LuaCommandDispatcher.h" />
+    <ClInclude Include="include\EngineScripting\commands\Command.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scene\SceneView.tpp">

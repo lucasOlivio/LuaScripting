@@ -3,28 +3,25 @@
 #include <vector>
 #include <string>
 
-#include "iCommand.h"
+#include "commands/Command.h"
 
-class CommandGroup : public iCommand
+class CommandGroup : public Command
 {
 public:
 	CommandGroup();
 	virtual ~CommandGroup();
 
-	std::string friendlyName;
-	unsigned int UniqueID;
-
 	void AddSerialCommand(iCommand* pTheCommand);
 	void AddParallelCommand(iCommand* pTheCommand);
 
 	// iCommand
+	virtual bool Initialize(SceneView* pScene, rapidjson::Value& document);
 	virtual bool PreStart(void);
 	virtual bool PostEnd(void);
 	virtual bool Update(double deltaTime);
 	virtual bool IsDone(void);
 
 private:
-
 	// Serial commands
 	std::vector< iCommand* > m_vecSerialCommands;
 	// Points to the next command we're going to run

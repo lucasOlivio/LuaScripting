@@ -5,6 +5,8 @@
 #include <sstream>
 #include <fstream>
 #include <glm/mat4x4.hpp>
+#include <random>
+#include <unordered_map>
 
 void __CheckEngineError(const char* msg, const char* file, int line)
 {
@@ -252,4 +254,14 @@ glm::vec3 myutils::CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float
     glm::vec3 velocity = speed * directionNormal;
 
     return velocity;
+}
+
+uint64_t myutils::GenerateUUID()
+{
+    // Based on Hazel engine "Hazel/Core/UUID.h"
+    static std::random_device s_RandomDevice;
+    static std::mt19937_64 s_Engine(s_RandomDevice());
+    static std::uniform_int_distribution<uint64_t> s_UniformDistribution;
+
+    return s_UniformDistribution(s_Engine);
 }

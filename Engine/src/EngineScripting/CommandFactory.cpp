@@ -3,51 +3,39 @@
 #include "common/ParserJSON.h"
 #include <cstdarg>
 #include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
 
 CommandFactory::CommandFactory(SceneView* pScene) :
     m_pScene(pScene)
 {
 }
 
-iCommand* CommandFactory::CreateCommand(const char* command, const char* args)
+iCommand* CommandFactory::CreateCommand(const char* json)
 {
     using namespace rapidjson;
-    using namespace glm;
-    using namespace std;
 
-    ParserJSON parser = ParserJSON();
-    iCommand* pCommand = nullptr;
+    // Parse json string into object
     Document document;
-    document.Parse(args);
+    document.Parse(json);
 
-    if (command == "MoveTo")
-    {
-        // Check if json have all the argument needed
-        if (document.HasMember("entity")   &&
-            document.HasMember("location") &&
-            document.HasMember("time"))
-        {
-            int entity;
-            vec3 location;
-            float time;
-
-            // Get variables values from json string
-            parser.GetInt(document["entity"], entity);
-            parser.GetVec3(document["location"], location);
-            parser.GetFloat(document["time"], time);
-
-            pCommand = new MoveTo(m_pScene, entity, location, time);
-        }
+    if (document.HasParseError()) {
+        m_errorMsg = "Failed to parse command json\n";
+        return nullptr;
     }
 
-    // On error we save all parameters in case the caller needs to deal with it
-    if (pCommand == nullptr)
+    // Reset error msg
+    m_errorMsg = "";
+
+    // Desserialize into CommandGroup nested structure
+    iCommand* pCommand = m_DeserializeCommand(document);
+
+    if (m_errorMsg != "")
     {
-        m_errorMsg = string("No command '") + command + "' found with args: " + args;
-    }
-    else
-    {
-        m_errorMsg = "";
+        // If there is an error we should not return this value 
+        // and just delete the command to avoid memory leak
+        delete pCommand;
+        return nullptr;
     }
 
     return pCommand;
@@ -56,4 +44,93 @@ iCommand* CommandFactory::CreateCommand(const char* command, const char* args)
 std::string CommandFactory::GetError()
 {
     return m_errorMsg;
+}
+
+iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document)
+{
+    using namespace rapidjson;
+
+    if (!document.IsObject())
+    {
+        m_errorMsg += "Invalid json structure\n";
+        return nullptr;
+    }
+
+    CommandGroup* pCommandGroup = new CommandGroup();
+
+    // Check if it's a serial or parallel group
+    if (document.HasMember("serial")) 
+    {
+        // Array of serial commands to be executed
+        Value& serialArray = document["serial"].GetArray();
+        for (SizeType i = 0; i < serialArray.Size(); ++i) 
+        {
+            iCommand* pSerial = m_DeserializeCommand(serialArray[i]);
+
+            pCommandGroup->AddSerialCommand(pSerial);
+        }
+    }
+
+    if (document.HasMember("parallel"))
+    {
+        // Array of parallel commands to be executed
+        Value& parallelArray = document["parallel"].GetArray();
+        for (SizeType i = 0; i < parallelArray.Size(); ++i)
+        {
+            iCommand* pParallel = m_DeserializeCommand(parallelArray[i]);
+
+            pCommandGroup->AddParallelCommand(pParallel);
+        }
+    }
+    
+    // If have a command member then its a final command (the leaf of the structure)
+    if (document.HasMember("command"))
+    {
+        Value& command = document["command"];
+        iCommand* pCommand = m_CreateFinalCommand(command);
+
+        if (pCommand == nullptr)
+        {
+            // Stringfy the invalid command
+            StringBuffer buffer;
+            Writer<StringBuffer> writer(buffer);
+            document.Accept(writer);
+
+            m_errorMsg = m_errorMsg + "Command or args not valid: " + buffer.GetString() + "\n";
+        }
+
+        return pCommand;
+    }
+
+    pCommandGroup->Initialize(m_pScene, document);
+
+    return pCommandGroup;
+}
+
+iCommand* CommandFactory::m_CreateFinalCommand(rapidjson::Value& command)
+{
+    using namespace rapidjson;
+
+    iCommand* pCommand = nullptr;
+    std::string name = command["name"].GetString();
+    Value& args = command["args"].GetObject();
+
+    if (name == "MoveTo")
+    {
+        pCommand = new MoveTo();
+    }
+
+    if (pCommand)
+    {
+        bool isValid = pCommand->Initialize(m_pScene, args);
+
+        if (!isValid)
+        {
+            // Value not valid, command should not go through
+            delete pCommand;
+            return nullptr;
+        }
+    }
+
+    return pCommand;
 }

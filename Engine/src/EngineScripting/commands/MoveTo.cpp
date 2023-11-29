@@ -1,11 +1,40 @@
 #include "EngineScripting/commands/MoveTo.h"
 #include "common/utils.h"
+#include "common/ParserJSON.h"
 
-MoveTo::MoveTo(SceneView* pScene, EntityID entity, glm::vec3 location, float time) :
-    m_finalPos(location), m_maxTime(time), m_elapsedTime(0), m_lastDistance(0)
+MoveTo::MoveTo() :
+    m_elapsedTime(0), m_lastDistance(0)
 {
+}
+
+bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
+{
+    int entity;
+    bool isValid = true;
+
+    // Initialize default command variables
+    isValid &= this->Command::Initialize();
+    m_name = "MoveTo";
+
+    ParserJSON parser = ParserJSON();
+
+    rapidjson::Value& objEntt = document["entity"];
+    isValid &= parser.GetInt(objEntt, entity);
+    rapidjson::Value& objLoc = document["location"];
+    isValid &= parser.GetVec3(objLoc, m_location);
+    rapidjson::Value& objTime = document["time"];
+    isValid &= parser.GetFloat(objTime, m_time);
+
+    if (!isValid)
+    {
+        // Invalid arguments
+        return false;
+    }
+
     m_pTransform = pScene->GetComponent<TransformComponent>(entity, "transform");
     m_pForce = pScene->GetComponent<ForceComponent>(entity, "force");
+
+    return true;
 }
 
 bool MoveTo::Update(double deltaTime)
@@ -19,23 +48,21 @@ bool MoveTo::Update(double deltaTime)
 
 bool MoveTo::IsDone(void)
 {
-    float distanceToFinal = glm::length(m_pTransform->GetPosition() - m_finalPos);
-    printf("distance: %.2f\n", distanceToFinal);
-    printf("time: %.2f\n", m_elapsedTime);
+    float distanceToFinal = glm::length(m_pTransform->GetPosition() - m_location);
 
     // Doubel check to see if reached or passed destination
-    if (distanceToFinal <= 0.1 || 
+    if (distanceToFinal <= 0.1 ||
         m_lastDistance < distanceToFinal)
     {
         // Reached or passed destination, so stop object and clamp to right position
         m_pForce->SetVelocity(glm::vec3(0));
-        m_pTransform->SetPosition(m_finalPos);
+        m_pTransform->SetPosition(m_location);
         return true;
     }
 
     m_lastDistance = distanceToFinal;
 
-    if (m_elapsedTime >= m_maxTime)
+    if (m_elapsedTime >= m_time)
     {
         // Did not reach destination but ran out of time so probably can't reach it
         m_pForce->SetVelocity(glm::vec3(0));
@@ -47,10 +74,10 @@ bool MoveTo::IsDone(void)
 
 bool MoveTo::PreStart(void)
 {
-    m_lastDistance = glm::length(m_pTransform->GetPosition() - m_finalPos);
-    glm::vec3 newVelocity = myutils::CalculateVelocity(m_pTransform->GetPosition(), 
-                                                       m_finalPos, 
-                                                       m_maxTime);
+    m_lastDistance = glm::length(m_pTransform->GetPosition() - m_location);
+    glm::vec3 newVelocity = myutils::CalculateVelocity(m_pTransform->GetPosition(),
+        m_location,
+        m_time);
 
     m_pForce->SetVelocity(newVelocity);
 

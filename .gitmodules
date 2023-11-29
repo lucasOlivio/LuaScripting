@@ -1,0 +1,3 @@
+[submodule "Application/assets/scripts/lib/cjson"]
+	path = Application/assets/scripts/lib/cjson
+	url = https://github.com/openresty/lua-cjson.git

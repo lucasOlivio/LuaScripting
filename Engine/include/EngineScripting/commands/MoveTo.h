@@ -1,17 +1,19 @@
 #pragma once
 
 #include "common/types.h"
-#include "EngineScripting/iCommand.h"
+#include "EngineScripting/commands/Command.h"
 #include "scene/SceneView.h"
 #include "components/Transform.h"
 #include "components/Force.h"
 #include <glm/vec3.hpp>
 
-class MoveTo : public iCommand
+class MoveTo : public Command
 {
 public:
-	MoveTo(SceneView* pScene, EntityID entity, glm::vec3 location, float time);
+	MoveTo();
 	virtual ~MoveTo() {};
+
+	virtual bool Initialize(SceneView* pScene, rapidjson::Value& document);
 
 	// Called every frame/step:
 	// Returns true when command is done
@@ -23,13 +25,12 @@ public:
 	virtual bool PreStart(void);
 
 	virtual bool PostEnd(void);
-
 private:
-	glm::vec3 m_finalPos;
-	float m_lastDistance;
+	glm::vec3 m_location; // End location to move to
+	float m_time;		  // Max time that should take to move
 
 	float m_elapsedTime;
-	float m_maxTime;
+	float m_lastDistance;
 
 	TransformComponent* m_pTransform;
 	ForceComponent* m_pForce;

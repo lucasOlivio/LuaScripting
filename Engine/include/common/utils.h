@@ -55,4 +55,7 @@ namespace myutils
 
     // Calculate the needed velocity to go from start to end in the given time
     glm::vec3 CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float time);
+
+    // Generates an unique UUID using random lib and uniform dist
+    uint64_t GenerateUUID();
 }

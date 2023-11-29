@@ -23,12 +23,12 @@ public:
 	/**
 	 * Creeates and send the new command to the command manager.
 	 *
-	 * @param command. Name of the command to be created.
+	 * @param json. A serialized batch of commands to be executed (See docs).
 	 * @param isForever. If this command should run forever without a check
-	 * @param nArgs. Number of parameters been passed.
-     * @param args... variable number of parameters for the command.
+	 * 
+	 * @return If batch was valid and added
 	 */
-	void AddCommand(const char* command, bool isForever, const char* args);
+	bool AddCommand(const char* json, bool isForever, uint64_t UUIDOut);
 
 private:
 	LuaBrain* m_pLuaBrain;

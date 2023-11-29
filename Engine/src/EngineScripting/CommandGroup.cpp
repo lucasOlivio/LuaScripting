@@ -1,9 +1,9 @@
 #include "EngineScripting/CommandGroup.h"
+#include "common/ParserJSON.h"
+#include "common/utils.h"
 
 CommandGroup::CommandGroup()
 {
-	//std::vector< iCommand*>::iterator m_itNextCommand;
-	m_itNextSerialCommand = m_vecSerialCommands.begin();
 }
 
 CommandGroup::~CommandGroup()
@@ -45,9 +45,24 @@ void CommandGroup::AddParallelCommand(iCommand* pTheCommand)
 	return;
 }
 
-bool CommandGroup::PreStart(void)
+bool CommandGroup::Initialize(SceneView* pScene, rapidjson::Value& document)
 {
+	this->Command::Initialize();
+
+	ParserJSON parser = ParserJSON();
+
+	rapidjson::Value& objName = document["name"];
+	parser.GetString(objName, m_name);
+
+	return true;
+}
+
+bool CommandGroup::PreStart()
+{
+	m_itNextSerialCommand = m_vecSerialCommands.begin();
+
 	bool isValid = true;
+
 	isValid &= m_PreStartSerial();
 	isValid &= m_PreStartParallel();
 
@@ -164,6 +179,11 @@ bool CommandGroup::m_IsDoneSerial(void)
 
 bool CommandGroup::m_PreStartSerial()
 {
+	if (m_IsDoneSerial())
+	{
+		return true;
+	}
+
 	iCommand* pCurrentCommand = *m_itNextSerialCommand;
 
 	bool isValid = pCurrentCommand->PreStart();
@@ -192,9 +212,10 @@ bool CommandGroup::m_UpdateSerial(double deltaTime)
 	}
 
 	pCurrentCommand->PostEnd();
+
+	// Remove command and move to next
 	delete pCurrentCommand;
-	// Move to next command
-	m_itNextSerialCommand++;
+	m_itNextSerialCommand = m_vecSerialCommands.erase(m_itNextSerialCommand);
 
 	// All commands are done?
 	if (m_itNextSerialCommand == m_vecSerialCommands.end())

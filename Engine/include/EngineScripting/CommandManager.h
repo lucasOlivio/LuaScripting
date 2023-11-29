@@ -1,6 +1,6 @@
 #pragma once
 
-#include "iCommand.h"
+#include "commands/iCommand.h"
 #include <vector>
 
 class CommandManager

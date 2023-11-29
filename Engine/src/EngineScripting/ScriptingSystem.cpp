@@ -22,8 +22,6 @@ ScriptingSystem* ScriptingSystem::Get()
     return ScriptingSystem::m_pInstance;
 }
 
-#include <chrono>
-#include <iostream>
 bool ScriptingSystem::Initialize(std::string baseScriptsPath, SceneView* pScene)
 {
     m_pScene = pScene;
@@ -56,9 +54,6 @@ bool ScriptingSystem::LoadScene()
         return false;
     }
 
-    const char* test = "{\"entity\": 0, \"location\": [-200.0, 0.0, 0.0], \"time\": 3}";
-    AddCommand("MoveTo", false, test);
-
     return true;
 }
 
@@ -75,17 +70,17 @@ void ScriptingSystem::Update(double deltaTime)
     m_pCommandManager->Update(deltaTime);
 }
 
-void ScriptingSystem::AddCommand(const char* command, bool isForever, const char* args)
+bool ScriptingSystem::AddCommand(const char* json, bool isForever, uint64_t UUIDOut)
 {
     using namespace std;
 
-    iCommand* pComm = m_pCommandFactory->CreateCommand(command, args);
+    iCommand* pComm = m_pCommandFactory->CreateCommand(json);
 
     if (pComm == nullptr)
     {
         // command not found or arguments wrong
         CheckEngineError(m_pCommandFactory->GetError().c_str());
-        return;
+        return false;
     }
 
     // Add command to the command manager
@@ -97,4 +92,8 @@ void ScriptingSystem::AddCommand(const char* command, bool isForever, const char
     {
         m_pCommandManager->AddCommand(pComm);
     }
+
+    UUIDOut = pComm->GetUUID();
+
+    return true;
 }
