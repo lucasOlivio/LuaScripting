@@ -1,7 +1,7 @@
-#include "EngineScripting/luaBindings/LuaCommandDispatcher.h"
+#include "EngineScripting/LuaBindings/LuaCommandDispatcher.h"
 #include "EngineScripting/ScriptingSystem.h"
 
-int SendCommands(lua_State* L)
+int lua_SendCommands(lua_State* L)
 {
 	// Batch serialized
 	const char* json = lua_tostring(L, 1);

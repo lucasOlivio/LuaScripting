@@ -14,4 +14,4 @@ extern "C" {
 * 
 * @return if was a valid command batch and the command id.
 */
-int SendCommands(lua_State* L);
+int lua_SendCommands(lua_State* L);

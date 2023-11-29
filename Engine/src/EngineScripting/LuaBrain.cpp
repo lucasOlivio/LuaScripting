@@ -1,6 +1,7 @@
 #include "EngineScripting/LuaBrain.h"
 #include "components/Script.h"
 #include "common/utils.h"
+#include "EngineScripting/luaBindings/LuaCommandDispatcher.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -27,10 +28,13 @@ bool LuaBrain::Initialize(std::string baseScriptsPath, SceneView* pScene)
 	m_pScene = pScene;
 
 	// Create new Lua state.
-	// NOTE: this is common to ALL script in this case
 	m_pLuaState = luaL_newstate();
 
 	luaL_openlibs(m_pLuaState);
+
+	// Bind Lua integration functions
+	lua_pushcfunction(m_pLuaState, lua_SendCommands);
+	lua_setglobal(m_pLuaState, "SendCommands");
 
 	return true;
 }

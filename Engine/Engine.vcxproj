@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="src\EngineScripting\commands\Command.cpp" />
-    <ClCompile Include="src\EngineScripting\luaBindings\LuaCommandDispatcher.cpp" />
+    <ClCompile Include="src\EngineScripting\LuaBindings\LuaCommandDispatcher.cpp" />
     <ClCompile Include="src\EngineScripting\commands\MoveTo.cpp" />
     <ClCompile Include="src\EngineScripting\CommandFactory.cpp" />
     <ClCompile Include="src\EngineScripting\ScriptingSystem.cpp" />
@@ -119,7 +119,8 @@
     <ClInclude Include="include\EngineScripting\commands\Command.h" />
     <ClInclude Include="include\EngineScripting\commands\MoveTo.h" />
     <ClInclude Include="include\EngineScripting\commands\iCommand.h" />
-    <ClInclude Include="include\EngineScripting\luaBindings\LuaCommandDispatcher.h" />
+    <ClInclude Include="include\EngineScripting\LuaBindings.h" />
+    <ClInclude Include="include\EngineScripting\LuaBindings\LuaCommandDispatcher.h" />
     <ClInclude Include="include\EngineScripting\LuaBrain.h" />
     <ClInclude Include="include\EngineScripting\ScriptingSystem.h" />
     <ClInclude Include="include\events\iCollisionListener.h" />
@@ -265,7 +266,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalModuleDependencies>AssimpFileLoaderHelper.lib;lua5.4.6-static.lib</AdditionalModuleDependencies>
+      <AdditionalModuleDependencies>AssimpFileLoaderHelper.lib;lua5.4.6-static.lib;cjson.lib</AdditionalModuleDependencies>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -293,7 +294,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalModuleDependencies>AssimpFileLoaderHelper.lib;lua5.4.6-static.lib</AdditionalModuleDependencies>
+      <AdditionalModuleDependencies>AssimpFileLoaderHelper.lib;lua5.4.6-static.lib;cjson.lib</AdditionalModuleDependencies>
     </ClCompile>
     <Link>
       <SubSystem>

@@ -199,7 +199,7 @@
     <ClCompile Include="src\EngineScripting\commands\MoveTo.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\EngineScripting\luaBindings\LuaCommandDispatcher.cpp">
+    <ClCompile Include="src\EngineScripting\LuaBindings\LuaCommandDispatcher.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\EngineScripting\commands\Command.cpp">
@@ -362,8 +362,9 @@
     <ClInclude Include="include\EngineScripting\CommandFactory.h" />
     <ClInclude Include="include\EngineScripting\commands.h" />
     <ClInclude Include="include\EngineScripting\commands\MoveTo.h" />
-    <ClInclude Include="include\EngineScripting\luaBindings\LuaCommandDispatcher.h" />
+    <ClInclude Include="include\EngineScripting\LuaBindings\LuaCommandDispatcher.h" />
     <ClInclude Include="include\EngineScripting\commands\Command.h" />
+    <ClInclude Include="include\EngineScripting\LuaBindings.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scene\SceneView.tpp">
