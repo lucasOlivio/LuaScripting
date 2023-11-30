@@ -339,35 +339,23 @@ glm::vec3 myutils::CalculateAcceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
     return acceleration;
 }
 
-// Calculate the binomial coefficient "n choose k"
-float myutils::BinomialCoefficient(int n, int k)
-{
-    if (k == 0 || k == n) {
-        return 1.0f;
-    }
-    float result = 1.0f;
-    for (int i = 1; i <= k; ++i) {
-        result *= static_cast<float>(n - i + 1) / static_cast<float>(i);
-    }
-    return result;
-}
-
-float myutils::BezierBlend(int n, int i, float time) 
-{
-    return BinomialCoefficient(n, i) * pow(time, i) * pow(1 - time, n - i);
-}
-
 glm::vec3 myutils::CalculateBezierPoint(std::vector<glm::vec3>& controlPoints, float time)
 {
-    int n = controlPoints.size() - 1;
-    glm::vec3 result(0.0f);
+    using namespace glm;
 
-    for (int i = 0; i <= n; ++i) {
-        float blend = BezierBlend(n, i, time);
-        result += blend * controlPoints[i];
+    // Only do cubic bezier for now (4 points)
+    if (controlPoints.size() > 4 || controlPoints.size() < 4)
+    {
+        return vec3(0);
     }
 
-    return result;
+    // x(t) = (1-t)^3 * P0 + 3t * (1-t)^2 * P1 + 3t^2 * (1-t) * P2 + t^3 * P3
+    vec3 pointT = (float)pow((1.0f - time), 3) * controlPoints[0] +
+                  3.0f * time * (float)pow((1.0f - time), 2) * controlPoints[1] + 
+                  3.0f * time * time * (1 - time) * controlPoints[2] + 
+                  (float)pow(time, 3) * controlPoints[3];
+
+    return pointT;
 }
 
 float myutils::CalculateBezierTime(std::vector<glm::vec3>&controlPoints, float distance)

@@ -120,6 +120,7 @@
     <ClInclude Include="include\EngineScripting\commands.h" />
     <ClInclude Include="include\EngineScripting\commands\Command.h" />
     <ClInclude Include="include\EngineScripting\commands\FollowCurve.h" />
+    <ClInclude Include="include\EngineScripting\commands\FollowObject.h" />
     <ClInclude Include="include\EngineScripting\commands\MoveTo.h" />
     <ClInclude Include="include\EngineScripting\commands\iCommand.h" />
     <ClInclude Include="include\EngineScripting\commands\OrientTo.h" />

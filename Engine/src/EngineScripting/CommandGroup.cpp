@@ -131,7 +131,12 @@ bool CommandGroup::m_UpdateParallel(double deltaTime)
 			continue;
 		}
 
-		pThisCommand->Update(deltaTime);
+		bool commandDone = pThisCommand->Update(deltaTime);
+		if (commandDone)
+		{
+			pThisCommand->PostEnd();
+		}
+
 		// This isn't done
 		isDone = false;
 	}//for ( std::vector< iCommand* >::iterator
@@ -163,18 +168,7 @@ bool CommandGroup::m_IsDoneParallel(void)
 
 bool CommandGroup::m_PostEndParallel()
 {
-	bool isValid = true;
-
-	for (std::vector< iCommand* >::iterator itCurCommand = m_vecParallelCommands.begin();
-		itCurCommand != m_vecParallelCommands.end();
-		itCurCommand++)
-	{
-		iCommand* pThisCommand = *itCurCommand;
-
-		isValid &= pThisCommand->PostEnd();
-	}
-
-	return isValid;
+	return true;
 }
 
 bool CommandGroup::m_IsDoneSerial(void)
@@ -242,9 +236,5 @@ bool CommandGroup::m_UpdateSerial(double deltaTime)
 
 bool CommandGroup::m_PostEndSerial()
 {
-	iCommand* pCurrentCommand = *m_itNextSerialCommand;
-
-	bool isValid = pCurrentCommand->PostEnd();
-
-	return isValid;
+	return true;
 }

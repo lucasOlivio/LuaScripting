@@ -75,9 +75,14 @@ void MoveTo::Initialize(SceneView* pScene, TransformComponent* pTransform,
     m_pForce = pForce;
 }
 
+#include "EngineDebug/DebugSystem.h"
+#include "common/constants.h"
+
 bool MoveTo::Update(double deltaTime)
 {
     using namespace glm;
+
+    DebugSystem::Get()->AddLine(m_pTransform->GetPosition(), m_location, GREEN);
 
     m_elapsedTime += deltaTime;
     vec3 currPosition = m_pTransform->GetPosition();

@@ -373,6 +373,7 @@
     <ClInclude Include="include\EngineScripting\LuaBindings.h" />
     <ClInclude Include="include\EngineScripting\commands\OrientTo.h" />
     <ClInclude Include="include\EngineScripting\commands\FollowCurve.h" />
+    <ClInclude Include="include\EngineScripting\commands\FollowObject.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scene\SceneView.tpp">

@@ -8,12 +8,11 @@ function onstart(thisEntity)
     
     -- Example usage:
     local controlPoints = {
-        {1600.0, 400.0, 0.0},
         {800.0, 800.0, 0.0},
-        {400.0, 1200.0, 0.0},
-        {0.0, 1600.0, 0.0}
+        {0.0, 1600.0, 0.0},
+        {-800.0, 800.0, 0.0}
     }
-    local curveCommand = commands.FollowCurveCommand(entity, controlPoints, 10.0, 0.5, 0.0, 0.0, true)
+    local curveCommand = commands.FollowCurveCommand(entity, controlPoints, 5.0, 50.0, 0.0, 0.0, true)
 
     -- Create the main command group
     local followGroup = CommandGroup:new("curve")

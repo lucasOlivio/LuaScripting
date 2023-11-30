@@ -28,7 +28,7 @@ private:
 	std::vector<glm::vec3> m_controlPoints; // Bezier curve control points 
 											 // (current position inserted in first index)
 
-	int m_timeStep;     // # Steps to calculate the curve
+	float m_timeStep;     // # Steps to calculate the curve
 	float m_time;		// Max time that should take to move
 	bool m_stopAtEnd;   // When arrive at location should stop?
 

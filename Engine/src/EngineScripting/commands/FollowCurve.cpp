@@ -10,6 +10,8 @@ FollowCurve::FollowCurve()
 
 bool FollowCurve::Initialize(SceneView* pScene, rapidjson::Value& document)
 {
+    using namespace rapidjson;
+
     float entity;
     float accRatio;
     float deaccRatio;
@@ -21,19 +23,19 @@ bool FollowCurve::Initialize(SceneView* pScene, rapidjson::Value& document)
 
     ParserJSON parser = ParserJSON();
 
-    rapidjson::Value& objEntt = document["entity"];
+    Value& objEntt = document["entity"];
     isValid &= parser.GetFloat(objEntt, entity);
-    rapidjson::Value& objLoc = document["controlPoints"];
+    Value& objLoc = document["controlPoints"];
     isValid &= parser.GetVecVec3(objLoc, m_controlPoints);
-    rapidjson::Value& objTime = document["time"];
+    Value& objTime = document["time"];
     isValid &= parser.GetFloat(objTime, m_time);
-    rapidjson::Value& objStep = document["timeStep"];
-    isValid &= parser.GetInt(objStep, m_timeStep);
-    rapidjson::Value& objAcc = document["accRatio"];
+    Value& objStep = document["timeStep"];
+    isValid &= parser.GetFloat(objStep, m_timeStep);
+    Value& objAcc = document["accRatio"];
     isValid &= parser.GetFloat(objAcc, accRatio);
-    rapidjson::Value& objDeacc = document["deaccRatio"];
+    Value& objDeacc = document["deaccRatio"];
     isValid &= parser.GetFloat(objDeacc, deaccRatio);
-    rapidjson::Value& objStop = document["stopAtEnd"];
+    Value& objStop = document["stopAtEnd"];
     isValid &= parser.GetBool(objStop, m_stopAtEnd);
 
     m_accelerationTime = accRatio * m_time;
@@ -82,6 +84,12 @@ bool FollowCurve::PreStart(void)
 
 bool FollowCurve::PostEnd(void)
 {
+    if (m_stopAtEnd)
+    {
+        m_pForce->SetAcceleration(glm::vec3(0));
+        m_pForce->SetVelocity(glm::vec3(0));
+    }
+
     bool isEnded = this->CommandGroup::PostEnd();
 
     return isEnded;
@@ -97,12 +105,13 @@ void FollowCurve::m_GenerateSubCommands(SceneView* pScene)
     // Generate MoveTo commands to follow the Bezier curve
     // Starting from 2 position (first position is current)
     for (float i = step; i <= m_time; i += step) {
-        glm::vec3 position = myutils::CalculateBezierPoint(m_controlPoints, i);
+        float ratioTime = i / m_time;
+        glm::vec3 position = myutils::CalculateBezierPoint(m_controlPoints, ratioTime);
 
-        // Create a MoveTo command for the calculated position
+        // Create a MoveTo command for the calculated position in "step" time
         MoveTo* pMove = new MoveTo();
 
-        pMove->Initialize(pScene, m_pTransform, m_pForce, position, i);
+        pMove->Initialize(pScene, m_pTransform, m_pForce, position, step);
 
         // Add the MoveTo command to the list of commands
         pMoveGroup->AddSerialCommand(pMove);
