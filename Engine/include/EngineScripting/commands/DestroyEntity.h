@@ -22,7 +22,4 @@ public:
 private:
 	SceneView* m_pScene;
 	EntityID m_entityID;        // Entity to destroy
-
-	bool m_isReplace;
-	EntityID m_entityToReplace; // Replace entity by this one
 };

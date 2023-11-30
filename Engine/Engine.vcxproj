@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="src\EngineScripting\commands\CreateEntity.cpp" />
     <ClCompile Include="src\EngineScripting\commands\DestroyEntity.cpp" />
     <ClCompile Include="src\EngineScripting\commands\Command.cpp" />
     <ClCompile Include="src\EngineScripting\commands\FollowCurve.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="include\EngineScripting\CommandManager.h" />
     <ClInclude Include="include\EngineScripting\commands.h" />
     <ClInclude Include="include\EngineScripting\commands\Command.h" />
+    <ClInclude Include="include\EngineScripting\commands\CreateEntity.h" />
     <ClInclude Include="include\EngineScripting\commands\DestroyEntity.h" />
     <ClInclude Include="include\EngineScripting\commands\FollowCurve.h" />
     <ClInclude Include="include\EngineScripting\commands\FollowObject.h" />

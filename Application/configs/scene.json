@@ -531,6 +531,81 @@
         }
     },
     {
+        "material": {
+            "materialName": "matmissle",
+            "offsetMove": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "colorTextures": [
+                "textmissle"
+            ],
+            "colorTexturesRatios": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "useHeightMap": false,
+            "heightMapTexture": "",
+            "heightScale": 0.0,
+            "useNormalTexture": false,
+            "normalTexture": "",
+            "useSpecularTexture": false,
+            "specularTexture": "",
+            "useDiscardTexture": false,
+            "discardTexture": "",
+            "useCubeTexture": false,
+            "cubeTexture": "",
+            "alphaValue": 1.0,
+            "isActive": true
+        },
+        "tag": {
+            "name": "matmissle",
+            "isActive": true
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "isActive": true
+        }
+    },
+    {
+        "tag": {
+            "name": "textmissle",
+            "isActive": true
+        },
+        "texture": {
+            "fileName": "missle.bmp",
+            "textureType": 0,
+            "vecTextures": [],
+            "isActive": true
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "isActive": true
+        }
+    },
+    {
         "model": {
             "models": [
                 "shipdestroied.ply"
@@ -614,7 +689,7 @@
                 "debugmodels/sphere.ply"
             ],
             "collisionName": "",
-            "material": "matship",
+            "material": "matmissle",
             "friendlyName": "",
             "parentTagName": "",
             "isWireframe": false,
@@ -632,7 +707,7 @@
                 -0.0,
                 -0.0
             ],
-            "scale": 50.0,
+            "scale": 25.0,
             "orientation": [
                 0.0,
                 -0.0,
