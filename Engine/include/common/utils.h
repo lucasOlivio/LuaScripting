@@ -55,6 +55,18 @@ namespace myutils
 
     // Calculate the needed velocity to go from start to end in the given time
     glm::vec3 CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float time);
+    // Calculate the needed speed to cover a proportional distance in given time
+    glm::vec3 CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float ratio, float time);
+
+    // Calculate acceleration needed to reach the target position at the specified time
+    glm::vec3 CalculateAcceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
+                                    glm::vec3 initialVelocity, float accRatio,
+                                    float initialTime, float finalTime);
+
+    // Calculate deceleration based on the desired motion
+    glm::vec3 CalculateDeceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
+                                    glm::vec3 initialVelocity, float initialTime, 
+                                    float finalTime);
 
     // Generates an unique UUID using random lib and uniform dist
     // 16 bits to simplify and be able to use with Lua scripts

@@ -9,21 +9,13 @@ function onstart(thisEntity)
     print("startn entity: " .. entity)
     
     -- Example usage:
-    local moveCommand1 = MoveCommand(entity, {-200.0, 0.0, 0.0}, 3)
+    local moveCommand1 = MoveCommand(entity, {-800.0, 0.0, 0.0}, 3)
 
     -- Create the main command group
     local mainCommandGroup = CommandGroup:new("movegroup")
     mainCommandGroup:addCommand(moveCommand1, false)  -- Add moveCommand1 to serial
 
     success, commandsUUID = DisptachCommands(mainCommandGroup)
-
-    print("After command")
-
-    if success then
-        print("UUID: " .. commandsUUID)
-    else
-        print("Failed to run move")
-    end
 end
 
 function update(deltatime)

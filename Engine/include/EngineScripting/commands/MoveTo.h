@@ -28,9 +28,15 @@ public:
 private:
 	glm::vec3 m_location; // End location to move to
 	float m_time;		  // Max time that should take to move
+	bool m_stopAtEnd;       // When arrive at location should stop velocity 
+						  // and acceleration or just keep going?
+
+	float m_accelerationTime; // % of the time it will accelerate
+	float m_decelerationTime; // % of the time it will decelerate
+	float m_constantTime;     // % of the time the velocity will be constant
 
 	float m_elapsedTime;
-	float m_lastDistance;
+	float m_lastDistance;    // Validate that we are not moving away from target (if so then we arrived)
 
 	TransformComponent* m_pTransform;
 	ForceComponent* m_pForce;

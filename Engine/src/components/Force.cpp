@@ -2,8 +2,8 @@
 
 ForceComponent::ForceComponent()
 {
-    this->m_adjustTowards = glm::vec3(0);
-    this->m_adjustValue = glm::vec3(0);
+    this->m_centrifugalAcceleration = glm::vec3(0);
+    this->m_centrifugalVelocity = glm::vec3(0);
 }
 
 ForceComponent::~ForceComponent()
@@ -35,14 +35,14 @@ void ForceComponent::SetActive(bool isActive)
     this->m_isActive = isActive;
 }
 
-void ForceComponent::SetAdjustTowards(glm::vec3 value)
+void ForceComponent::SetCentrifugalAcceleration(glm::vec3 value)
 {
-    this->m_adjustTowards = value;
+    this->m_centrifugalAcceleration = value;
 }
 
-void ForceComponent::SetAdjustValue(glm::vec3 value)
+void ForceComponent::SetCentrifugalVelocity(glm::vec3 value)
 {
-    this->m_adjustValue = value;
+    this->m_centrifugalVelocity = value;
 }
 
 float ForceComponent::GetInverseMass()
@@ -77,14 +77,14 @@ bool ForceComponent::IsActive()
     }
 }
 
-glm::vec3 ForceComponent::GetAdjustTowards()
+glm::vec3 ForceComponent::GetCentrifugalAcceleration()
 {
-    return this->m_adjustTowards;
+    return this->m_centrifugalAcceleration;
 }
 
-glm::vec3 ForceComponent::GetAdjustValue()
+glm::vec3 ForceComponent::GetCentrifugalVelocity()
 {
-    return this->m_adjustValue;
+    return this->m_centrifugalVelocity;
 }
 
 void ForceComponent::GetInfo(sComponentInfo& compInfoOut)
@@ -97,8 +97,8 @@ void ForceComponent::GetInfo(sComponentInfo& compInfoOut)
     this->AddCompParInfo("acceleration", "vec3", this->GetAcceleration(), compInfoOut);
     this->AddCompParInfo("velocity", "vec3", this->GetVelocity(), compInfoOut);
     this->AddCompParInfo("isActive", "bool", this->m_isActive, compInfoOut);
-    this->AddCompParInfo("adjustTowards", "vec3", this->GetAdjustTowards(), compInfoOut);
-    this->AddCompParInfo("adjustValue", "vec3", this->GetAdjustValue(), compInfoOut);
+    this->AddCompParInfo("CentrifugalAcceleration", "vec3", this->GetCentrifugalAcceleration(), compInfoOut);
+    this->AddCompParInfo("CentrifugalVelocity", "vec3", this->GetCentrifugalVelocity(), compInfoOut);
 
     return;
 }
@@ -120,11 +120,11 @@ void ForceComponent::SetParameter(sParameterInfo& parameterIn)
     else if (parameterIn.parameterName == "isActive") {
         this->m_isActive = parameterIn.parameterBoolValue;
     }
-    else if (parameterIn.parameterName == "adjustTowards") {
-        this->SetAdjustTowards(parameterIn.parameterVec3Value);
+    else if (parameterIn.parameterName == "centrifugalAcceleration") {
+        this->SetCentrifugalAcceleration(parameterIn.parameterVec3Value);
     }
-    else if (parameterIn.parameterName == "adjustValue") {
-        this->SetAdjustValue(parameterIn.parameterVec3Value);
+    else if (parameterIn.parameterName == "centrifugalVelocity") {
+        this->SetCentrifugalVelocity(parameterIn.parameterVec3Value);
     }
 
     return;

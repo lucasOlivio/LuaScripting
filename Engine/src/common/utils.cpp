@@ -256,6 +256,41 @@ glm::vec3 myutils::CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float
     return velocity;
 }
 
+glm::vec3 myutils::CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float ratio, float time)
+{
+    glm::vec3 direction = endXYZ - startXYZ;
+    glm::vec3 directionNormal = glm::normalize(direction);
+
+    float distance = glm::length(direction) * ratio;
+    float speed = distance / time;
+
+    glm::vec3 velocity = speed * directionNormal;
+
+    return velocity;
+}
+
+glm::vec3 myutils::CalculateAcceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
+                                         glm::vec3 initialVelocity, float accRatio, 
+                                         float initialTime, float finalTime)
+{
+    glm::vec3 finalVelocity = CalculateVelocity(startXYZ, endXYZ, accRatio, finalTime);
+
+    // a = delta vel / delta time
+    glm::vec3 acceleration = finalVelocity - initialVelocity / finalTime - initialTime;
+
+    return acceleration;
+}
+
+ glm::vec3 myutils::CalculateDeceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
+                                          glm::vec3 initialVelocity, float initialTime, 
+                                          float finalTime)
+ {
+     // a = delta vel / delta time
+     glm::vec3 acceleration = -initialVelocity / finalTime - initialTime;
+
+     return acceleration;
+ }
+
 uint16_t myutils::GenerateUUID()
 {
     // Based on Hazel engine "Hazel/Core/UUID.h"
