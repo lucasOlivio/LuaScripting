@@ -64,8 +64,8 @@ glm::mat4 WindowSystem::GetProjection()
 {
     return glm::perspective(0.6f,
                             this->m_ratio,
-                            100.0f,
-                            10000.0f);
+                            1000.0f,
+                            1000000.0f);
 }
 
 void WindowSystem::NewFrame(int shaderID)

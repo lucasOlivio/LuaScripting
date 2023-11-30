@@ -27,6 +27,8 @@ bool FollowCurve::Initialize(SceneView* pScene, rapidjson::Value& document)
     isValid &= parser.GetVecVec3(objLoc, m_controlPoints);
     rapidjson::Value& objTime = document["time"];
     isValid &= parser.GetFloat(objTime, m_time);
+    rapidjson::Value& objStep = document["timeStep"];
+    isValid &= parser.GetInt(objStep, m_timeStep);
     rapidjson::Value& objAcc = document["accRatio"];
     isValid &= parser.GetFloat(objAcc, accRatio);
     rapidjson::Value& objDeacc = document["deaccRatio"];
@@ -46,6 +48,9 @@ bool FollowCurve::Initialize(SceneView* pScene, rapidjson::Value& document)
 
     m_pTransform = pScene->GetComponent<TransformComponent>(entity, "transform");
     m_pForce = pScene->GetComponent<ForceComponent>(entity, "force");
+
+    // First point should aways be the current position for simplicity
+    m_controlPoints.insert(m_controlPoints.begin(), m_pTransform->GetPosition());
 
     m_GenerateSubCommands(pScene);
 
@@ -85,22 +90,33 @@ bool FollowCurve::PostEnd(void)
 void FollowCurve::m_GenerateSubCommands(SceneView* pScene)
 {
     // Calculate the number of steps based on the time
-    int numSteps = (int)(m_time / m_timeStep);
+    float step = m_time / m_timeStep;
 
     CommandGroup* pMoveGroup = new CommandGroup();
 
     // Generate MoveTo commands to follow the Bezier curve
-    for (int i = 0; i <= numSteps; ++i) {
-        float time = (float)i / numSteps;
-        glm::vec3 position = myutils::CalculateBezierPoint(m_controlPoints, time);
+    // Starting from 2 position (first position is current)
+    for (float i = step; i <= m_time; i += step) {
+        glm::vec3 position = myutils::CalculateBezierPoint(m_controlPoints, i);
 
         // Create a MoveTo command for the calculated position
         MoveTo* pMove = new MoveTo();
 
-        pMove->Initialize(pScene, m_pTransform, m_pForce, position, numSteps);
+        pMove->Initialize(pScene, m_pTransform, m_pForce, position, i);
 
         // Add the MoveTo command to the list of commands
         pMoveGroup->AddSerialCommand(pMove);
+    }
+
+
+    // Setup new groups
+    pMoveGroup->Initialize(pScene, m_name);
+    pMoveGroup->PreStart();
+
+    if (pMoveGroup->IsDone())
+    {
+        // No waypoints created
+        return;
     }
 
     // Set motion commands

@@ -243,55 +243,98 @@ bool myutils::TxtToPointVector(std::string filename, char one, char zero, glm::v
     return true;
 }
 
-glm::vec3 myutils::IncreaseVelocity(glm::vec3 initialVelocity, glm::vec3 acceleration, float deltaTime)
-{
-    return (acceleration * deltaTime) + initialVelocity;
-}
-
-glm::vec3 myutils::CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float time)
-{
-    glm::vec3 direction = endXYZ - startXYZ;
-    glm::vec3 directionNormal = glm::normalize(direction);
-
-    float distance = glm::length(direction);
-    float speed = distance / time;
-
-    glm::vec3 velocity = speed * directionNormal;
-
-    return velocity;
-}
-
-glm::vec3 myutils::CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float ratio, float time)
+glm::vec3 myutils::CalculateVector(glm::vec3 startXYZ, glm::vec3 endXYZ, float ratio)
 {
     glm::vec3 direction = endXYZ - startXYZ;
     glm::vec3 directionNormal = glm::normalize(direction);
 
     float distance = glm::length(direction) * ratio;
-    float speed = distance / time;
+    glm::vec3 resultVec = (directionNormal * distance) + startXYZ;
 
-    glm::vec3 velocity = speed * directionNormal;
+    return resultVec;
+}
+
+glm::vec3 myutils::IncreaseVelocity(glm::vec3 initialVelocity, glm::vec3 acceleration, float deltaTime)
+{
+    return (acceleration * deltaTime) + initialVelocity;
+}
+
+glm::vec3 myutils::CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ,
+                                     float initialTime, float finalTime)
+{
+    using namespace glm;
+
+    // u = (displacement / deltatime)
+    vec3 displacement = endXYZ - startXYZ;
+    float deltaTime = finalTime - initialTime;
+    vec3 velocity = (displacement / deltaTime);
+
+    // Avoid float imprecisions
+    if (velocity.x < 0.1 && velocity.x > -0.1)
+    {
+        velocity.x = 0.0;
+    }
+    if (velocity.y < 0.1 && velocity.y > -0.1)
+    {
+        velocity.y = 0.0;
+    }
+    if (velocity.z < 0.1 && velocity.z > -0.1)
+    {
+        velocity.z = 0.0;
+    }
 
     return velocity;
 }
 
 glm::vec3 myutils::CalculateAcceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
-                                         glm::vec3 initialVelocity, float accRatio, 
+                                         glm::vec3 initialVelocity,
                                          float initialTime, float finalTime)
 {
-    glm::vec3 finalVelocity = CalculateVelocity(startXYZ, endXYZ, accRatio, finalTime);
+    using namespace glm;
+    // a = (2 * displacement / delta time * delta time) - (2 * vel / deltatime)
+    vec3 displacement = endXYZ - startXYZ;
+    float deltaTime = finalTime - initialTime;
+    vec3 acceleration = ((2.0f * displacement) / (deltaTime * deltaTime)) - ((2.0f * initialVelocity) / deltaTime);
 
-    // a = delta vel / delta time
-    glm::vec3 acceleration = finalVelocity - initialVelocity / finalTime - initialTime;
+    // Avoid float imprecisions
+    if (acceleration.x < 0.1 && acceleration.x > -0.1)
+    {
+        acceleration.x = 0.0;
+    }
+    if (acceleration.y < 0.1 && acceleration.y > -0.1)
+    {
+        acceleration.y = 0.0;
+    }
+    if (acceleration.z < 0.1 && acceleration.z > -0.1)
+    {
+        acceleration.z = 0.0;
+    }
 
     return acceleration;
 }
 
-glm::vec3 myutils::CalculateDeceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
-                                        glm::vec3 initialVelocity, float initialTime, 
-                                        float finalTime)
+glm::vec3 myutils::CalculateAcceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
+                                         float initialTime, float finalTime)
 {
-    // a = delta vel / delta time
-    glm::vec3 acceleration = -initialVelocity / finalTime - initialTime;
+    using namespace glm;
+    // a = 2 * displacement / delta time * delta time
+    vec3 displacement = endXYZ - startXYZ;
+    float deltaTime = finalTime - initialTime;
+    vec3 acceleration = (2.0f * displacement) / (deltaTime * deltaTime);
+
+    // Avoid float imprecisions
+    if (acceleration.x < 0.1 && acceleration.x > -0.1)
+    {
+        acceleration.x = 0.0;
+    }
+    if (acceleration.y < 0.1 && acceleration.y > -0.1)
+    {
+        acceleration.y = 0.0;
+    }
+    if (acceleration.z < 0.1 && acceleration.z > -0.1)
+    {
+        acceleration.z = 0.0;
+    }
 
     return acceleration;
 }

@@ -27,14 +27,25 @@ public:
 
 	virtual bool PostEnd(void);
 private:
-	glm::vec3 m_location; // End location to move to
-	float m_time;		  // Max time that should take to move
-	bool m_stopAtEnd;       // When arrive at location should stop velocity 
-						  // and acceleration or just keep going?
+	enum ePhase
+	{
+		STARTUP,
+		EASYIN,
+		CONSTANT,
+		EASYOUT
+	};
+	ePhase m_currPhase;
 
-	float m_accelerationTime; // % of the time it will accelerate
-	float m_decelerationTime; // % of the time it will decelerate
-	float m_constantTime;     // % of the time the velocity will be constant
+	glm::vec3 m_location;   // End location to move to
+	glm::vec3 m_easyInPos;  // Position it will stop accelerating
+	glm::vec3 m_easyOutPos; // Position it will start decelerating
+	bool m_stopAtEnd;       // When arrive at location should stop velocity 
+						    // and acceleration or just keep going?
+
+	float m_time;		  // Max time that should take to move
+	float m_easyInTime;   // Time it will accelerate
+	float m_easyOutTime;  // Time it will decelerate
+	float m_constantTime; // Time the velocity will be constant
 
 	float m_elapsedTime;
 

@@ -7,5 +7,6 @@ return
     commandgroups.CommandGroup,
     MoveCommand = commands.MoveCommand,
     OrientCommand = commands.OrientCommand,
+    FollowCurveCommand = commands.FollowCurveCommand,
     DispatchCommands = utils.DispatchCommands,
 }

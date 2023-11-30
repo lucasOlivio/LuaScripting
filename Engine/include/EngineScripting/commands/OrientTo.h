@@ -7,6 +7,7 @@
 #include "components/Force.h"
 #include <glm/vec3.hpp>
 
+// TODO: MoveTo and OrientTo (All movements commands) should have a common class
 class OrientTo : public Command
 {
 public:
@@ -26,13 +27,24 @@ public:
 
 	virtual bool PostEnd(void);
 private:
-	glm::vec3 m_orientation; // End orientation to rotate object
-	float m_time;		     // Max time that should take to rotate
-	bool m_stopAtEnd;        // When reach orientation should stop centrifugal force?
+	enum ePhase
+	{
+		STARTUP,
+		EASYIN,
+		CONSTANT,
+		EASYOUT
+	};
+	ePhase m_currPhase;
 
-	float m_accelerationTime; // % of the time it will accelerate
-	float m_decelerationTime; // % of the time it will decelerate
-	float m_constantTime;     // % of the time the velocity will be constant
+	glm::vec3 m_orientation; // End orientation to rotate to
+	glm::vec3 m_easyInPos;   // Orientation it will stop accelerating
+	glm::vec3 m_easyOutPos;  // Orientation it will start decelerating
+	bool m_stopAtEnd;        // When arrive at orientation should stop rotating?
+
+	float m_time;		  // Max time that should take to move
+	float m_easyInTime;   // Time it will accelerate
+	float m_easyOutTime;  // Time it will decelerate
+	float m_constantTime; // Time the velocity will be constant
 
 	float m_elapsedTime;
 

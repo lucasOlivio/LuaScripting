@@ -164,6 +164,13 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\scripts\commands\command.lua" />
+    <None Include="assets\scripts\commands\commandgroup.lua" />
+    <None Include="assets\scripts\commands\commands.lua" />
+    <None Include="assets\scripts\commands\init.lua" />
+    <None Include="assets\scripts\commands\utils.lua" />
+    <None Include="assets\scripts\json.lua" />
+    <None Include="assets\scripts\ship.lua" />
     <None Include="assets\shaders\fragmentdebugshader.glsl" />
     <None Include="assets\shaders\fragmentShader01.glsl" />
     <None Include="assets\shaders\vertexdebugshader.glsl" />

@@ -53,22 +53,23 @@ namespace myutils
 
     bool TxtToPointVector(std::string filename, char one, char zero, glm::vec3 minXY, glm::vec3 maxXY, std::vector<glm::vec3>& vecOut);
 
+    // Calculate the vector proportion by a given ratio 
+    glm::vec3 CalculateVector(glm::vec3 startXYZ, glm::vec3 endXYZ, float ratio);
+
     // Calculate new velocity based on time, initial velocity and acceleration
     glm::vec3 IncreaseVelocity(glm::vec3 initialVelocity, glm::vec3 acceleration, float deltaTime);
     // Calculate the needed velocity to go from start to end in the given time
-    glm::vec3 CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float time);
-    // Calculate the needed speed to cover a proportional distance in given time
-    glm::vec3 CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float ratio, float time);
+    glm::vec3 CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ,
+                                float initialTime, float finalTime);
 
     // Calculate acceleration needed to reach the target position at the specified time
     glm::vec3 CalculateAcceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
-                                    glm::vec3 initialVelocity, float accRatio,
+                                    glm::vec3 initialVelocity,
                                     float initialTime, float finalTime);
 
-    // Calculate deceleration based on the desired motion
-    glm::vec3 CalculateDeceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
-                                    glm::vec3 initialVelocity, float initialTime, 
-                                    float finalTime);
+    // Calculate acceleration needed to reach the target position at the specified time
+    glm::vec3 CalculateAcceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
+                                    float initialTime, float finalTime);
 
     // Calculate the binomial coefficient "n choose k"
     float BinomialCoefficient(int n, int k);

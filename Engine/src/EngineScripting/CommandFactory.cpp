@@ -139,6 +139,10 @@ iCommand* CommandFactory::m_CreateFinalCommand(rapidjson::Value& command)
     {
         pCommand = new OrientTo();
     }
+    else if (name == "FollowCurve")
+    {
+        pCommand = new FollowCurve();
+    }
 
     if (!pCommand)
     {

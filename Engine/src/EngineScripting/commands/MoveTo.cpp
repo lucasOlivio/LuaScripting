@@ -3,15 +3,18 @@
 #include "common/ParserJSON.h"
 
 MoveTo::MoveTo() :
-    m_elapsedTime(0)
+    m_elapsedTime(0), m_currPhase(ePhase::STARTUP)
 {
 }
 
 bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
 {
+    using namespace rapidjson;
+    using namespace myutils;
+
     float entity;
-    float accRatio;
-    float deaccRatio;
+    float easyIn;
+    float easyOut;
     bool isValid = true;
 
     // Initialize default command variables
@@ -20,22 +23,18 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
 
     ParserJSON parser = ParserJSON();
 
-    rapidjson::Value& objEntt = document["entity"];
+    Value& objEntt = document["entity"];
     isValid &= parser.GetFloat(objEntt, entity);
-    rapidjson::Value& objLoc = document["location"];
+    Value& objLoc = document["location"];
     isValid &= parser.GetVec3(objLoc, m_location);
-    rapidjson::Value& objTime = document["time"];
+    Value& objTime = document["time"];
     isValid &= parser.GetFloat(objTime, m_time);
-    rapidjson::Value& objAcc = document["accRatio"];
-    isValid &= parser.GetFloat(objAcc, accRatio);
-    rapidjson::Value& objDeacc = document["deaccRatio"];
-    isValid &= parser.GetFloat(objDeacc, deaccRatio);
-    rapidjson::Value& objStop = document["stopAtEnd"];
+    Value& objIn = document["easyIn"];
+    isValid &= parser.GetFloat(objIn, easyIn);
+    Value& objDeacc = document["easyOut"];
+    isValid &= parser.GetFloat(objDeacc, easyOut);
+    Value& objStop = document["stopAtEnd"];
     isValid &= parser.GetBool(objStop, m_stopAtEnd);
-
-    m_accelerationTime = accRatio * m_time;
-    m_decelerationTime = deaccRatio * m_time;
-    m_constantTime = m_time - m_accelerationTime - m_decelerationTime;
 
     if (!isValid)
     {
@@ -45,6 +44,17 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
 
     m_pTransform = pScene->GetComponent<TransformComponent>(entity, "transform");
     m_pForce = pScene->GetComponent<ForceComponent>(entity, "force");
+
+    // Calculate time phases
+    m_easyInTime = easyIn * m_time;
+    m_easyOutTime = easyOut * m_time;
+    m_constantTime = m_time - m_easyInTime - m_easyOutTime;
+
+    // Calculate positions phases
+    m_easyInPos = CalculateVector(m_pTransform->GetPosition(),
+        m_location, easyIn);  // Position it will stop accelerating
+    m_easyOutPos = CalculateVector(m_pTransform->GetPosition(),
+        m_location, 1.0f - easyOut);  // Position it will start decelerating
 
     return true;
 }
@@ -56,8 +66,9 @@ void MoveTo::Initialize(SceneView* pScene, TransformComponent* pTransform,
     m_time = time;
 
     m_stopAtEnd = false;
-    m_accelerationTime = 0.0;
-    m_decelerationTime = 0.0;
+
+    m_easyInTime = 0.0;
+    m_easyOutTime = 0.0;
     m_constantTime = m_time;
 
     m_pTransform = pTransform;
@@ -72,31 +83,41 @@ bool MoveTo::Update(double deltaTime)
     vec3 currPosition = m_pTransform->GetPosition();
     vec3 currVelocity = m_pForce->GetVelocity();
 
-    glm::vec3 acceleration = glm::vec3(0.0f);
-
     // Check which phase of the velocity curve its in
-    if (m_elapsedTime <= m_accelerationTime) {
+    if (m_elapsedTime <= m_easyInTime && 
+        m_currPhase == ePhase::STARTUP) {
         // Acceleration phase
-        float accRatio = m_accelerationTime / m_time;
-        acceleration = myutils::CalculateAcceleration(currPosition, m_location, 
-                                                      currVelocity, accRatio, 
-                                                      m_elapsedTime, m_accelerationTime);
-    }
-    else if (m_elapsedTime <= m_accelerationTime + m_constantTime) {
-        // Constant speed phase
-        /*glm::vec3 velocity = myutils::CalculateVelocity(currPosition, m_location,
-                                                        currVelocity, 
-                                                        m_elapsedTime, m_accelerationTime);*/
-        acceleration = glm::vec3(0);
-    }
-    else if (m_elapsedTime <= m_time) {
-        // Deceleration phase
-        acceleration = myutils::CalculateDeceleration(currPosition, m_location, 
-                                                      currVelocity, m_elapsedTime,
-                                                      m_time);
-    }
+        m_currPhase = ePhase::EASYIN;
+        vec3 acceleration = myutils::CalculateAcceleration(currPosition, m_easyInPos,
+                                                           m_elapsedTime, m_easyInTime);
 
-    m_pForce->SetAcceleration(acceleration);
+        m_pForce->SetVelocity(vec3(0));
+        m_pForce->SetAcceleration(acceleration);
+    }
+    else if (m_elapsedTime >= m_easyInTime &&
+             m_elapsedTime <= m_easyInTime + m_constantTime &&
+             m_currPhase   != ePhase::CONSTANT) {
+        // Constant speed phase
+        m_currPhase = ePhase::CONSTANT;
+        // Setting velocity again for cases when easyin = 0
+        vec3 velocity = myutils::CalculateVelocity(currPosition, m_easyOutPos, 
+                                                   m_easyInTime, 
+                                                   m_time - m_easyOutTime);
+
+        m_pForce->SetAcceleration(vec3(0));
+        m_pForce->SetVelocity(velocity);       
+    }
+    else if (m_elapsedTime >= m_easyInTime + m_constantTime &&
+             m_elapsedTime <= m_time &&
+             m_currPhase != ePhase::EASYOUT) {
+        // Deceleration phase
+        m_currPhase = ePhase::EASYOUT;
+        vec3 acceleration = myutils::CalculateAcceleration(currPosition, m_location,
+                                                           currVelocity,
+                                                           m_elapsedTime, m_time);
+
+        m_pForce->SetAcceleration(-acceleration);
+    }
 
     bool isDone = IsDone();
 
@@ -126,6 +147,16 @@ bool MoveTo::IsDone(void)
 
 bool MoveTo::PreStart(void)
 {
+    using namespace myutils;
+
+    // Calculate positions phases
+    float easyIn = m_easyInTime / m_time;
+    m_easyInPos = CalculateVector(m_pTransform->GetPosition(),
+                                  m_location, easyIn);  // Position it will stop accelerating
+    float easyOut = m_easyOutTime / m_time;
+    m_easyOutPos = CalculateVector(m_pTransform->GetPosition(),
+                                   m_location, 1.0f - easyOut);  // Position it will start decelerating
+
     return true;
 }
 

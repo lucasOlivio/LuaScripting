@@ -31,8 +31,6 @@ public:
 	 * @return If batch was valid and added
 	 */
 	bool AddCommand(const char* json, bool isForever, uint16_t& UUIDOut);
-	// Add command to existing command UUID
-	bool AddCommandToUUID(iCommand* pCommand, bool isForever, uint16_t UUID);
 
 private:
 	LuaBrain* m_pLuaBrain;

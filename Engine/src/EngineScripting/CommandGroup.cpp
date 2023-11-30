@@ -57,6 +57,15 @@ bool CommandGroup::Initialize(SceneView* pScene, rapidjson::Value& document)
 	return true;
 }
 
+bool CommandGroup::Initialize(SceneView* pScene, std::string name)
+{
+	this->Command::Initialize();
+
+	m_name = name;
+
+	return false;
+}
+
 bool CommandGroup::PreStart()
 {
 	m_itNextSerialCommand = m_vecSerialCommands.begin();

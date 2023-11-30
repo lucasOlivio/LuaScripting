@@ -3,15 +3,18 @@
 #include "common/ParserJSON.h"
 
 OrientTo::OrientTo() :
-    m_elapsedTime(0)
+    m_elapsedTime(0), m_currPhase(ePhase::STARTUP)
 {
 }
 
 bool OrientTo::Initialize(SceneView* pScene, rapidjson::Value& document)
 {
+    using namespace rapidjson;
+    using namespace myutils;
+
     float entity;
-    float accRatio;
-    float deaccRatio;
+    float easyIn;
+    float easyOut;
     bool isValid = true;
 
     // Initialize default command variables
@@ -20,22 +23,18 @@ bool OrientTo::Initialize(SceneView* pScene, rapidjson::Value& document)
 
     ParserJSON parser = ParserJSON();
 
-    rapidjson::Value& objEntt = document["entity"];
+    Value& objEntt = document["entity"];
     isValid &= parser.GetFloat(objEntt, entity);
-    rapidjson::Value& objLoc = document["orientation"];
+    Value& objLoc = document["orientation"];
     isValid &= parser.GetVec3(objLoc, m_orientation);
-    rapidjson::Value& objTime = document["time"];
+    Value& objTime = document["time"];
     isValid &= parser.GetFloat(objTime, m_time);
-    rapidjson::Value& objAcc = document["accRatio"];
-    isValid &= parser.GetFloat(objAcc, accRatio);
-    rapidjson::Value& objDeacc = document["deaccRatio"];
-    isValid &= parser.GetFloat(objDeacc, deaccRatio);
-    rapidjson::Value& objStop = document["stopAtEnd"];
+    Value& objIn = document["easyIn"];
+    isValid &= parser.GetFloat(objIn, easyIn);
+    Value& objOut = document["easyOut"];
+    isValid &= parser.GetFloat(objOut, easyOut);
+    Value& objStop = document["stopAtEnd"];
     isValid &= parser.GetBool(objStop, m_stopAtEnd);
-
-    m_accelerationTime = accRatio * m_time;
-    m_decelerationTime = deaccRatio * m_time;
-    m_constantTime = m_time - m_accelerationTime - m_decelerationTime;
 
     if (!isValid)
     {
@@ -46,6 +45,17 @@ bool OrientTo::Initialize(SceneView* pScene, rapidjson::Value& document)
     m_pTransform = pScene->GetComponent<TransformComponent>(entity, "transform");
     m_pForce = pScene->GetComponent<ForceComponent>(entity, "force");
 
+    // Calculate time phases
+    m_easyInTime = easyIn * m_time;
+    m_easyOutTime = easyOut * m_time;
+    m_constantTime = m_time - m_easyInTime - m_easyOutTime;
+
+    // Calculate orientation phases
+    m_easyInPos = CalculateVector(m_pTransform->GetOrientation(),
+                                  m_orientation, easyIn);          // Orientation it will stop accelerating
+    m_easyOutPos = CalculateVector(m_pTransform->GetPosition(),
+                                   m_orientation, 1.0f - easyOut); // Orientation it will start decelerating
+
     return true;
 }
 
@@ -55,30 +65,43 @@ bool OrientTo::Update(double deltaTime)
 
     m_elapsedTime += deltaTime;
     vec3 currOrientation = m_pTransform->GetOrientation();
-    vec3 currVCentrVelocity = m_pForce->GetCentrifugalVelocity();
-
-    glm::vec3 acceleration = glm::vec3(0.0f);
+    vec3 currCentrVelocity = m_pForce->GetCentrifugalVelocity();
 
     // Check which phase of the velocity curve its in
-    if (m_elapsedTime <= m_accelerationTime) {
+    if (m_elapsedTime <= m_easyInTime &&
+        m_currPhase == ePhase::STARTUP) {
         // Acceleration phase
-        float accRatio = m_accelerationTime / m_time;
-        acceleration = myutils::CalculateAcceleration(currOrientation, m_orientation,
-                                                      currVCentrVelocity, accRatio,
-                                                      m_elapsedTime, m_accelerationTime);
-    }
-    else if (m_elapsedTime <= m_accelerationTime + m_constantTime) {
-        // Constant speed phase
-        acceleration = glm::vec3(0.0f);
-    }
-    else if (m_elapsedTime <= m_time) {
-        // Deceleration phase
-        acceleration = myutils::CalculateDeceleration(currOrientation, m_orientation,
-                                                      currVCentrVelocity, m_elapsedTime,
-                                                      m_time);
-    }
+        m_currPhase = ePhase::EASYIN;
+        vec3 acceleration = myutils::CalculateAcceleration(currOrientation, m_easyInPos,
+                                                           m_elapsedTime, m_easyInTime);
 
-    m_pForce->SetCentrifugalAcceleration(acceleration);
+        m_pForce->SetCentrifugalVelocity(vec3(0));
+        m_pForce->SetCentrifugalAcceleration(acceleration);
+    }
+    else if (m_elapsedTime >= m_easyInTime &&
+        m_elapsedTime <= m_easyInTime + m_constantTime &&
+        m_currPhase != ePhase::CONSTANT) {
+        // Constant speed phase
+        m_currPhase = ePhase::CONSTANT;
+        // Setting velocity again for cases when easyin = 0
+        vec3 velocity = myutils::CalculateVelocity(currOrientation, m_easyOutPos,
+                                                   m_easyInTime,
+                                                   m_time - m_easyOutTime);
+
+        m_pForce->SetCentrifugalAcceleration(vec3(0));
+        m_pForce->SetCentrifugalVelocity(velocity);
+    }
+    else if (m_elapsedTime >= m_easyInTime + m_constantTime &&
+        m_elapsedTime <= m_time &&
+        m_currPhase != ePhase::EASYOUT) {
+        // Deceleration phase
+        m_currPhase = ePhase::EASYOUT;
+        vec3 acceleration = myutils::CalculateAcceleration(currOrientation, m_orientation,
+                                                           currCentrVelocity,
+                                                           m_elapsedTime, m_time);
+
+        m_pForce->SetCentrifugalAcceleration(-acceleration);
+    }
 
     bool isDone = IsDone();
 
