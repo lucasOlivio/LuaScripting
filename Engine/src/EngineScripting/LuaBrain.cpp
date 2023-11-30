@@ -97,17 +97,8 @@ void LuaBrain::OnStart()
 		EntityID entityID = itScript->first;
 		std::string curLuaScript = itScript->second;
 
-		int error = luaL_dostring(m_pLuaState,
-								  curLuaScript.c_str());
-		if (error != 0 /*no error*/)
-		{
-			std::cout << "-------------------------------------------------------" << std::endl;
-			std::cout << "Error running Lua script: ";
-			std::cout << "Entity: " << entityID << std::endl;
-			std::cout << m_DecodeLuaErrorToString(error) << std::endl;
-			std::cout << "-------------------------------------------------------" << std::endl;
-			continue;
-		}
+		// Run script to load functions
+		RunScriptImmediately(curLuaScript);
 
 		// Call the onstart function for each object
 		lua_getglobal(m_pLuaState, "onstart");
@@ -140,17 +131,8 @@ void LuaBrain::Update(float deltaTime)
 		EntityID entityID = itScript->first;
 		std::string curLuaScript = itScript->second;
 
-		int error = luaL_dostring(m_pLuaState,
-			curLuaScript.c_str());
-		if (error != 0 /*no error*/)
-		{
-			std::cout << "-------------------------------------------------------" << std::endl;
-			std::cout << "Error running Lua script: ";
-			std::cout << "Entity: " << entityID << std::endl;
-			std::cout << m_DecodeLuaErrorToString(error) << std::endl;
-			std::cout << "-------------------------------------------------------" << std::endl;
-			continue;
-		}
+		// Run script to load functions
+		RunScriptImmediately(curLuaScript);
 
 		// Call the update function for each object
 		lua_getglobal(m_pLuaState, "update");

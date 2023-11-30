@@ -62,17 +62,19 @@ iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document)
         Value& command = document["command"];
         iCommand* pCommand = m_CreateFinalCommand(command);
 
-        if (pCommand == nullptr)
+        if (pCommand)
         {
-            // Stringfy the invalid command
-            StringBuffer buffer;
-            Writer<StringBuffer> writer(buffer);
-            document.Accept(writer);
-
-            m_errorMsg = m_errorMsg + "Command or args not valid: " + buffer.GetString() + "\n";
+            return pCommand;
         }
 
-        return pCommand;
+        // Stringfy the invalid command
+        StringBuffer buffer;
+        Writer<StringBuffer> writer(buffer);
+        document.Accept(writer);
+
+        m_errorMsg = m_errorMsg + "Command or args not valid: " + buffer.GetString() + "\n";
+
+        return nullptr;
     }
 
     // Should be a command group then
@@ -121,17 +123,23 @@ iCommand* CommandFactory::m_CreateFinalCommand(rapidjson::Value& command)
     {
         pCommand = new MoveTo();
     }
-
-    if (pCommand)
+    else if (name == "OrientTo")
     {
-        bool isValid = pCommand->Initialize(m_pScene, args);
+        pCommand = new OrientTo();
+    }
 
-        if (!isValid)
-        {
-            // Value not valid, command should not go through
-            delete pCommand;
-            return nullptr;
-        }
+    if (!pCommand)
+    {
+        return nullptr;
+    }
+
+    bool isValid = pCommand->Initialize(m_pScene, args);
+
+    if (!isValid)
+    {
+        // Value not valid, command should not go through
+        delete pCommand;
+        return nullptr;
     }
 
     return pCommand;

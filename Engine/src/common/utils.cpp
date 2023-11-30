@@ -243,6 +243,11 @@ bool myutils::TxtToPointVector(std::string filename, char one, char zero, glm::v
     return true;
 }
 
+glm::vec3 myutils::IncreaseVelocity(glm::vec3 initialVelocity, glm::vec3 acceleration, float deltaTime)
+{
+    return (acceleration * deltaTime) + initialVelocity;
+}
+
 glm::vec3 myutils::CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float time)
 {
     glm::vec3 direction = endXYZ - startXYZ;

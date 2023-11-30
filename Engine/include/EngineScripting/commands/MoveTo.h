@@ -21,7 +21,6 @@ public:
 
 	virtual bool IsDone(void);
 
-	// Calculate the velocity it should reach
 	virtual bool PreStart(void);
 
 	virtual bool PostEnd(void);
@@ -36,7 +35,6 @@ private:
 	float m_constantTime;     // % of the time the velocity will be constant
 
 	float m_elapsedTime;
-	float m_lastDistance;    // Validate that we are not moving away from target (if so then we arrived)
 
 	TransformComponent* m_pTransform;
 	ForceComponent* m_pForce;

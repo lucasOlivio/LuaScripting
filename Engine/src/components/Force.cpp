@@ -97,8 +97,8 @@ void ForceComponent::GetInfo(sComponentInfo& compInfoOut)
     this->AddCompParInfo("acceleration", "vec3", this->GetAcceleration(), compInfoOut);
     this->AddCompParInfo("velocity", "vec3", this->GetVelocity(), compInfoOut);
     this->AddCompParInfo("isActive", "bool", this->m_isActive, compInfoOut);
-    this->AddCompParInfo("CentrifugalAcceleration", "vec3", this->GetCentrifugalAcceleration(), compInfoOut);
-    this->AddCompParInfo("CentrifugalVelocity", "vec3", this->GetCentrifugalVelocity(), compInfoOut);
+    this->AddCompParInfo("centrifugalAcceleration", "vec3", this->GetCentrifugalAcceleration(), compInfoOut);
+    this->AddCompParInfo("centrifugalVelocity", "vec3", this->GetCentrifugalVelocity(), compInfoOut);
 
     return;
 }

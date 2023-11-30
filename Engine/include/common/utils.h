@@ -53,6 +53,8 @@ namespace myutils
 
     bool TxtToPointVector(std::string filename, char one, char zero, glm::vec3 minXY, glm::vec3 maxXY, std::vector<glm::vec3>& vecOut);
 
+    // Calculate new velocity based on time, initial velocity and acceleration
+    glm::vec3 IncreaseVelocity(glm::vec3 initialVelocity, glm::vec3 acceleration, float deltaTime);
     // Calculate the needed velocity to go from start to end in the given time
     glm::vec3 CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ, float time);
     // Calculate the needed speed to cover a proportional distance in given time

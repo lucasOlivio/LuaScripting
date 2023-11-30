@@ -3,7 +3,7 @@
 #include "common/ParserJSON.h"
 
 MoveTo::MoveTo() :
-    m_elapsedTime(0), m_lastDistance(0)
+    m_elapsedTime(0)
 {
 }
 
@@ -97,8 +97,6 @@ bool MoveTo::IsDone(void)
         return true;
     }
 
-    m_lastDistance = distanceToFinal;
-
     if (m_elapsedTime >= m_time)
     {
         // Did not reach destination but ran out of time so probably can't reach it
@@ -110,9 +108,6 @@ bool MoveTo::IsDone(void)
 
 bool MoveTo::PreStart(void)
 {
-    float distanceToFinal = glm::length(m_pTransform->GetPosition() - m_location);
-    m_lastDistance = distanceToFinal;
-
     return true;
 }
 

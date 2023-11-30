@@ -1,5 +1,6 @@
 #include "EnginePhysics/Physics.h"
 #include "common/utilsMat.h"
+#include "common/utils.h"
 #include "components/Tag.h"
 #include <glm/gtx/string_cast.hpp>
 
@@ -263,12 +264,24 @@ void Physics::m_ApplyForce(ForceComponent* pForce, TransformComponent* pTransfor
 
 	// Calculate new velocity this frame based on 
 	// delta time, acceleration and current velocity
-	glm::vec3 velThisFrame = (pForce->GetAcceleration() * (float)deltaTime) + pForce->GetVelocity();
+	glm::vec3 velThisFrame = myutils::IncreaseVelocity(pForce->GetVelocity(), pForce->GetAcceleration(), (float)deltaTime);
 	pForce->SetVelocity(velThisFrame);
 	// New object position
 	glm::vec3 deltaPosition = velThisFrame * (float)deltaTime;
 
 	pTransform->Move(deltaPosition);
+
+	// Apply centrifugal forces
+	// Same principle with movement velocity but applying adjusts to rotation
+	glm::vec3 rotationVel = myutils::IncreaseVelocity(pForce->GetCentrifugalVelocity(), 
+													  pForce->GetCentrifugalAcceleration(), 
+													  (float)deltaTime);
+	pForce->SetCentrifugalVelocity(rotationVel);
+	// New object position
+	glm::vec3 deltaRotation = rotationVel * (float)deltaTime;
+
+	pTransform->AdjustOrientation(deltaRotation);
+
 
 	return;
 }

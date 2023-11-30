@@ -14,12 +14,12 @@
                 0.0
             ],
             "isActive": true,
-            "CentrifugalAcceleration": [
+            "centrifugalAcceleration": [
                 0.0,
                 0.0,
                 0.0
             ],
-            "CentrifugalVelocity": [
+            "centrifugalVelocity": [
                 0.0,
                 0.0,
                 0.0
@@ -27,22 +27,22 @@
         },
         "model": {
             "models": [
-                "debugmodels/sphere.ply"
+                "ship.ply"
             ],
             "collisionName": "",
-            "material": "matgrey",
+            "material": "matship",
             "friendlyName": "",
             "parentTagName": "",
             "isWireframe": false,
-            "doNotLight": true,
+            "doNotLight": false,
             "useColorTexture": true,
             "isActive": true
         },
         "script": {
-            "scriptName": "sphere.lua"
+            "scriptName": "ship.lua"
         },
         "tag": {
-            "name": "ball"
+            "name": "ship"
         },
         "transform": {
             "position": [
@@ -50,66 +50,7 @@
                 0.0,
                 0.0
             ],
-            "scale": 10.0,
-            "orientation": [
-                0.0,
-                -0.0,
-                0.0
-            ]
-        }
-    },
-    {
-        "force": {
-            "inverseMass": 0.10000000149011612,
-            "restitution": 0.800000011920929,
-            "acceleration": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "velocity": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "isActive": true,
-            "CentrifugalAcceleration": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "CentrifugalVelocity": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        },
-        "model": {
-            "models": [
-                "debugmodels/sphere.ply"
-            ],
-            "collisionName": "",
-            "material": "matgrey",
-            "friendlyName": "",
-            "parentTagName": "",
-            "isWireframe": false,
-            "doNotLight": true,
-            "useColorTexture": true,
-            "isActive": true
-        },
-        "script": {
-            "scriptName": "sphere2.lua"
-        },
-        "tag": {
-            "name": "ball2"
-        },
-        "transform": {
-            "position": [
-                0.0,
-                36.0,
-                0.0
-            ],
-            "scale": 10.0,
+            "scale": 1.0,
             "orientation": [
                 0.0,
                 -0.0,
@@ -145,9 +86,79 @@
                 0.0
             ],
             "diffuse": [
-                0.4000000059604645,
-                0.4000000059604645,
-                0.4000000059604645,
+                0.8999999761581421,
+                0.8999999761581421,
+                0.8999999761581421,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "params": [
+                2.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "status": true
+        },
+        "tag": {
+            "name": "directionallight"
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 0.0,
+            "orientation": [
+                -0.0,
+                -0.0,
+                -0.0
+            ]
+        }
+    },
+    {
+        "light": {
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "direction": [
+                1.0,
+                -0.0,
+                -0.0,
+                1.0
+            ],
+            "distanceOffset": 0.0,
+            "positionOffset": [
+                0.0,
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "directionOffset": [
+                0.0,
+                1.0,
+                0.5,
+                0.0
+            ],
+            "diffuse": [
+                0.5,
+                0.5,
+                0.5,
                 1.0
             ],
             "specular": [
@@ -195,58 +206,33 @@
                 0.0
             ]
         },
-        "force": {
-            "inverseMass": 0.10000000149011612,
-            "restitution": 0.800000011920929,
-            "acceleration": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "velocity": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "isActive": true,
-            "CentrifugalAcceleration": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "CentrifugalVelocity": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        },
         "tag": {
             "name": "camera"
         },
         "transform": {
             "position": [
-                -220.01536560058594,
-                658.6748046875,
-                4279.99609375
+                1351.68701171875,
+                1000.7234497070313,
+                6990.16357421875
             ],
             "scale": 1.0,
             "orientation": [
-                -84.44763946533203,
-                3.3994300365448,
-                -0.00013000000035390258
+                -92.4734878540039,
+                2.2495100498199463,
+                -0.00007999999797903001
             ]
         }
     },
     {
         "material": {
-            "materialName": "matgrey",
+            "materialName": "matship",
             "offsetMove": [
                 0.0,
                 0.0,
                 0.0
             ],
             "colorTextures": [
-                "textgrey"
+                "textship"
             ],
             "colorTexturesRatios": [
                 1.0,
@@ -267,7 +253,7 @@
             "alphaValue": 1.0
         },
         "tag": {
-            "name": "matgrey"
+            "name": "matship"
         },
         "transform": {
             "position": [
@@ -285,10 +271,10 @@
     },
     {
         "tag": {
-            "name": "textgrey"
+            "name": "textship"
         },
         "texture": {
-            "fileName": "grey.bmp",
+            "fileName": "ship.bmp",
             "textureType": 0,
             "vecTextures": []
         },
