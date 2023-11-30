@@ -102,8 +102,7 @@ void LuaBrain::OnStart()
 
 		// Call the onstart function for each object
 		lua_getglobal(m_pLuaState, "onstart");
-		lua_pushnumber(m_pLuaState, entityID);
-		int result = lua_pcall(m_pLuaState, 1, 0, 0);
+		int result = lua_pcall(m_pLuaState, 0, 0, 0);
 		if (result != LUA_OK) {
 			std::string luaError;
 			// Get error information from top of stack (-1 is top)
@@ -145,6 +144,45 @@ void LuaBrain::Update(float deltaTime)
 
 			std::cout << "-------------------------------------------------------" << std::endl;
 			std::cout << "Error running update: ";
+			std::cout << "Entity: " << entityID << std::endl;
+			std::cout << luaError << std::endl;
+			std::cout << "-------------------------------------------------------" << std::endl;
+			lua_pop(m_pLuaState, 1); // Pop the function from the stack
+		}
+
+	}
+
+	return;
+}
+
+void LuaBrain::OnCollision(EntityID entityID, std::string tagCollided)
+{
+	for (std::map< EntityID, std::string /*source*/>::iterator itScript =
+		m_mapScripts.begin(); itScript != m_mapScripts.end(); itScript++)
+	{
+		EntityID currEntity = itScript->first;
+
+		if (entityID != currEntity)
+		{
+			continue;
+		}
+
+		std::string curLuaScript = itScript->second;
+
+		// Run script to load functions
+		RunScriptImmediately(curLuaScript);
+
+		// Call the update function for each object
+		lua_getglobal(m_pLuaState, "oncollision");
+		lua_pushstring(m_pLuaState, tagCollided.c_str());
+		int result = lua_pcall(m_pLuaState, 1, 0, 0);
+		if (result != LUA_OK) {
+			std::string luaError;
+			// Get error information from top of stack (-1 is top)
+			luaError.append(lua_tostring(m_pLuaState, -1));
+
+			std::cout << "-------------------------------------------------------" << std::endl;
+			std::cout << "Error running oncollision: ";
 			std::cout << "Entity: " << entityID << std::endl;
 			std::cout << luaError << std::endl;
 			std::cout << "-------------------------------------------------------" << std::endl;

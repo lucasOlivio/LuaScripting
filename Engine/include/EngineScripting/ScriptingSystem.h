@@ -4,6 +4,7 @@
 #include "CommandFactory.h"
 #include "CommandManager.h"
 #include "LuaBrain.h"
+#include "events/iCollisionListener.h"
 #include <glm/mat4x4.hpp>
 
 class ScriptingSystem
@@ -21,6 +22,7 @@ public:
 	// Lua commands
 	void OnStart();
 	void Update(double deltaTime);
+	void OnCollision(sCollisionData* pCollision);
 
 	/**
 	 * Creates and send the new command to the command manager.

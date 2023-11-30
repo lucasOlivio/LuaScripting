@@ -13,7 +13,7 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
     using namespace rapidjson;
     using namespace myutils;
 
-    float entity;
+    std::string entity;
     float easyIn;
     float easyOut;
     bool isValid = true;
@@ -25,7 +25,7 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
     ParserJSON parser = ParserJSON();
 
     Value& objEntt = document["entity"];
-    isValid &= parser.GetFloat(objEntt, entity);
+    isValid &= parser.GetString(objEntt, entity);
     Value& objLoc = document["location"];
     isValid &= parser.GetVec3(objLoc, m_location);
 
@@ -51,8 +51,8 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
         return false;
     }
 
-    m_pTransform = pScene->GetComponent<TransformComponent>(entity, "transform");
-    m_pForce = pScene->GetComponent<ForceComponent>(entity, "force");
+    m_pTransform = pScene->GetComponentByTag<TransformComponent>(entity, "transform");
+    m_pForce = pScene->GetComponentByTag<ForceComponent>(entity, "force");
 
     // Calculate time phases
     m_easyInTime = easyIn * m_time;

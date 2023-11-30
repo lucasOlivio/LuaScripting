@@ -28,11 +28,14 @@ public:
 	bool LoadScript(EntityID entityID, std::string scriptName);
 	void DeleteScript(EntityID entityID);
 
+	// Call all onstart for each script
+	void OnStart();
+
 	// Call all the active scripts that are loaded
 	void Update(float deltaTime);
 
-	// Call all onstart for each script
-	void OnStart();
+	// Call collision function only for this entity
+	void OnCollision(EntityID entityId, std::string tagCollided);
 
 	// Runs a script, but doesn't save it (originally used to set the ObjectID)
 	void RunScriptImmediately(std::string script);

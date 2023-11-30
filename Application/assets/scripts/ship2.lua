@@ -1,9 +1,8 @@
 local commands = require("assets.scripts.commands")
 
-local entity = -1
+local entity = "ship2"
 
-function onstart(thisEntity)
-    entity = thisEntity
+function onstart()
     print("startn entity: " .. entity)
     
     -- Example usage:
@@ -25,4 +24,13 @@ function onstart(thisEntity)
 end
 
 function update(deltatime)
+end
+
+function oncollision(tagCollided)
+    local selfdestroy = commands.DestroyEntityCommand(entity, true, "shipdestroied")
+
+    local mainCommandGroup = CommandGroup:new("selfdestroy")
+    mainCommandGroup:addCommand(selfdestroy, false) 
+
+    commands.DispatchCommands(mainCommandGroup)
 end

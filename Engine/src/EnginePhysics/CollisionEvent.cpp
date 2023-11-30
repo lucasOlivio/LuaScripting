@@ -1,5 +1,6 @@
 #include "events/CollisionEvent.h"
 #include "events/iCollisionListener.h"
+#include "EngineScripting/ScriptingSystem.h"
 
 CollisionEvent::CollisionEvent()
 {
@@ -15,6 +16,8 @@ void CollisionEvent::TriggerCollisions(std::vector<sCollisionData*> pFrameCollis
 	for (int i = 0; i < pFrameCollisions.size(); i++)
 	{
 		sCollisionData* pCollision = pFrameCollisions[i];
+
+		// Notify entities that collided
 		for (int j = 0; j < this->m_pListeners.size(); j++)
 		{
 			iCollisionListener* pCollListener = (iCollisionListener*)this->m_pListeners[j];
@@ -25,5 +28,8 @@ void CollisionEvent::TriggerCollisions(std::vector<sCollisionData*> pFrameCollis
 				pCollListener->Notify(this, pCollision);
 			}
 		}
+
+		// Notify Scripting engine
+		ScriptingSystem::Get()->OnCollision(pCollision);
 	}
 }

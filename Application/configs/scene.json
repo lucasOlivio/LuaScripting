@@ -1,5 +1,66 @@
 [
     {
+        "collision": {
+            "shape": 4,
+            "bodyType": 0,
+            "isActive": true,
+            "minXYZ": [
+                -200.0,
+                -200.0,
+                -200.0
+            ],
+            "maxXYZ": [
+                200.0,
+                200.0,
+                200.0
+            ],
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        "script": {
+            "scriptName": "minefield.lua"
+        },
+        "tag": {
+            "name": "minefield"
+        },
+        "transform": {
+            "position": [
+                -1200.0,
+                1200.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ]
+        }
+    },
+    {
+        "collision": {
+            "shape": 4,
+            "bodyType": 1,
+            "isActive": true,
+            "minXYZ": [
+                -250.0,
+                -80.0,
+                -200.0
+            ],
+            "maxXYZ": [
+                250.0,
+                80.0,
+                200.0
+            ],
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
         "force": {
             "inverseMass": 0.10000000149011612,
             "restitution": 0.800000011920929,
@@ -59,6 +120,26 @@
         }
     },
     {
+        "collision": {
+            "shape": 4,
+            "bodyType": 1,
+            "isActive": true,
+            "minXYZ": [
+                -250.0,
+                -80.0,
+                -200.0
+            ],
+            "maxXYZ": [
+                250.0,
+                80.0,
+                200.0
+            ],
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
         "force": {
             "inverseMass": 0.10000000149011612,
             "restitution": 0.800000011920929,
@@ -270,15 +351,15 @@
         },
         "transform": {
             "position": [
-                84.57586669921875,
-                -893.9059448242188,
-                8486.05859375
+                -193.77622985839844,
+                27.343059539794922,
+                3912.398193359375
             ],
             "scale": 1.0,
             "orientation": [
-                -88.59854125976563,
-                18.24945068359375,
-                -0.000029999999242136255
+                -92.72382354736328,
+                11.524450302124023,
+                -0.00004999999873689376
             ]
         }
     },
@@ -342,6 +423,37 @@
                 0.0,
                 0.0,
                 0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ]
+        }
+    },
+    {
+        "model": {
+            "models": [
+                "shipdestroied.ply"
+            ],
+            "collisionName": "",
+            "material": "matship",
+            "friendlyName": "",
+            "parentTagName": "",
+            "isWireframe": false,
+            "doNotLight": false,
+            "useColorTexture": true,
+            "isActive": true
+        },
+        "tag": {
+            "name": "shipdestroied"
+        },
+        "transform": {
+            "position": [
+                -1000.0,
+                -1000.0,
+                -1000.0
             ],
             "scale": 1.0,
             "orientation": [

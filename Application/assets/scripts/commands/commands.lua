@@ -62,9 +62,21 @@ function FollowObjectCommand(entity, targetTag, timeStep, maxSpeed, followDistan
                                     followForever = followForever})
 end
 
+-- Destroy the given entity and replaces with another
+-- entity, entity id to destroy
+-- isReplace optional, should replace it with other?
+-- tagToReplace optional, Entity name to be replaced with 
+function DestroyEntityCommand(entity, isReplace, tagToReplace)
+    isReplace  =  isReplace or false
+    tagToReplace = tagToReplace or ""
+    return Command:new("DestroyEntity", {entity = entity, isReplace = isReplace, 
+                                    tagToReplace = tagToReplace})
+end
+
 return {
     MoveCommand = MoveCommand, 
     OrientCommand = OrientCommand, 
     FollowCurveCommand = FollowCurveCommand,
-    FollowObjectCommand = FollowObjectCommand
+    FollowObjectCommand = FollowObjectCommand,
+    DestroyEntityCommand = DestroyEntityCommand
 }

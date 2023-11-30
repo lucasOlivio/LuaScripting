@@ -9,5 +9,6 @@ return
     OrientCommand = commands.OrientCommand,
     FollowCurveCommand = commands.FollowCurveCommand,
     FollowObjectCommand = commands.FollowObjectCommand,
+    DestroyEntityCommand = commands.DestroyEntityCommand,
     DispatchCommands = utils.DispatchCommands,
 }

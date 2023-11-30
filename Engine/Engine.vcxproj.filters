@@ -214,6 +214,9 @@
     <ClCompile Include="src\EngineScripting\commands\FollowObject.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\EngineScripting\commands\DestroyEntity.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\EngineRenderer\CameraSystem.h">
@@ -377,6 +380,7 @@
     <ClInclude Include="include\EngineScripting\commands\OrientTo.h" />
     <ClInclude Include="include\EngineScripting\commands\FollowCurve.h" />
     <ClInclude Include="include\EngineScripting\commands\FollowObject.h" />
+    <ClInclude Include="include\EngineScripting\commands\DestroyEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scene\SceneView.tpp">
