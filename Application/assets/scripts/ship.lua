@@ -6,14 +6,19 @@ function onstart()
     print("startn entity: " .. entity)
     
     -- Example usage:
-    local followobjCommand = commands.FollowObjectCommand(entity, "ship2", 0.1, 500, 50, {0.0, -400.0, 0.0})
+    local controlPoints = {
+        {1200.0, 1200.0, 0.0},
+        {0.0, 2000.0, 0.0},
+        {-1200.0, 1200.0, 0.0}
+    }
+    local curveCommand = commands.FollowCurveCommand(entity, controlPoints, 3.0, 50.0, 0.0, 0.0, true)
 
     -- Create the main command group
-    local followGroup = CommandGroup:new("followobjCommand")
-    followGroup:addCommand(followobjCommand, false)
+    local followGroup = CommandGroup:new("curve")
+    followGroup:addCommand(curveCommand, false)
 
     local mainCommandGroup = CommandGroup:new("followGroup")
-    mainCommandGroup:addCommand(followGroup, false) 
+    mainCommandGroup:addCommand(followGroup, true) 
 
     commands.DispatchCommands(mainCommandGroup)
 end
@@ -22,4 +27,10 @@ function update(deltatime)
 end
 
 function oncollision(tagCollided)
+    local selfdestroy = commands.DestroyEntityCommand(entity, true, "shipdestroied")
+
+    local mainCommandGroup = CommandGroup:new("selfdestroy")
+    mainCommandGroup:addCommand(selfdestroy, false) 
+
+    commands.DispatchCommands(mainCommandGroup)
 end

@@ -91,7 +91,7 @@
                 "ship.ply"
             ],
             "collisionName": "",
-            "material": "matship",
+            "material": "matshipenemy",
             "friendlyName": "",
             "parentTagName": "",
             "isWireframe": false,
@@ -100,10 +100,10 @@
             "isActive": true
         },
         "script": {
-            "scriptName": "ship.lua"
+            "scriptName": "shipenemy.lua"
         },
         "tag": {
-            "name": "ship"
+            "name": "shipenemy"
         },
         "transform": {
             "position": [
@@ -179,10 +179,10 @@
             "isActive": true
         },
         "script": {
-            "scriptName": "ship2.lua"
+            "scriptName": "ship.lua"
         },
         "tag": {
-            "name": "ship2"
+            "name": "ship"
         },
         "transform": {
             "position": [
@@ -415,6 +415,75 @@
         },
         "texture": {
             "fileName": "ship.bmp",
+            "textureType": 0,
+            "vecTextures": []
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ]
+        }
+    },
+    {
+        "material": {
+            "materialName": "matshipenemy",
+            "offsetMove": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "colorTextures": [
+                "textshipenemy"
+            ],
+            "colorTexturesRatios": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "useHeightMap": false,
+            "heightMapTexture": "",
+            "heightScale": 0.0,
+            "useNormalTexture": false,
+            "normalTexture": "",
+            "useSpecularTexture": false,
+            "specularTexture": "",
+            "useDiscardTexture": false,
+            "discardTexture": "",
+            "useCubeTexture": false,
+            "cubeTexture": "",
+            "alphaValue": 1.0
+        },
+        "tag": {
+            "name": "matshipenemy"
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ]
+        }
+    },
+    {
+        "tag": {
+            "name": "textshipenemy"
+        },
+        "texture": {
+            "fileName": "shipenemy.bmp",
             "textureType": 0,
             "vecTextures": []
         },
