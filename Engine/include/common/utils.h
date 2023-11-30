@@ -71,10 +71,6 @@ namespace myutils
     glm::vec3 CalculateAcceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
                                     float initialTime, float finalTime);
 
-    // Calculate the binomial coefficient "n choose k"
-    float BinomialCoefficient(int n, int k);
-    // Calculate the Bezier blending function for a given time
-    float BezierBlend(int n, int i, float time);
     // Calculate the position on the Bezier curve at a given time
     glm::vec3 CalculateBezierPoint(std::vector<glm::vec3>& controlPoints, float time);
     // Calculate the time along the Bezier curve for a given distance

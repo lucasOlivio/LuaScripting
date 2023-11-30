@@ -39,5 +39,5 @@ private:
 	TransformComponent* m_pTransform;
 	ForceComponent* m_pForce;
 
-	void m_GenerateSubCommands(SceneView* pScene);
+	void m_GenerateSubCommands();
 };

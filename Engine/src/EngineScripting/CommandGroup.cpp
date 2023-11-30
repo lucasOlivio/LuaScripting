@@ -8,15 +8,7 @@ CommandGroup::CommandGroup()
 
 CommandGroup::~CommandGroup()
 {
-	// Command groups should be responsible for deleting their commands
-	for (iCommand* pCommand : m_vecSerialCommands)
-	{
-		delete pCommand;
-	}
-	for (iCommand* pCommand : m_vecParallelCommands)
-	{
-		delete pCommand;
-	}
+	ClearCommands();
 }
 
 bool CommandGroup::IsDone(void)
@@ -33,9 +25,28 @@ bool CommandGroup::IsDone(void)
 	return true;
 }
 
+void CommandGroup::ClearCommands()
+{
+	// Command groups should be responsible for deleting their commands
+	for (iCommand* pCommand : m_vecSerialCommands)
+	{
+		delete pCommand;
+	}
+	m_vecSerialCommands.clear();
+	for (iCommand* pCommand : m_vecParallelCommands)
+	{
+		delete pCommand;
+	}
+	m_vecSerialCommands.clear();
+}
+
 void CommandGroup::AddSerialCommand(iCommand* pTheCommand)
 {
 	m_vecSerialCommands.push_back(pTheCommand);
+	if (m_vecSerialCommands.size() == 1)
+	{
+		m_itNextSerialCommand = m_vecSerialCommands.begin();
+	}
 	return;
 }
 
@@ -57,7 +68,7 @@ bool CommandGroup::Initialize(SceneView* pScene, rapidjson::Value& document)
 	return true;
 }
 
-bool CommandGroup::Initialize(SceneView* pScene, std::string name)
+bool CommandGroup::Initialize(std::string name)
 {
 	this->Command::Initialize();
 

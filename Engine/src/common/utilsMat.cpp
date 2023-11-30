@@ -167,9 +167,9 @@ namespace myutils
         return normal;
     }
 
-    glm::vec3 GetNormal(glm::vec3 collisionPoint, glm::vec3 center)
+    glm::vec3 GetNormal(glm::vec3 endXYZ, glm::vec3 startXYZ)
     {
-        glm::vec3 normal = glm::normalize(collisionPoint - center);
+        glm::vec3 normal = glm::normalize(endXYZ - startXYZ);
         return normal;
     }
 

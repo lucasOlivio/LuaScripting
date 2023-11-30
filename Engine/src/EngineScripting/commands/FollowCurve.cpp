@@ -54,7 +54,7 @@ bool FollowCurve::Initialize(SceneView* pScene, rapidjson::Value& document)
     // First point should aways be the current position for simplicity
     m_controlPoints.insert(m_controlPoints.begin(), m_pTransform->GetPosition());
 
-    m_GenerateSubCommands(pScene);
+    m_GenerateSubCommands();
 
     return true;
 }
@@ -95,7 +95,7 @@ bool FollowCurve::PostEnd(void)
     return isEnded;
 }
 
-void FollowCurve::m_GenerateSubCommands(SceneView* pScene)
+void FollowCurve::m_GenerateSubCommands()
 {
     // Calculate the number of steps based on the time
     float step = m_time / m_timeStep;
@@ -111,7 +111,7 @@ void FollowCurve::m_GenerateSubCommands(SceneView* pScene)
         // Create a MoveTo command for the calculated position in "step" time
         MoveTo* pMove = new MoveTo();
 
-        pMove->Initialize(pScene, m_pTransform, m_pForce, position, step);
+        pMove->Initialize(m_pTransform, m_pForce, position, step);
 
         // Add the MoveTo command to the list of commands
         pMoveGroup->AddSerialCommand(pMove);
@@ -119,7 +119,7 @@ void FollowCurve::m_GenerateSubCommands(SceneView* pScene)
 
 
     // Setup new groups
-    pMoveGroup->Initialize(pScene, m_name);
+    pMoveGroup->Initialize(m_name);
     pMoveGroup->PreStart();
 
     if (pMoveGroup->IsDone())

@@ -25,8 +25,8 @@ namespace myutils
     // Chapter 5:
     glm::vec3 ClosestPtPointOBB(glm::vec3 p, glm::vec3 obbCenter, glm::mat3 obbRotation, glm::vec3 maxXYZ);
 
-    // Calculates the normal for a sphere based on the collision point and the center of sphere
-    glm::vec3 GetNormal(glm::vec3 collisionPoint, glm::vec3 center);
+    // Any vector normal based on startXYZ (center) to endXYZ(collisionPoint)
+    glm::vec3 GetNormal(glm::vec3 endXYZ, glm::vec3 startXYZ);
 
     // Calculates the normal for a triangle based on the vertices positions
     glm::vec3 GetNormal(glm::vec3 vertices[3]);

@@ -4,3 +4,4 @@
 #include "commands/MoveTo.h"
 #include "commands/OrientTo.h"
 #include "commands/FollowCurve.h"
+#include "commands/FollowObject.h"

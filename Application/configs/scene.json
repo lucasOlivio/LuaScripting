@@ -59,6 +59,65 @@
         }
     },
     {
+        "force": {
+            "inverseMass": 0.10000000149011612,
+            "restitution": 0.800000011920929,
+            "acceleration": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "velocity": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "isActive": true,
+            "centrifugalAcceleration": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "centrifugalVelocity": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        "model": {
+            "models": [
+                "ship.ply"
+            ],
+            "collisionName": "",
+            "material": "matship",
+            "friendlyName": "",
+            "parentTagName": "",
+            "isWireframe": false,
+            "doNotLight": false,
+            "useColorTexture": true,
+            "isActive": true
+        },
+        "script": {
+            "scriptName": "ship2.lua"
+        },
+        "tag": {
+            "name": "ship2"
+        },
+        "transform": {
+            "position": [
+                400.0,
+                400.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ]
+        }
+    },
+    {
         "light": {
             "position": [
                 0.0,
@@ -211,15 +270,15 @@
         },
         "transform": {
             "position": [
-                273.26739501953125,
-                172.30191040039063,
-                4611.45556640625
+                84.57586669921875,
+                -893.9059448242188,
+                8486.05859375
             ],
             "scale": 1.0,
             "orientation": [
-                -86.29847717285156,
-                13.299519538879395,
-                -0.000039999998989515007
+                -88.59854125976563,
+                18.24945068359375,
+                -0.000029999999242136255
             ]
         }
     },

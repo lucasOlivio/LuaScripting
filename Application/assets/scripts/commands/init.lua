@@ -8,5 +8,6 @@ return
     MoveCommand = commands.MoveCommand,
     OrientCommand = commands.OrientCommand,
     FollowCurveCommand = commands.FollowCurveCommand,
+    FollowObjectCommand = commands.FollowObjectCommand,
     DispatchCommands = utils.DispatchCommands,
 }

@@ -7,19 +7,14 @@ function onstart(thisEntity)
     print("startn entity: " .. entity)
     
     -- Example usage:
-    local controlPoints = {
-        {800.0, 800.0, 0.0},
-        {0.0, 1600.0, 0.0},
-        {-800.0, 800.0, 0.0}
-    }
-    local curveCommand = commands.FollowCurveCommand(entity, controlPoints, 5.0, 50.0, 0.0, 0.0, true)
+    local followobjCommand = commands.FollowObjectCommand(entity, "ship2", 0.1, 500, false)
 
     -- Create the main command group
-    local followGroup = CommandGroup:new("curve")
-    followGroup:addCommand(curveCommand, false)
+    local followGroup = CommandGroup:new("followobjCommand")
+    followGroup:addCommand(followobjCommand, false)
 
     local mainCommandGroup = CommandGroup:new("followGroup")
-    mainCommandGroup:addCommand(followGroup, true) 
+    mainCommandGroup:addCommand(followGroup, false) 
 
     commands.DispatchCommands(mainCommandGroup)
 end

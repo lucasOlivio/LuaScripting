@@ -16,11 +16,13 @@ public:
 
 	// iCommand
 	virtual bool Initialize(SceneView* pScene, rapidjson::Value& document);
-	virtual bool Initialize(SceneView* pScene, std::string name);
+	virtual bool Initialize(std::string name);
 	virtual bool PreStart(void);
 	virtual bool PostEnd(void);
 	virtual bool Update(double deltaTime);
 	virtual bool IsDone(void);
+
+	void ClearCommands();
 
 private:
 	// Serial commands

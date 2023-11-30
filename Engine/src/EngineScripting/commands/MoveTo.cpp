@@ -1,5 +1,6 @@
 #include "EngineScripting/commands/MoveTo.h"
 #include "common/utils.h"
+#include "common/utilsMat.h"
 #include "common/ParserJSON.h"
 
 MoveTo::MoveTo() :
@@ -27,8 +28,16 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
     isValid &= parser.GetFloat(objEntt, entity);
     Value& objLoc = document["location"];
     isValid &= parser.GetVec3(objLoc, m_location);
+
+    // Calculations are based in time OR max velocity, so must have one
     Value& objTime = document["time"];
-    isValid &= parser.GetFloat(objTime, m_time);
+    bool hasTime = parser.GetFloat(objTime, m_time);
+    if (!hasTime)
+    {
+        Value& objMaxVel = document["maxVelocity"];
+        isValid &= parser.GetVec3(objMaxVel, m_maxVelocity);
+    }
+
     Value& objIn = document["easyIn"];
     isValid &= parser.GetFloat(objIn, easyIn);
     Value& objDeacc = document["easyOut"];
@@ -48,7 +57,10 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
     // Calculate time phases
     m_easyInTime = easyIn * m_time;
     m_easyOutTime = easyOut * m_time;
-    m_constantTime = m_time - m_easyInTime - m_easyOutTime;
+    
+    // TODO: Fix this whole easyin/easyout, for now just constant speed to avoid these problems
+    //m_constantTime = m_time - m_easyInTime - m_easyOutTime;
+    m_constantTime = m_time;
 
     // Calculate positions phases
     m_easyInPos = CalculateVector(m_pTransform->GetPosition(),
@@ -59,11 +71,27 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
     return true;
 }
 
-void MoveTo::Initialize(SceneView* pScene, TransformComponent* pTransform, 
-                        ForceComponent* pForce, glm::vec3 location, float time)
+void MoveTo::Initialize(TransformComponent* pTransform, ForceComponent* pForce, glm::vec3 location, float time)
 {
     m_location = location;
     m_time = time;
+    m_maxVelocity = glm::vec3(0);
+
+    m_stopAtEnd = false;
+
+    m_easyInTime = 0.0;
+    m_easyOutTime = 0.0;
+    m_constantTime = m_time;
+
+    m_pTransform = pTransform;
+    m_pForce = pForce;
+}
+
+void MoveTo::Initialize(TransformComponent* pTransform, ForceComponent* pForce, glm::vec3 location, glm::vec3 maxVelocity)
+{
+    m_location = location;
+    m_time = 0;
+    m_maxVelocity = maxVelocity;
 
     m_stopAtEnd = false;
 
@@ -82,46 +110,19 @@ bool MoveTo::Update(double deltaTime)
 {
     using namespace glm;
 
-    DebugSystem::Get()->AddLine(m_pTransform->GetPosition(), m_location, GREEN);
-
     m_elapsedTime += deltaTime;
     vec3 currPosition = m_pTransform->GetPosition();
     vec3 currVelocity = m_pForce->GetVelocity();
 
-    // Check which phase of the velocity curve its in
-    if (m_elapsedTime <= m_easyInTime && 
-        m_currPhase == ePhase::STARTUP) {
-        // Acceleration phase
-        m_currPhase = ePhase::EASYIN;
-        vec3 acceleration = myutils::CalculateAcceleration(currPosition, m_easyInPos,
-                                                           m_elapsedTime, m_easyInTime);
+    DebugSystem::Get()->AddLine(m_pTransform->GetPosition(), m_pTransform->GetPosition() + currVelocity * 2.0f, GREEN);
 
-        m_pForce->SetVelocity(vec3(0));
-        m_pForce->SetAcceleration(acceleration);
+    if (m_time > 0)
+    {
+        m_SetAccTime(currPosition, currVelocity);
     }
-    else if (m_elapsedTime >= m_easyInTime &&
-             m_elapsedTime <= m_easyInTime + m_constantTime &&
-             m_currPhase   != ePhase::CONSTANT) {
-        // Constant speed phase
-        m_currPhase = ePhase::CONSTANT;
-        // Setting velocity again for cases when easyin = 0
-        vec3 velocity = myutils::CalculateVelocity(currPosition, m_easyOutPos, 
-                                                   m_easyInTime, 
-                                                   m_time - m_easyOutTime);
-
-        m_pForce->SetAcceleration(vec3(0));
-        m_pForce->SetVelocity(velocity);       
-    }
-    else if (m_elapsedTime >= m_easyInTime + m_constantTime &&
-             m_elapsedTime <= m_time &&
-             m_currPhase != ePhase::EASYOUT) {
-        // Deceleration phase
-        m_currPhase = ePhase::EASYOUT;
-        vec3 acceleration = myutils::CalculateAcceleration(currPosition, m_location,
-                                                           currVelocity,
-                                                           m_elapsedTime, m_time);
-
-        m_pForce->SetAcceleration(-acceleration);
+    else
+    {
+        m_SetAccMaxVel(currPosition, currVelocity);
     }
 
     bool isDone = IsDone();
@@ -174,4 +175,55 @@ bool MoveTo::PostEnd(void)
     }
 
     return true;
+}
+
+void MoveTo::m_SetAccTime(glm::vec3 currPosition, glm::vec3 currVelocity)
+{
+    using namespace glm;
+
+    // Check which phase of the velocity curve its in
+    if (m_elapsedTime <= m_easyInTime &&
+        m_currPhase == ePhase::STARTUP) {
+        // Acceleration phase
+        m_currPhase = ePhase::EASYIN;
+        vec3 acceleration = myutils::CalculateAcceleration(currPosition, m_easyInPos,
+            m_elapsedTime, m_easyInTime);
+
+        m_pForce->SetVelocity(vec3(0));
+        m_pForce->SetAcceleration(acceleration);
+    }
+    else if (m_elapsedTime >= m_easyInTime &&
+        m_elapsedTime <= m_easyInTime + m_constantTime &&
+        m_currPhase != ePhase::CONSTANT) {
+        // Constant speed phase
+        m_currPhase = ePhase::CONSTANT;
+        // Setting velocity again for cases when easyin = 0
+        vec3 velocity = myutils::CalculateVelocity(currPosition, m_easyOutPos,
+            m_easyInTime,
+            m_time - m_easyOutTime);
+
+        m_pForce->SetAcceleration(vec3(0));
+        m_pForce->SetVelocity(velocity);
+    }
+    else if (m_elapsedTime >= m_easyInTime + m_constantTime &&
+        m_elapsedTime <= m_time &&
+        m_currPhase != ePhase::EASYOUT) {
+        // Deceleration phase
+        m_currPhase = ePhase::EASYOUT;
+        vec3 acceleration = myutils::CalculateAcceleration(currPosition, m_location,
+            currVelocity,
+            m_elapsedTime, m_time);
+
+        m_pForce->SetAcceleration(-acceleration);
+    }
+}
+
+void MoveTo::m_SetAccMaxVel(glm::vec3 currPosition, glm::vec3 currVelocity)
+{
+    using namespace glm;
+    using namespace myutils;
+    
+    vec3 normal = GetNormal(m_location, currPosition);
+
+    m_pForce->SetVelocity(m_maxVelocity * normal);
 }
