@@ -42,6 +42,9 @@ public:
 	virtual void SetDeleted(bool isDeleted) = 0;
 	virtual bool IsDeleted() = 0;
 
+	virtual void SetActive(bool isActive) = 0;
+	virtual bool IsActive() = 0;
+
 	virtual void GetInfo(sComponentInfo& compInfoOut) = 0;
 	virtual void SetParameter(sParameterInfo& parameterIn) = 0;
 };

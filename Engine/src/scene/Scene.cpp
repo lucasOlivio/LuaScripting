@@ -60,7 +60,7 @@ EntityID Scene::CreateEntity()
     return newEntityID;
 }
 
-EntityID Scene::CreateEntity(EntityID entityID)
+EntityID Scene::CreateEntity(EntityID entityID, bool createAndActivate)
 {
     EntityID newEntityID = this->CreateEntity();
     
@@ -79,7 +79,16 @@ EntityID Scene::CreateEntity(EntityID entityID)
             ModelComponent* pModelComp = (ModelComponent*)this->GetComponent(entityID, "model");
             pNewModelComp->SetMeshes(pModelComp->GetMeshes());
         }
+
+        pNewComp->SetActive(createAndActivate);
     }
+
+    return newEntityID;
+}
+
+EntityID Scene::CreateEntity(EntityID entityID)
+{
+    EntityID newEntityID = this->CreateEntity(entityID, true);
 
     return newEntityID;
 }

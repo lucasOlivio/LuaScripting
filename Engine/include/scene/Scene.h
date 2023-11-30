@@ -45,6 +45,7 @@ public:
 	virtual EntityID CreateEntity();
 	// Create a new entity copy of the "entityID" passed
 	virtual EntityID CreateEntity(EntityID entityID);
+	virtual EntityID CreateEntity(EntityID entityID, bool createAndActivate);
 
 	virtual void DeleteEntity(EntityID entityID);
 	virtual void DeleteListener(iListener* pListener);
