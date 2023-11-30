@@ -234,6 +234,12 @@ void DebugSystem::m_AddCollisions()
     {
         EntityID entityID = m_pScene->CurrentKey();
         CollisionComponent* pCollision = m_pScene->CurrentValue<CollisionComponent>();
+
+        if (!pCollision->IsActive())
+        {
+            continue;
+        }
+
         TransformComponent* pTransform = m_pScene->GetComponent<TransformComponent>(entityID, "transform");
 
         mat4 worldMat = pTransform->GetTransform();

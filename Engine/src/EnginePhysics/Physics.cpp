@@ -39,6 +39,12 @@ void Physics::Update(double deltaTime)
 	{
 		EntityID entityID = m_pSceneView->CurrentKey();
 		ForceComponent* pForce = m_pSceneView->CurrentValue<ForceComponent>();
+
+		if (!pForce->IsActive())
+		{
+			continue;
+		}
+
 		TransformComponent* pTransform = m_pSceneView->GetComponent<TransformComponent>(entityID, "transform");
 
 		m_ApplyForce(pForce, pTransform, deltaTime);
@@ -49,6 +55,12 @@ void Physics::Update(double deltaTime)
 	{
 		EntityID entityID = m_pSceneView->CurrentKey();
 		CollisionComponent* pCollision = m_pSceneView->CurrentValue<CollisionComponent>();
+
+		if (!pCollision->IsActive())
+		{
+			continue;
+		}
+
 		TransformComponent* pTransform = m_pSceneView->GetComponent<TransformComponent>(entityID, "transform");
 
 		m_CheckCollisions(entityID, pCollision, pTransform);
