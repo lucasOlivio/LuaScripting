@@ -25,14 +25,14 @@ void CommandManager::AddForeverCommand(iCommand* pNewCommand)
 	return;
 }
 
-void CommandManager::DeleteForeverCommand(iCommand* pNewCommand)
+void CommandManager::DeleteForeverCommand(uint16_t UUID)
 {
 	for (std::vector< iCommand* >::iterator itCurCommand = m_vecForeverCommands.begin();
 		itCurCommand != m_vecForeverCommands.end();
 		itCurCommand++)
 	{
 		iCommand* pGroup = *itCurCommand;
-		if (pNewCommand != pGroup)
+		if (UUID != pGroup->GetUUID())
 		{
 			continue;
 		}

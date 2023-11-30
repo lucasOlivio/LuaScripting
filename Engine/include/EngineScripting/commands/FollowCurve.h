@@ -1,21 +1,19 @@
 #pragma once
 
 #include "common/types.h"
-#include "EngineScripting/commands/Command.h"
+#include "EngineScripting/CommandGroup.h"
 #include "scene/SceneView.h"
 #include "components/Transform.h"
 #include "components/Force.h"
 #include <glm/vec3.hpp>
 
-class MoveTo : public Command
+class FollowCurve : public CommandGroup
 {
 public:
-	MoveTo();
-	virtual ~MoveTo() {};
+	FollowCurve();
+	virtual ~FollowCurve() {};
 
 	virtual bool Initialize(SceneView* pScene, rapidjson::Value& document);
-	void Initialize(SceneView* pScene, TransformComponent* pTransform, 
-					ForceComponent* pForce, glm::vec3 location, float time);
 
 	// Called every frame/step:
 	// Returns true when command is done
@@ -27,17 +25,19 @@ public:
 
 	virtual bool PostEnd(void);
 private:
-	glm::vec3 m_location; // End location to move to
+	std::vector<glm::vec3> m_controlPoints; // Bezier curve control points 
+											 // (current position inserted in first index)
+
+	float m_timeStep;     // Steps to calculate the curve
 	float m_time;		  // Max time that should take to move
-	bool m_stopAtEnd;       // When arrive at location should stop velocity 
-						  // and acceleration or just keep going?
+	bool m_stopAtEnd;     // When arrive at location should stop?
 
 	float m_accelerationTime; // % of the time it will accelerate
 	float m_decelerationTime; // % of the time it will decelerate
 	float m_constantTime;     // % of the time the velocity will be constant
 
-	float m_elapsedTime;
-
 	TransformComponent* m_pTransform;
 	ForceComponent* m_pForce;
+
+	void m_GenerateSubCommands(SceneView* pScene);
 };

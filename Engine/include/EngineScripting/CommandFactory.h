@@ -21,7 +21,7 @@ private:
     SceneView* m_pScene;
 
     // Deserialize command json into a nested CommanGroup
-    iCommand* m_DeserializeCommand(rapidjson::Value& document);
+    iCommand* m_DeserializeCommand(rapidjson::Value& document, uint16_t rootUUID);
 
     // Creates a final command that will be executed
     iCommand* m_CreateFinalCommand(rapidjson::Value& command);

@@ -15,7 +15,7 @@ public:
 
 	// Commands groups that will run forever or until explicitly deleted
 	void AddForeverCommand(iCommand* pNewCommand);
-	void DeleteForeverCommand(iCommand* pNewCommand);
+	void DeleteForeverCommand(uint16_t UUID);
 
 	// Update all commands in lists
 	void Update(double deltaTime);

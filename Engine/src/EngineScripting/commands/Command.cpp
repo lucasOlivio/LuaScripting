@@ -13,6 +13,11 @@ uint16_t Command::GetUUID()
     return m_UUID;
 }
 
+void Command::SetUUID(uint16_t value)
+{
+    m_UUID = value;
+}
+
 std::string Command::GetName()
 {
     return m_name;

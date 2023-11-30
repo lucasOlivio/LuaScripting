@@ -286,15 +286,67 @@ glm::vec3 myutils::CalculateAcceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
     return acceleration;
 }
 
- glm::vec3 myutils::CalculateDeceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
-                                          glm::vec3 initialVelocity, float initialTime, 
-                                          float finalTime)
- {
-     // a = delta vel / delta time
-     glm::vec3 acceleration = -initialVelocity / finalTime - initialTime;
+glm::vec3 myutils::CalculateDeceleration(glm::vec3 startXYZ, glm::vec3 endXYZ,
+                                        glm::vec3 initialVelocity, float initialTime, 
+                                        float finalTime)
+{
+    // a = delta vel / delta time
+    glm::vec3 acceleration = -initialVelocity / finalTime - initialTime;
 
-     return acceleration;
- }
+    return acceleration;
+}
+
+// Calculate the binomial coefficient "n choose k"
+float myutils::BinomialCoefficient(int n, int k)
+{
+    if (k == 0 || k == n) {
+        return 1.0f;
+    }
+    float result = 1.0f;
+    for (int i = 1; i <= k; ++i) {
+        result *= static_cast<float>(n - i + 1) / static_cast<float>(i);
+    }
+    return result;
+}
+
+float myutils::BezierBlend(int n, int i, float time) 
+{
+    return BinomialCoefficient(n, i) * pow(time, i) * pow(1 - time, n - i);
+}
+
+glm::vec3 myutils::CalculateBezierPoint(std::vector<glm::vec3>& controlPoints, float time)
+{
+    int n = controlPoints.size() - 1;
+    glm::vec3 result(0.0f);
+
+    for (int i = 0; i <= n; ++i) {
+        float blend = BezierBlend(n, i, time);
+        result += blend * controlPoints[i];
+    }
+
+    return result;
+}
+
+float myutils::CalculateBezierTime(std::vector<glm::vec3>&controlPoints, float distance)
+{
+    float epsilon = 1e-5f;
+    float low = 0.0f, high = 1.0f, mid, currentDistance;
+
+    while (high - low > epsilon) {
+        mid = (low + high) / 2.0f;
+        currentDistance = CalculateBezierPoint(controlPoints, mid).x;
+
+        if (currentDistance < distance) {
+            low = mid;
+        }
+        else {
+            high = mid;
+        }
+    }
+
+    return mid;
+}
+
 
 uint16_t myutils::GenerateUUID()
 {

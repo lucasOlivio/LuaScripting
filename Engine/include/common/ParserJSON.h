@@ -26,6 +26,8 @@ public:
 	bool GetBool(rapidjson::Value& jsonObject, bool& valueOut);
 	bool SetBool(rapidjson::Value& jsonObject, bool valueIn);
 
+	bool GetVecVec3(rapidjson::Value& jsonObject, std::vector<glm::vec3>& valueOut);
+
 	bool GetVec3(rapidjson::Value& jsonObject, glm::vec3& valueOut);
 	bool SetVec3(rapidjson::Value& jsonObject, 
 				 const glm::vec3& valueIn,

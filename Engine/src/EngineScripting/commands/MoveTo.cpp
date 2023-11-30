@@ -49,6 +49,21 @@ bool MoveTo::Initialize(SceneView* pScene, rapidjson::Value& document)
     return true;
 }
 
+void MoveTo::Initialize(SceneView* pScene, TransformComponent* pTransform, 
+                        ForceComponent* pForce, glm::vec3 location, float time)
+{
+    m_location = location;
+    m_time = time;
+
+    m_stopAtEnd = false;
+    m_accelerationTime = 0.0;
+    m_decelerationTime = 0.0;
+    m_constantTime = m_time;
+
+    m_pTransform = pTransform;
+    m_pForce = pForce;
+}
+
 bool MoveTo::Update(double deltaTime)
 {
     using namespace glm;
@@ -69,7 +84,10 @@ bool MoveTo::Update(double deltaTime)
     }
     else if (m_elapsedTime <= m_accelerationTime + m_constantTime) {
         // Constant speed phase
-        acceleration = glm::vec3(0.0f);
+        /*glm::vec3 velocity = myutils::CalculateVelocity(currPosition, m_location,
+                                                        currVelocity, 
+                                                        m_elapsedTime, m_accelerationTime);*/
+        acceleration = glm::vec3(0);
     }
     else if (m_elapsedTime <= m_time) {
         // Deceleration phase

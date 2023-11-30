@@ -30,5 +30,7 @@ public:
 	virtual bool PostEnd(void) = 0;
 
 	virtual uint16_t GetUUID() = 0;
+	// UUID of the command should be the same as the root
+	virtual void SetUUID(uint16_t value) = 0;
 };
 

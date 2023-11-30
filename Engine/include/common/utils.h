@@ -70,6 +70,15 @@ namespace myutils
                                     glm::vec3 initialVelocity, float initialTime, 
                                     float finalTime);
 
+    // Calculate the binomial coefficient "n choose k"
+    float BinomialCoefficient(int n, int k);
+    // Calculate the Bezier blending function for a given time
+    float BezierBlend(int n, int i, float time);
+    // Calculate the position on the Bezier curve at a given time
+    glm::vec3 CalculateBezierPoint(std::vector<glm::vec3>& controlPoints, float time);
+    // Calculate the time along the Bezier curve for a given distance
+    float CalculateBezierTime(std::vector<glm::vec3>& controlPoints, float distance);
+
     // Generates an unique UUID using random lib and uniform dist
     // 16 bits to simplify and be able to use with Lua scripts
     uint16_t GenerateUUID();

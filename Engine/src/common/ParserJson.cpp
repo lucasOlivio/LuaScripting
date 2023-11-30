@@ -98,6 +98,27 @@ bool ParserJSON::SetBool(rapidjson::Value& jsonObject, bool valueIn)
     return true;
 }
 
+bool ParserJSON::GetVecVec3(rapidjson::Value& jsonObject, std::vector<glm::vec3>& valueOut)
+{
+    using namespace rapidjson;
+
+    if (!jsonObject.IsArray() || jsonObject[0].Size() != 3) {
+        return false;
+    }
+
+    for (SizeType i = 0; i < jsonObject.Size(); i++) {
+        glm::vec3 val = glm::vec3(
+            jsonObject[i][0].GetFloat(),
+            jsonObject[i][1].GetFloat(),
+            jsonObject[i][2].GetFloat()
+        );
+
+        valueOut.push_back(val);
+    }
+
+    return true;
+}
+
 bool ParserJSON::GetVec4(rapidjson::Value& jsonObject, glm::vec4& valueOut)
 {
     using namespace rapidjson;

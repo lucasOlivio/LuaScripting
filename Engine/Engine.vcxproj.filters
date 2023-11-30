@@ -208,6 +208,9 @@
     <ClCompile Include="src\EngineScripting\commands\OrientTo.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\EngineScripting\commands\FollowCurve.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\EngineRenderer\CameraSystem.h">
@@ -369,6 +372,7 @@
     <ClInclude Include="include\EngineScripting\commands\Command.h" />
     <ClInclude Include="include\EngineScripting\LuaBindings.h" />
     <ClInclude Include="include\EngineScripting\commands\OrientTo.h" />
+    <ClInclude Include="include\EngineScripting\commands\FollowCurve.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scene\SceneView.tpp">

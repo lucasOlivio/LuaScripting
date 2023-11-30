@@ -28,7 +28,7 @@ iCommand* CommandFactory::CreateCommand(const char* json)
     m_errorMsg = "";
 
     // Desserialize into CommandGroup nested structure
-    iCommand* pCommand = m_DeserializeCommand(document);
+    iCommand* pCommand = m_DeserializeCommand(document, 0);
 
     if (m_errorMsg != "")
     {
@@ -46,7 +46,7 @@ std::string CommandFactory::GetError()
     return m_errorMsg;
 }
 
-iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document)
+iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document, uint16_t rootUUID)
 {
     using namespace rapidjson;
 
@@ -64,6 +64,11 @@ iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document)
 
         if (pCommand)
         {
+            if (rootUUID > 0)
+            {
+                pCommand->SetUUID(rootUUID);
+            }
+
             return pCommand;
         }
 
@@ -80,6 +85,13 @@ iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document)
     // Should be a command group then
     CommandGroup* pCommandGroup = new CommandGroup();
 
+    pCommandGroup->Initialize(m_pScene, document);
+
+    if (rootUUID > 0)
+    {
+        pCommandGroup->SetUUID(rootUUID);
+    }
+
     // Check if it's a serial or parallel group
     // (Empty vectors come as objects so we must check)
     if (document.HasMember("serial") && document["serial"].IsArray())
@@ -88,7 +100,9 @@ iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document)
         Value& serialArray = document["serial"].GetArray();
         for (SizeType i = 0; i < serialArray.Size(); ++i)
         {
-            iCommand* pSerial = m_DeserializeCommand(serialArray[i]);
+            iCommand* pSerial = m_DeserializeCommand(serialArray[i], pCommandGroup->GetUUID());
+
+            // Propagates the root UUID to all children
 
             pCommandGroup->AddSerialCommand(pSerial);
         }
@@ -100,13 +114,11 @@ iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document)
         Value& parallelArray = document["parallel"].GetArray();
         for (SizeType i = 0; i < parallelArray.Size(); ++i)
         {
-            iCommand* pParallel = m_DeserializeCommand(parallelArray[i]);
+            iCommand* pParallel = m_DeserializeCommand(parallelArray[i], pCommandGroup->GetUUID());
 
             pCommandGroup->AddParallelCommand(pParallel);
         }
     }
-
-    pCommandGroup->Initialize(m_pScene, document);
 
     return pCommandGroup;
 }

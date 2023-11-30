@@ -102,3 +102,18 @@ bool ScriptingSystem::AddCommand(const char* json, bool isForever, uint16_t& UUI
 
     return true;
 }
+
+bool ScriptingSystem::AddCommandToUUID(iCommand* pCommand, bool isForever, uint16_t UUID)
+{
+    // Add command to the command manager to the specifiec UUID
+    if (isForever)
+    {
+        m_pCommandManager->AddForeverCommand(pCommand, UUID);
+    }
+    else
+    {
+        m_pCommandManager->AddCommand(pCommand, UUID);
+    }
+
+    return false;
+}
