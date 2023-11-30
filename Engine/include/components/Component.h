@@ -5,20 +5,14 @@
 // Mediator for dealing with components parameters in a centralized way
 class Component : public iComponent
 {
-protected:
-	// Used to communicate with everything via the component mediators
-	EntityID m_entityID;
-
-	// Mark to be deleted at end of frame
-	bool m_isDeleted;
-
-	Component();
-
 public:
 	virtual ~Component() {};
 
 	virtual void SetDeleted(bool isDeleted);
 	virtual bool IsDeleted();
+
+	virtual void SetActive(bool isActive);
+	virtual bool IsActive();
 
 	// TODO: Now we have one parse per type, is there a better way to do this?
 	// Parse to component paramenter info and add to vector of parameters
@@ -74,6 +68,17 @@ public:
 	virtual EntityID GetEntityID();
 	virtual void SetEntityID(EntityID entityID);
 
-	virtual void GetInfo(sComponentInfo& compInfoOut) = 0;
-	virtual void SetParameter(sParameterInfo& parameterIn) = 0;
+	virtual void GetInfo(sComponentInfo& compInfoOut);
+	virtual void SetParameter(sParameterInfo& parameterIn);
+
+protected:
+	// Used to communicate with everything via the component mediators
+	EntityID m_entityID;
+
+	// Mark to be deleted at end of frame
+	bool m_isDeleted;
+
+	bool m_isActive;
+
+	Component();
 };

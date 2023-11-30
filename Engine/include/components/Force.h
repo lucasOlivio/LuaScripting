@@ -5,7 +5,6 @@
 class ForceComponent : public Component
 {
 private:
-	bool m_isActive;
 	float m_inverseMass;
 	float m_restitution;
 

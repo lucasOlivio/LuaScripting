@@ -10,11 +10,15 @@ void TagComponent::GetInfo(sComponentInfo& compInfoOut)
     compInfoOut.componentParameters.clear();
 
     this->AddCompParInfo("name", "string", this->name, compInfoOut);
+
+    this->Component::GetInfo(compInfoOut);
 }
 
 void TagComponent::SetParameter(sParameterInfo& parameterIn)
 {
     using namespace myutils;
+
+    this->Component::SetParameter(parameterIn);
 
     if (parameterIn.parameterName == "name") {
         this->name = parameterIn.parameterStrValue;

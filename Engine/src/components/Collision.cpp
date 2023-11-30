@@ -175,7 +175,6 @@ void CollisionComponent::GetInfo(sComponentInfo& compInfoOut)
 
 	this->AddCompParInfo("shape", "int", this->m_eShape, compInfoOut);
 	this->AddCompParInfo("bodyType", "int", this->m_eBodyType, compInfoOut);
-	this->AddCompParInfo("isActive", "bool", this->m_isActive, compInfoOut);
 
 	// TODO: way to be more dynamic here
 	if (this->m_eShape == eShape::SPHERE)
@@ -217,19 +216,20 @@ void CollisionComponent::GetInfo(sComponentInfo& compInfoOut)
 		this->AddCompParInfo("center", "vec3", pOBB->center, compInfoOut);
 	}
 
+	this->Component::GetInfo(compInfoOut);
+
 	return;
 }
 
 void CollisionComponent::SetParameter(sParameterInfo& parameterIn)
 {
+	this->Component::SetParameter(parameterIn);
+
 	if (parameterIn.parameterName == "shape") {
 		this->Set_eShape((eShape)parameterIn.parameterIntValue);
 	}
 	else if (parameterIn.parameterName == "bodyType") {
 		this->m_eBodyType = (eBodyType)parameterIn.parameterIntValue;
-	}
-	else if (parameterIn.parameterName == "isActive") {
-		this->m_isActive = parameterIn.parameterBoolValue;
 	}
 	else // Any other CollisionComponent parameter should come before here
 	{

@@ -61,12 +61,13 @@ void ModelComponent::GetInfo(sComponentInfo& compInfoOut)
 	this->AddCompParInfo("isWireframe", "bool", this->isWireframe, compInfoOut);
 	this->AddCompParInfo("doNotLight", "bool", this->doNotLight, compInfoOut);
     this->AddCompParInfo("useColorTexture", "bool", this->useColorTexture, compInfoOut);
-    this->AddCompParInfo("isActive", "bool", this->m_isActive, compInfoOut);
+
+    this->Component::GetInfo(compInfoOut);
 }
 
 void ModelComponent::SetParameter(sParameterInfo& parameterIn)
 {
-    using namespace myutils;
+    this->Component::SetParameter(parameterIn);
 
     if (parameterIn.parameterName == "models") {
         this->m_currFrame = 0;
@@ -93,9 +94,6 @@ void ModelComponent::SetParameter(sParameterInfo& parameterIn)
     }
     else if (parameterIn.parameterName == "useColorTexture") {
         this->useColorTexture = parameterIn.parameterBoolValue;
-    }
-    else if (parameterIn.parameterName == "isActive") {
-        this->m_isActive = parameterIn.parameterBoolValue;
     }
 
     return;

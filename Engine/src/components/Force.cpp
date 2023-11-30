@@ -96,15 +96,18 @@ void ForceComponent::GetInfo(sComponentInfo& compInfoOut)
     this->AddCompParInfo("restitution", "float", this->GetRestitution(), compInfoOut);
     this->AddCompParInfo("acceleration", "vec3", this->GetAcceleration(), compInfoOut);
     this->AddCompParInfo("velocity", "vec3", this->GetVelocity(), compInfoOut);
-    this->AddCompParInfo("isActive", "bool", this->m_isActive, compInfoOut);
     this->AddCompParInfo("centrifugalAcceleration", "vec3", this->GetCentrifugalAcceleration(), compInfoOut);
     this->AddCompParInfo("centrifugalVelocity", "vec3", this->GetCentrifugalVelocity(), compInfoOut);
+
+    this->Component::GetInfo(compInfoOut);
 
     return;
 }
 
 void ForceComponent::SetParameter(sParameterInfo& parameterIn)
 {
+    this->Component::SetParameter(parameterIn);
+
     if (parameterIn.parameterName == "inverseMass") {
         this->SetInverseMass(parameterIn.parameterFloatValue);
     }
@@ -116,9 +119,6 @@ void ForceComponent::SetParameter(sParameterInfo& parameterIn)
     }
     else if (parameterIn.parameterName == "velocity") {
         this->SetVelocity(parameterIn.parameterVec3Value);
-    }
-    else if (parameterIn.parameterName == "isActive") {
-        this->m_isActive = parameterIn.parameterBoolValue;
     }
     else if (parameterIn.parameterName == "centrifugalAcceleration") {
         this->SetCentrifugalAcceleration(parameterIn.parameterVec3Value);

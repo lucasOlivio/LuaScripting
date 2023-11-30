@@ -3,7 +3,6 @@
         "collision": {
             "shape": 4,
             "bodyType": 0,
-            "isActive": true,
             "minXYZ": [
                 -200.0,
                 -200.0,
@@ -18,13 +17,16 @@
                 0.0,
                 0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         },
         "script": {
-            "scriptName": "minefield.lua"
+            "scriptName": "minefield.lua",
+            "isActive": true
         },
         "tag": {
-            "name": "minefield"
+            "name": "minefield",
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -37,14 +39,14 @@
                 0.0,
                 -0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         }
     },
     {
         "collision": {
             "shape": 4,
             "bodyType": 1,
-            "isActive": true,
             "minXYZ": [
                 -250.0,
                 -80.0,
@@ -59,7 +61,8 @@
                 0.0,
                 0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         },
         "force": {
             "inverseMass": 0.10000000149011612,
@@ -74,7 +77,6 @@
                 0.0,
                 0.0
             ],
-            "isActive": true,
             "centrifugalAcceleration": [
                 0.0,
                 0.0,
@@ -84,7 +86,8 @@
                 0.0,
                 0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         },
         "model": {
             "models": [
@@ -100,10 +103,12 @@
             "isActive": true
         },
         "script": {
-            "scriptName": "shipenemy.lua"
+            "scriptName": "shipenemy.lua",
+            "isActive": true
         },
         "tag": {
-            "name": "shipenemy"
+            "name": "shipenemy",
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -116,14 +121,14 @@
                 0.0,
                 -0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         }
     },
     {
         "collision": {
             "shape": 4,
             "bodyType": 1,
-            "isActive": true,
             "minXYZ": [
                 -250.0,
                 -80.0,
@@ -138,7 +143,8 @@
                 0.0,
                 0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         },
         "force": {
             "inverseMass": 0.10000000149011612,
@@ -153,7 +159,6 @@
                 0.0,
                 0.0
             ],
-            "isActive": true,
             "centrifugalAcceleration": [
                 0.0,
                 0.0,
@@ -163,7 +168,8 @@
                 0.0,
                 0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         },
         "model": {
             "models": [
@@ -179,10 +185,12 @@
             "isActive": true
         },
         "script": {
-            "scriptName": "ship.lua"
+            "scriptName": "ship.lua",
+            "isActive": true
         },
         "tag": {
-            "name": "ship"
+            "name": "ship",
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -195,7 +203,8 @@
                 0.0,
                 -0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         }
     },
     {
@@ -249,10 +258,12 @@
                 1.0,
                 1.0
             ],
-            "status": true
+            "status": true,
+            "isActive": true
         },
         "tag": {
-            "name": "directionallight"
+            "name": "directionallight",
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -265,7 +276,8 @@
                 -0.0,
                 -0.0,
                 -0.0
-            ]
+            ],
+            "isActive": true
         }
     },
     {
@@ -319,10 +331,12 @@
                 1.0,
                 1.0
             ],
-            "status": true
+            "status": true,
+            "isActive": true
         },
         "tag": {
-            "name": "directionallight"
+            "name": "directionallight",
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -335,7 +349,8 @@
                 -0.0,
                 -0.0,
                 -0.0
-            ]
+            ],
+            "isActive": true
         }
     },
     {
@@ -347,7 +362,8 @@
             ]
         },
         "tag": {
-            "name": "camera"
+            "name": "camera",
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -360,7 +376,8 @@
                 -92.72382354736328,
                 11.524450302124023,
                 -0.00004999999873689376
-            ]
+            ],
+            "isActive": true
         }
     },
     {
@@ -390,10 +407,12 @@
             "discardTexture": "",
             "useCubeTexture": false,
             "cubeTexture": "",
-            "alphaValue": 1.0
+            "alphaValue": 1.0,
+            "isActive": true
         },
         "tag": {
-            "name": "matship"
+            "name": "matship",
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -406,17 +425,20 @@
                 0.0,
                 -0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         }
     },
     {
         "tag": {
-            "name": "textship"
+            "name": "textship",
+            "isActive": true
         },
         "texture": {
             "fileName": "ship.bmp",
             "textureType": 0,
-            "vecTextures": []
+            "vecTextures": [],
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -429,7 +451,8 @@
                 0.0,
                 -0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         }
     },
     {
@@ -459,10 +482,12 @@
             "discardTexture": "",
             "useCubeTexture": false,
             "cubeTexture": "",
-            "alphaValue": 1.0
+            "alphaValue": 1.0,
+            "isActive": true
         },
         "tag": {
-            "name": "matshipenemy"
+            "name": "matshipenemy",
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -475,17 +500,20 @@
                 0.0,
                 -0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         }
     },
     {
         "tag": {
-            "name": "textshipenemy"
+            "name": "textshipenemy",
+            "isActive": true
         },
         "texture": {
             "fileName": "shipenemy.bmp",
             "textureType": 0,
-            "vecTextures": []
+            "vecTextures": [],
+            "isActive": true
         },
         "transform": {
             "position": [
@@ -498,7 +526,8 @@
                 0.0,
                 -0.0,
                 0.0
-            ]
+            ],
+            "isActive": true
         }
     },
     {
@@ -513,23 +542,103 @@
             "isWireframe": false,
             "doNotLight": false,
             "useColorTexture": true,
-            "isActive": true
+            "isActive": false
         },
         "tag": {
-            "name": "shipdestroied"
+            "name": "shipdestroied",
+            "isActive": false
         },
         "transform": {
             "position": [
-                -1000.0,
-                -1000.0,
-                -1000.0
+                -0.0,
+                -0.0,
+                -0.0
             ],
             "scale": 1.0,
             "orientation": [
                 0.0,
                 -0.0,
                 0.0
-            ]
+            ],
+            "isActive": false
+        }
+    },
+    {
+        "collision": {
+            "shape": 4,
+            "bodyType": 0,
+            "minXYZ": [
+                -50.0,
+                -50.0,
+                -50.0
+            ],
+            "maxXYZ": [
+                50.0,
+                50.0,
+                50.0
+            ],
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "isActive": false
+        },
+        "force": {
+            "inverseMass": 0.10000000149011612,
+            "restitution": 0.800000011920929,
+            "acceleration": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "velocity": [
+                500.0,
+                500.0,
+                500.0
+            ],
+            "centrifugalAcceleration": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "centrifugalVelocity": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "isActive": false
+        },
+        "model": {
+            "models": [
+                "debugmodels/sphere.ply"
+            ],
+            "collisionName": "",
+            "material": "matship",
+            "friendlyName": "",
+            "parentTagName": "",
+            "isWireframe": false,
+            "doNotLight": false,
+            "useColorTexture": true,
+            "isActive": false
+        },
+        "tag": {
+            "name": "missle",
+            "isActive": false
+        },
+        "transform": {
+            "position": [
+                -0.0,
+                -0.0,
+                -0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "isActive": false
         }
     }
 ]

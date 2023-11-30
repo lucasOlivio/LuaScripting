@@ -25,6 +25,16 @@ bool Component::IsDeleted()
     }
 }
 
+void Component::SetActive(bool isActive)
+{
+    m_isActive = isActive;
+}
+
+bool Component::IsActive()
+{
+    return m_isActive;
+}
+
 // TODO: Is there a better way to do this?
 void Component::AddCompParInfo(const std::string& name,
                                const std::string& type,
@@ -168,4 +178,16 @@ EntityID Component::GetEntityID()
 void Component::SetEntityID(EntityID entityID)
 {
     this->m_entityID = entityID;
+}
+
+void Component::GetInfo(sComponentInfo& compInfoOut)
+{
+    this->AddCompParInfo("isActive", "bool", this->m_isActive, compInfoOut);
+}
+
+void Component::SetParameter(sParameterInfo& parameterIn)
+{
+    if (parameterIn.parameterName == "isActive") {
+        this->m_isActive = parameterIn.parameterBoolValue;
+    }
 }

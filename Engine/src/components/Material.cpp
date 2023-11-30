@@ -21,10 +21,14 @@ void MaterialComponent::GetInfo(sComponentInfo& compInfoOut)
     AddCompParInfo("useCubeTexture", "bool", useCubeTexture, compInfoOut);
     AddCompParInfo("cubeTexture", "string", cubeTexture, compInfoOut);
     AddCompParInfo("alphaValue", "float", alphaValue, compInfoOut);
+
+    this->Component::GetInfo(compInfoOut);
 }
 
 void MaterialComponent::SetParameter(sParameterInfo& parameterIn)
 {
+    this->Component::SetParameter(parameterIn);
+
     if (parameterIn.parameterName == "materialName") {
         materialName = parameterIn.parameterStrValue;
     }

@@ -133,6 +133,11 @@ void Renderer::RenderAllModels(double deltaTime)
 		ModelComponent* pModel = m_pSceneView->CurrentValue<ModelComponent>();
 		TransformComponent* pTransform = m_pSceneView->GetComponent<TransformComponent>(entityID, "transform");
 
+		if (!pModel->IsActive())
+		{
+			continue;
+		}
+
 		// Bind material
 		iComponent* pMaterialComp = m_pSceneView->GetComponentByTag(pModel->material, "material");
 		if (pMaterialComp)

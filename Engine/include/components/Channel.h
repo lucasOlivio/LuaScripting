@@ -7,7 +7,6 @@
 class ChannelComponent : public Component
 {
 private:
-	bool m_isActive;
 	std::string m_name;
 	FMOD::Channel* m_pChannel;
 	float m_volume;

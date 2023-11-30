@@ -17,8 +17,6 @@ private:
 	EntityID m_onColStaticEntity;
 	EntityID m_onColKinematicEntity;
 
-	bool m_isActive;
-
 public:
 	CollisionComponent();
 	virtual ~CollisionComponent();

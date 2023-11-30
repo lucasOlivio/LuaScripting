@@ -11,11 +11,15 @@ void TextureComponent::GetInfo(sComponentInfo& compInfoOut)
     this->AddCompParInfo("fileName", "string", this->fileName, compInfoOut);
     this->AddCompParInfo("textureType", "int", this->textureType, compInfoOut);
     this->AddCompParInfo("vecTextures", "vecStr", this->vecTextures, compInfoOut);
+
+    this->Component::GetInfo(compInfoOut);
 }
 
 void TextureComponent::SetParameter(sParameterInfo& parameterIn)
 {
     using namespace myutils;
+
+    this->Component::SetParameter(parameterIn);
 
     if (parameterIn.parameterName == "fileName") {
         this->fileName = parameterIn.parameterStrValue;

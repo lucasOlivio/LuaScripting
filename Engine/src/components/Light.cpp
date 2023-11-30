@@ -203,11 +203,13 @@ void LightComponent::GetInfo(sComponentInfo& compInfoOut)
 	AddCompParInfo("atten", "vec4", m_initialAtten, compInfoOut);
 	AddCompParInfo("params", "vec4", m_params, compInfoOut);
 	AddCompParInfo("status", "bool", m_status, compInfoOut);
+
+	this->Component::GetInfo(compInfoOut);
 }
 
 void LightComponent::SetParameter(sParameterInfo& parameterIn)
 {
-	using namespace myutils;
+	this->Component::SetParameter(parameterIn);
 
 	if (parameterIn.parameterName == "position") {
 		SetPosition(parameterIn.parameterVec4Value);

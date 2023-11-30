@@ -21,11 +21,15 @@ void TilingComponent::GetInfo(sComponentInfo& compInfoOut)
 
     this->AddCompParInfo("axis", "vec3", this->m_axis, compInfoOut);
     this->AddCompParInfo("offset", "vec3", this->m_offset, compInfoOut);
+
+    this->Component::GetInfo(compInfoOut);
 }
 
 void TilingComponent::SetParameter(sParameterInfo& parameterIn)
 {
     using namespace myutils;
+
+    this->Component::SetParameter(parameterIn);
 
     if (parameterIn.parameterName == "axis") {
         this->m_axis = parameterIn.parameterVec3Value;

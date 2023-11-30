@@ -39,7 +39,6 @@ public:
 	void Update(double deltaTime);
 
 private:
-	bool m_isActive;
 	int m_currFrame;
 	double m_elapsedTime;
 

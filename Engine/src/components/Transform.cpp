@@ -172,11 +172,15 @@ void TransformComponent::GetInfo(sComponentInfo& compInfoOut)
 	this->AddCompParInfo("position", "vec3", this->m_initialPosition, compInfoOut);
 	this->AddCompParInfo("scale", "float", this->GetScale(), compInfoOut);
 	this->AddCompParInfo("orientation", "vec3", this->GetOrientation(), compInfoOut);
+
+	this->Component::GetInfo(compInfoOut);
 }
 
 void TransformComponent::SetParameter(sParameterInfo& parameterIn)
 {
 	using namespace myutils;
+
+	this->Component::SetParameter(parameterIn);
 
 	if (parameterIn.parameterName == "position") {
 		this->SetPosition(parameterIn.parameterVec3Value);
