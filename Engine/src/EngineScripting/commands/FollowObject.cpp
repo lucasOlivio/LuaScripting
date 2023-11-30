@@ -2,6 +2,7 @@
 #include "EngineScripting/commands/MoveTo.h"
 #include "EngineScripting/CommandGroup.h"
 #include "common/utils.h"
+#include "common/utilsMat.h"
 #include "common/ParserJSON.h"
 
 FollowObject::FollowObject() : m_elapsedTime(0)
@@ -32,6 +33,10 @@ bool FollowObject::Initialize(SceneView* pScene, rapidjson::Value& document)
     isValid &= parser.GetFloat(objStep, m_timeStep);
     Value& objSpeed = document["maxSpeed"];
     isValid &= parser.GetFloat(objSpeed, m_maxSpeed);
+    Value& objDist = document["followDistance"];
+    isValid &= parser.GetFloat(objDist, m_followDistance);
+    Value& objOffset = document["offset"];
+    isValid &= parser.GetVec3(objOffset, m_offset);
     Value& objForever = document["followForever"];
     isValid &= parser.GetBool(objForever, m_followForever);
     Value& objEasyIn = document["easyIn"];
@@ -66,12 +71,12 @@ bool FollowObject::Update(double deltaTime)
         return true;
     }
 
+    ClearCommands();
     // Check last move status
     bool isAtTargetPosition = this->m_IsAtSamePosition();
-    if (m_elapsedTime > m_timeStep)
+    if (m_elapsedTime > m_timeStep && !isAtTargetPosition)
     {
         m_elapsedTime = 0;
-        ClearCommands();
         m_GenerateSubCommands();
     }
 
@@ -119,16 +124,29 @@ void FollowObject::m_GenerateSubCommands()
     this->CommandGroup::AddSerialCommand(pMove);
 }
 
+void FollowObject::m_UpdateTargetPosition()
+{
+    using namespace glm;
+    using namespace myutils;
+
+    vec3 currTargetPos = m_pTransformTarget->GetPosition();
+    vec3 currPos = m_pTransform->GetPosition();
+    
+    m_lastTargetPosition = currTargetPos + m_offset;
+}
+
 bool FollowObject::m_IsAtSamePosition()
 {
     using namespace glm;
 
-    m_lastTargetPosition = m_pTransformTarget->GetPosition();
+    m_UpdateTargetPosition();
 
     float distance = length(m_lastTargetPosition - m_pTransform->GetPosition());
 
-    if (distance <= 0.1)
+    if (distance <= m_followDistance)
     {
+        m_pForce->SetVelocity(glm::vec3(0));
+        m_pForce->SetAcceleration(glm::vec3(0));
         return true;
     }
 
