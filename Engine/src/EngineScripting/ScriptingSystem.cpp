@@ -64,6 +64,11 @@ void ScriptingSystem::Destroy()
     delete m_pCommandManager;
 }
 
+void ScriptingSystem::LoadScript(EntityID entityID, std::string scriptName)
+{
+    m_pLuaBrain->LoadScript(entityID, scriptName);
+}
+
 void ScriptingSystem::OnStart()
 {
     m_pLuaBrain->OnStart();

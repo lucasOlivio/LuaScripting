@@ -18,6 +18,7 @@ public:
 	bool Initialize(std::string baseScriptsPath, SceneView* pScene);
 	bool LoadScene(); 
 	void Destroy();
+	void LoadScript(EntityID entityID, std::string scriptName);
 
 	// Lua commands
 	void OnStart();

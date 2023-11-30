@@ -5,17 +5,17 @@ void ScriptComponent::GetInfo(sComponentInfo& compInfoOut)
     compInfoOut.componentName = "script";
     compInfoOut.componentParameters.clear();
 
-    this->AddCompParInfo("scriptName", "string", this->scriptName, compInfoOut);
+    AddCompParInfo("scriptName", "string", scriptName, compInfoOut);
 
-    this->Component::GetInfo(compInfoOut);
+    Component::GetInfo(compInfoOut);
 }
 
 void ScriptComponent::SetParameter(sParameterInfo& parameterIn)
 {
-    this->Component::SetParameter(parameterIn);
+    Component::SetParameter(parameterIn);
 
     if (parameterIn.parameterName == "scriptName") {
-        this->scriptName = parameterIn.parameterStrValue;
+        scriptName = parameterIn.parameterStrValue;
     }
 
     return;

@@ -1,6 +1,7 @@
 #include "scene/Scene.h"
 #include "components/Model.h"
 #include "components/Tag.h"
+#include "components/Script.h"
 #include "components/ComponentBuilder.h"
 
 Scene::Scene(iEvent* pKeyEvents, iEvent* pCollisionEvents)
@@ -72,6 +73,8 @@ EntityID Scene::CreateEntity(EntityID entityID, bool createAndActivate)
     {
         iComponent* pNewComp = compBuilder.BuildComponent(sCompInfo, newEntityID);
 
+        pNewComp->SetActive(createAndActivate);
+
         // Copy meshes info for models and animations too
         if (sCompInfo.componentName == "model")
         {
@@ -79,8 +82,6 @@ EntityID Scene::CreateEntity(EntityID entityID, bool createAndActivate)
             ModelComponent* pModelComp = (ModelComponent*)this->GetComponent(entityID, "model");
             pNewModelComp->SetMeshes(pModelComp->GetMeshes());
         }
-
-        pNewComp->SetActive(createAndActivate);
     }
 
     return newEntityID;

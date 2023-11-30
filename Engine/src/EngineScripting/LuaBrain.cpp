@@ -56,6 +56,11 @@ bool LuaBrain::LoadScene()
 		EntityID entityId = m_pScene->CurrentKey();
 		ScriptComponent* pScript = m_pScene->CurrentValue<ScriptComponent>();
 
+		if (!pScript->IsActive())
+		{
+			continue;
+		}
+
 		bool isLoaded = LoadScript(entityId, pScript->scriptName);
 		if (!isLoaded)
 		{
