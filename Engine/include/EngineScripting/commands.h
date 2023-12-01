@@ -6,3 +6,4 @@
 #include "commands/FollowCurve.h"
 #include "commands/FollowObject.h"
 #include "commands/DestroyEntity.h"
+#include "commands/CreateEntity.h"

@@ -68,10 +68,17 @@ function DestroyEntityCommand(entity)
     return Command:new("DestroyEntity", {entity = entity})
 end
 
+-- Create an entity copied from the "entity" parameter
+-- entity, entity id to create copy from
+function CreateEntityCommand(entity, position, orientation)
+    return Command:new("CreateEntity", {entity = entity, position = position, orientation = orientation})
+end
+
 return {
     MoveCommand = MoveCommand, 
     OrientCommand = OrientCommand, 
     FollowCurveCommand = FollowCurveCommand,
     FollowObjectCommand = FollowObjectCommand,
-    DestroyEntityCommand = DestroyEntityCommand
+    DestroyEntityCommand = DestroyEntityCommand,
+    CreateEntityCommand = CreateEntityCommand
 }

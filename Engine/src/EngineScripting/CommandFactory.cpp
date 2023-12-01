@@ -151,6 +151,10 @@ iCommand* CommandFactory::m_CreateFinalCommand(rapidjson::Value& command)
     {
         pCommand = new DestroyEntity();
     }
+    else if (name == "CreateEntity")
+    {
+        pCommand = new CreateEntity();
+    }
 
     if (!pCommand)
     {
