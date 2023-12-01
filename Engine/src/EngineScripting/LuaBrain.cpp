@@ -38,6 +38,8 @@ bool LuaBrain::Initialize(std::string baseScriptsPath)
 	lua_setglobal(m_pLuaState, "SendCommands");
 	lua_pushcfunction(m_pLuaState, lua_GetTransform);
 	lua_setglobal(m_pLuaState, "GetTransform");
+	lua_pushcfunction(m_pLuaState, lua_Action);
+	lua_setglobal(m_pLuaState, "Action");
 
 	return true;
 }

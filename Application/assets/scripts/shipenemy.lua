@@ -19,6 +19,17 @@ function onstart()
 end
 
 function update(deltatime)
+
+    if Action("shoot") then
+        x, y, z, rx, ry, rz, scale = GetTransform(entity)
+
+        local shootCommand = commands.CreateEntityCommand("missle", {x, y, z}, {rx, ry, rz})
+
+        local mainCommandGroup = CommandGroup:new("shootgroup")
+        mainCommandGroup:addCommand(shootCommand, false) 
+
+        commands.DispatchCommands(mainCommandGroup)
+    end
 end
 
 function oncollision(tagCollided)

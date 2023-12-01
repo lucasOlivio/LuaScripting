@@ -13,8 +13,6 @@ bool CreateEntity::Initialize(rapidjson::Value& document)
     using namespace rapidjson;
 
     std::string entity;
-    glm::vec3 m_position;
-    glm::vec3 m_orientation;
 
     bool isValid = true;
 

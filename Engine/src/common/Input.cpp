@@ -2,6 +2,14 @@
 #include "common/opengl.h"
 #include "Engine.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <map>
+
+// TODO: Action list should be in a separated config file
+std::map<std::string /* action name */,
+         int         /* input key */> 
+mapActionKey {
+    {"shoot", GLFW_KEY_SPACE}
+};
 
 sKeyInfo Input::m_keyInfo = sKeyInfo();
 sMouseInfo Input::m_mouseInfo = sMouseInfo();
@@ -33,6 +41,31 @@ bool Input::IsKeyPressed(const int key)
     int state = glfwGetKey(pWindow, static_cast<int32_t>(key));
 
     return state == GLFW_PRESS;
+}
+
+bool Input::IsActionKeyPressed(const char* action)
+{
+    int key = GetActionKey(action);
+
+    bool isActionPressed = IsKeyPressed(key);
+
+    if (isActionPressed)
+    {
+        return true;
+    }
+    return false;
+}
+
+int Input::GetActionKey(const char* action)
+{
+    std::map<std::string, int>::iterator it = mapActionKey.find(action);
+
+    if (it == mapActionKey.end())
+    {
+        return -1;
+    }
+
+    return it->second;
 }
 
 glm::vec2 Input::MousePosition()
@@ -97,16 +130,6 @@ int Input::GetKeyMods()
 int Input::GetMouseMods()
 {
     return m_mouseInfo.mods;
-}
-
-int Input::GetKeyAction()
-{
-    return m_keyInfo.action;
-}
-
-int Input::GetMouseAction()
-{
-    return m_mouseInfo.action;
 }
 
 sKeyInfo Input::GetKeyInfo()

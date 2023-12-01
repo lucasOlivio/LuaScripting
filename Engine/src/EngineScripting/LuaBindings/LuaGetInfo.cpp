@@ -1,6 +1,7 @@
 #include "EngineScripting/LuaBindings/LuaGetInfo.h"
 #include "scene/SceneView.h"
 #include "components.h"
+#include "common/Input.h"
 #include <glm/vec3.hpp>
 
 int lua_GetTransform(lua_State* L)
@@ -22,4 +23,15 @@ int lua_GetTransform(lua_State* L)
 	lua_pushnumber( L, scale );
 	
 	return 7;
+}
+
+int lua_Action(lua_State* L)
+{
+	const char* action = lua_tostring(L, 1);
+	
+	bool isAction = Input::IsActionKeyPressed(action);
+
+	lua_pushboolean(L, isAction);
+
+	return 1;
 }
