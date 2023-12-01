@@ -19,14 +19,6 @@ function onstart()
 end
 
 function update(deltatime)
-
-
-    local shootCommand = commands.CreateEntityCommand("missle", {deltatime, 0.0, 0.0}, {0.0, 0.0, 0.0})
-
-    local mainCommandGroup = CommandGroup:new("shootgroup")
-    mainCommandGroup:addCommand(shootCommand, false) 
-
-    commands.DispatchCommands(mainCommandGroup)
 end
 
 function oncollision(tagCollided)

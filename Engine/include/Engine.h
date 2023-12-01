@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene/Scene.h"
+#include "scene/SceneView.h"
 #include "scene/iSceneDirector.h"
 #include "EngineRenderer/Renderer.h"
 #include "EngineEditor/Editor.h"
@@ -80,8 +81,8 @@ protected:
 
 	Input* m_pInput;
 
-	// TODO: System runtime events like physics should be handled by the scene
 	Scene* m_pScene;
+	SceneView* m_pSceneView;
 
 	// Singleton
 	Engine();

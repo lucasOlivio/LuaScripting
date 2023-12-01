@@ -6,6 +6,7 @@
 #include "components/Model.h"
 #include "components/Collision.h"
 #include "components/Transform.h"
+#include "scene/SceneView.h"
 
 DebugSystem* DebugSystem::m_pInstance = nullptr;
 const int LINE_VERTEX_BUFFER_SIZE = 10'000;
@@ -19,11 +20,9 @@ DebugSystem* DebugSystem::Get()
 	return DebugSystem::m_pInstance;
 }
 
-bool DebugSystem::Initialize(SceneView* pScene, ShaderManager* pShaderManager, std::string baseModelsPath)
+bool DebugSystem::Initialize(ShaderManager* pShaderManager, std::string baseModelsPath)
 {
     using namespace myutils;
-
-    m_pScene = pScene;
 
     m_pShaderManager = pShaderManager;
     m_pVAOManager = new VAOManager(m_pShaderManager);
@@ -230,17 +229,17 @@ void DebugSystem::m_AddCollisions()
     const vec4 COLLISION_COLOR = RED;
 
     // Draw each collision accordingly
-    for (m_pScene->First("collision"); !m_pScene->IsDone(); m_pScene->Next())
+    for (SceneView::Get()->First("collision"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
     {
-        EntityID entityID = m_pScene->CurrentKey();
-        CollisionComponent* pCollision = m_pScene->CurrentValue<CollisionComponent>();
+        EntityID entityID = SceneView::Get()->CurrentKey();
+        CollisionComponent* pCollision = SceneView::Get()->CurrentValue<CollisionComponent>();
 
         if (!pCollision->IsActive())
         {
             continue;
         }
 
-        TransformComponent* pTransform = m_pScene->GetComponent<TransformComponent>(entityID, "transform");
+        TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(entityID, "transform");
 
         mat4 worldMat = pTransform->GetTransform();
 
@@ -270,11 +269,11 @@ void DebugSystem::m_AddNormals()
 
     const int NORMAL_SIZE = 10;
 
-    for (m_pScene->First("model"); !m_pScene->IsDone(); m_pScene->Next())
+    for (SceneView::Get()->First("model"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
     {
-        EntityID entityID = m_pScene->CurrentKey();
-        ModelComponent* pModel = m_pScene->CurrentValue<ModelComponent>();
-        TransformComponent* pTransform = m_pScene->GetComponent<TransformComponent>(entityID, "transform");
+        EntityID entityID = SceneView::Get()->CurrentKey();
+        ModelComponent* pModel = SceneView::Get()->CurrentValue<ModelComponent>();
+        TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(entityID, "transform");
 
         mat4 worldMat = pTransform->GetTransform();
         sMesh* pMesh = pModel->GetCurrentMesh();

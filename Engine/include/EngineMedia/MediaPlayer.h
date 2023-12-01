@@ -1,14 +1,13 @@
 #pragma once
 
-#include "scene/SceneView.h"
 #include "AudioManager.h"
+#include "common/types.h"
 #include <glm/mat4x4.hpp>
 
 class MediaPlayer
 {
 private:
 	AudioManager* m_pAudioManager;
-	SceneView* m_pSceneView;
 
 	//Singleton
 	MediaPlayer();
@@ -20,7 +19,7 @@ public:
 	static MediaPlayer* Get();
 
 	// Where we really start/destroy everything that could go wrong
-	bool Initialize(std::string baseAudiosPath, SceneView* pSceneView);
+	bool Initialize(std::string baseAudiosPath);
 	bool LoadScene();
 	bool LoadOcclusions();
 	bool LoadChannels();

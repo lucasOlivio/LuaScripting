@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scene/SceneView.h"
 #include <string>
 #include <rapidjson/document.h>
 
@@ -10,8 +9,7 @@ public:
 	SceneParserJSON();
 	~SceneParserJSON();
 
-	bool ParseFromJsonObj(rapidjson::Value& jsonObject, iScene* pSceneOut);
-	bool ParseToJsonObj(SceneView* pScene,
-						rapidjson::Value& jsonObjectOut,
+	bool ParseFromJsonObj(rapidjson::Value& jsonObject);
+	bool ParseToJsonObj(rapidjson::Value& jsonObjectOut,
 						rapidjson::Document::AllocatorType& allocator);
 };

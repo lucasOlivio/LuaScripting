@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common/types.h"
-#include "scene/SceneView.h"
 #include "scene/iSceneDirector.h"
 #include "events/KeyEvent.h"
 #include "events/MouseEvent.h"
@@ -15,7 +14,7 @@ class Editor : public iListener
 {
 public:
 	// ctors & dtors
-	Editor(KeyEvent* pKeyEvent, SceneView* pSceneView, iSceneDirector* pSceneDirector, WindowSystem* pWindow);
+	Editor(KeyEvent* pKeyEvent, iSceneDirector* pSceneDirector, WindowSystem* pWindow);
 	~Editor();
 
 	bool LoadScene();
@@ -52,7 +51,6 @@ private:
 	bool m_isRunning;
 	std::vector<sComponentInfo> m_vecCompInfos;
 
-	SceneView* m_pSceneView;
 	iSceneDirector* m_pSceneDirector;
 
 	// Flying camera

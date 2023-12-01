@@ -3,6 +3,7 @@
 #include "components/Texture.h"
 #include "components/Tiling.h"
 #include "components/Material.h"
+#include "scene/SceneView.h"
 #include <algorithm>
 
 Renderer::Renderer()
@@ -18,17 +19,15 @@ Renderer::~Renderer()
 }
 
 bool Renderer::Initialize(std::string baseModelsPath,
-	std::string baseTexturesPath,
-	ShaderManager* pShaderManager,
-	uint currShaderID,
-	SceneView* pSceneView)
+						  std::string baseTexturesPath,
+						  ShaderManager* pShaderManager,
+						  uint currShaderID)
 {
 	if (m_isInitialized)
 	{
 		return true;
 	}
 
-	m_pSceneView = pSceneView;
 	m_pShaderManager = pShaderManager;
 	m_currShaderID = currShaderID;
 
@@ -38,9 +37,9 @@ bool Renderer::Initialize(std::string baseModelsPath,
 	printf("Initializing engine renderer...\n");
 	// All systems that update info in shaders must have the shader info
 	// To set their respectives uniforms and attributes
-	m_pCameraSystem = new CameraSystem(pSceneView);
-	m_pModelSystem = new ModelSystem(m_pShaderManager, pSceneView);
-	m_pLightSystem = new LightSystem(m_pShaderManager, pSceneView);
+	m_pCameraSystem = new CameraSystem();
+	m_pModelSystem = new ModelSystem(m_pShaderManager);
+	m_pLightSystem = new LightSystem(m_pShaderManager);
 	m_pMaterialManager = new MaterialManager(baseTexturesPath);
 
 	m_isInitialized = true;
@@ -94,12 +93,12 @@ bool Renderer::LoadScene(std::string baseModelsPath)
 bool Renderer::LoadMaterials()
 {
 	printf("Loading materials...\n");
-	for (m_pSceneView->First("material"); !m_pSceneView->IsDone(); m_pSceneView->Next())
+	for (SceneView::Get()->First("material"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
 	{
-		EntityID entityId = m_pSceneView->CurrentKey();
-		MaterialComponent* pMaterial = m_pSceneView->CurrentValue<MaterialComponent>();
+		EntityID entityId = SceneView::Get()->CurrentKey();
+		MaterialComponent* pMaterial = SceneView::Get()->CurrentValue<MaterialComponent>();
 
-		bool isMaterialLoaded = m_pMaterialManager->LoadMaterial(m_pSceneView, pMaterial);
+		bool isMaterialLoaded = m_pMaterialManager->LoadMaterial(pMaterial);
 		if (!isMaterialLoaded)
 		{
 			CheckEngineError(("Not able to load " + pMaterial->materialName).c_str());
@@ -127,11 +126,11 @@ void Renderer::RenderAllModels(double deltaTime)
 
 	// TODO: Find a better way to manage these rendering components and the mesh parents thing, is too messy right now
 	// Render all "not transparent" models
-	for (m_pSceneView->First("model"); !m_pSceneView->IsDone(); m_pSceneView->Next())
+	for (SceneView::Get()->First("model"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
 	{
-		EntityID entityID = m_pSceneView->CurrentKey();
-		ModelComponent* pModel = m_pSceneView->CurrentValue<ModelComponent>();
-		TransformComponent* pTransform = m_pSceneView->GetComponent<TransformComponent>(entityID, "transform");
+		EntityID entityID = SceneView::Get()->CurrentKey();
+		ModelComponent* pModel = SceneView::Get()->CurrentValue<ModelComponent>();
+		TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(entityID, "transform");
 
 		if (!pModel->IsActive())
 		{
@@ -139,7 +138,7 @@ void Renderer::RenderAllModels(double deltaTime)
 		}
 
 		// Bind material
-		iComponent* pMaterialComp = m_pSceneView->GetComponentByTag(pModel->material, "material");
+		iComponent* pMaterialComp = SceneView::Get()->GetComponentByTag(pModel->material, "material");
 		if (pMaterialComp)
 		{
 			MaterialComponent* pMaterial = (MaterialComponent*)pMaterialComp;
@@ -164,10 +163,10 @@ void Renderer::RenderAllModels(double deltaTime)
 	for (TransformComponent* pTransform : vecTransparentEntities)
 	{
 		EntityID entityID = pTransform->GetEntityID();
-		ModelComponent* pModel = m_pSceneView->GetComponent<ModelComponent>(entityID, "model");
+		ModelComponent* pModel = SceneView::Get()->GetComponent<ModelComponent>(entityID, "model");
 
 		// Bind material
-		MaterialComponent* pMaterial = m_pSceneView->GetComponentByTag<MaterialComponent>(pModel->material, "material");
+		MaterialComponent* pMaterial = SceneView::Get()->GetComponentByTag<MaterialComponent>(pModel->material, "material");
 		m_pMaterialManager->BindMaterial(m_pShaderProgram, pMaterial, deltaTime);
 
 		RenderModel(entityID, pModel, pTransform, deltaTime);
@@ -180,7 +179,7 @@ void Renderer::RenderModel(EntityID entityID, ModelComponent* pModel,
 {
 	using namespace glm;
 
-	iComponent* pTilingComp = m_pSceneView->GetComponent(entityID, "tiling");
+	iComponent* pTilingComp = SceneView::Get()->GetComponent(entityID, "tiling");
 
 	// Default we only draw 1 time in each axis
 	vec3 axis = vec3(1.0);
@@ -212,7 +211,7 @@ void Renderer::RenderModel(EntityID entityID, ModelComponent* pModel,
 				mat4 transformMat = mat4(1.0);
 				if (pModel->parentTagName != "")
 				{
-					TransformComponent* parentTransform = m_pSceneView->GetComponentByTag<TransformComponent>(pModel->parentTagName, "transform");
+					TransformComponent* parentTransform = SceneView::Get()->GetComponentByTag<TransformComponent>(pModel->parentTagName, "transform");
 
 					transformMat = parentTransform->GetTransformNoScale();
 				}

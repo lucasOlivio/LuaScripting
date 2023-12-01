@@ -1,6 +1,8 @@
 #pragma once
 
 #include "EngineScripting/commands/Command.h"
+#include "common/types.h"
+#include <glm/vec3.hpp>
 
 class CreateEntity : public Command
 {
@@ -8,7 +10,7 @@ public:
 	CreateEntity();
 	virtual ~CreateEntity() {};
 
-	virtual bool Initialize(SceneView* pScene, rapidjson::Value& document);
+	bool Initialize(rapidjson::Value& document);
 
 	// Called every frame/step:
 	// Returns true when command is done
@@ -20,7 +22,6 @@ public:
 
 	virtual bool PostEnd(void);
 private:
-	SceneView* m_pScene;
 	EntityID m_entityID;        // Entity copy to create from
 
 	glm::vec3 m_position;

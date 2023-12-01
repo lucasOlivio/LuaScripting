@@ -2,6 +2,8 @@
 #include "components/Script.h"
 #include "common/utils.h"
 #include "EngineScripting/luaBindings/LuaCommandDispatcher.h"
+#include "EngineScripting/luaBindings/LuaGetInfo.h"
+#include "scene/SceneView.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -22,10 +24,9 @@ LuaBrain* LuaBrain::Get()
 	return LuaBrain::m_pInstance;
 }
 
-bool LuaBrain::Initialize(std::string baseScriptsPath, SceneView* pScene)
+bool LuaBrain::Initialize(std::string baseScriptsPath)
 {
 	m_baseScriptsPath = baseScriptsPath;
-	m_pScene = pScene;
 
 	// Create new Lua state.
 	m_pLuaState = luaL_newstate();
@@ -35,6 +36,8 @@ bool LuaBrain::Initialize(std::string baseScriptsPath, SceneView* pScene)
 	// Bind Lua integration functions
 	lua_pushcfunction(m_pLuaState, lua_SendCommands);
 	lua_setglobal(m_pLuaState, "SendCommands");
+	lua_pushcfunction(m_pLuaState, lua_GetTransform);
+	lua_setglobal(m_pLuaState, "GetTransform");
 
 	return true;
 }
@@ -51,10 +54,10 @@ bool LuaBrain::LoadScene()
 	printf("Loading scripts...\n");
 	
 	// Lua functions bindings
-	for (m_pScene->First("script"); !m_pScene->IsDone(); m_pScene->Next())
+	for (SceneView::Get()->First("script"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
 	{
-		EntityID entityId = m_pScene->CurrentKey();
-		ScriptComponent* pScript = m_pScene->CurrentValue<ScriptComponent>();
+		EntityID entityId = SceneView::Get()->CurrentKey();
+		ScriptComponent* pScript = SceneView::Get()->CurrentValue<ScriptComponent>();
 
 		if (!pScript->IsActive())
 		{

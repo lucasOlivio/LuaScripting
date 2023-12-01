@@ -56,7 +56,7 @@ void CommandGroup::AddParallelCommand(iCommand* pTheCommand)
 	return;
 }
 
-bool CommandGroup::Initialize(SceneView* pScene, rapidjson::Value& document)
+bool CommandGroup::Initialize(rapidjson::Value& document)
 {
 	this->Command::Initialize();
 

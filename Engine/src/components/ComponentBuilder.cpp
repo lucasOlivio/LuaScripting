@@ -1,8 +1,8 @@
 #include "components/ComponentBuilder.h"
 #include "components.h"
+#include "scene/Scene.h"
 
-ComponentBuilder::ComponentBuilder(iScene* pScene)
-	: m_pScene(pScene)
+ComponentBuilder::ComponentBuilder()
 {
 }
 
@@ -78,7 +78,7 @@ iComponent* ComponentBuilder::BuildComponent(sComponentInfo& componentInfo, Enti
 	{
 		newComponent->SetParameter(parameter);
 	}
-	this->m_pScene->SetComponent(entityID, componentInfo.componentName, newComponent);
+	Scene::Get()->SetComponent(entityID, componentInfo.componentName, newComponent);
 
 	return newComponent;
 }

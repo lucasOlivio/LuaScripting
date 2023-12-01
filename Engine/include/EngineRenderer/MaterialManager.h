@@ -1,7 +1,6 @@
 #pragma once
 
 #include "TextureManager/cBasicTextureManager.h"
-#include "scene/SceneView.h"
 #include "components/Material.h"
 #include "ShaderManager.h"
 
@@ -12,7 +11,7 @@ public:
 	~MaterialManager();
 	
 	// Load material textures
-	bool LoadMaterial(SceneView* pScene, MaterialComponent* pMaterial);
+	bool LoadMaterial(MaterialComponent* pMaterial);
 
 	void BindMaterial(ShaderManager::ShaderProgram* pShaderProgram, MaterialComponent* pMaterial, double deltatime);
 	void UnbindMaterials(ShaderManager::ShaderProgram* pShaderProgram);
@@ -25,5 +24,5 @@ private:
 	std::string m_currMaterial;
 
 	// Load bitmap texture from file using texture manager
-	TextureComponent* m_LoadTexture(SceneView* pScene, std::string textureName);
+	TextureComponent* m_LoadTexture(std::string textureName);
 };

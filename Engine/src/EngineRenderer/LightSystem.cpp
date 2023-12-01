@@ -2,12 +2,12 @@
 #include "components/Light.h"
 #include "components/Transform.h"
 #include "common/utilsMat.h"
+#include "scene/SceneView.h"
 #include <glm/gtc/quaternion.hpp>
 
-LightSystem::LightSystem(iShaderInfo* pShaderInfo, SceneView* pSceneView)
+LightSystem::LightSystem(iShaderInfo* pShaderInfo)
 {
     m_pShaderInfo = pShaderInfo;
-    m_pSceneView = pSceneView;
 }
 
 LightSystem::~LightSystem()
@@ -19,11 +19,11 @@ bool LightSystem::Initialize(int shaderID)
     printf("Setting up lights...\n");
     // Go over each lights setting the ULs and initializing them
     int lightIndex = 0;
-    for (m_pSceneView->First("light"); !m_pSceneView->IsDone(); m_pSceneView->Next())
+    for (SceneView::Get()->First("light"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
     {
         std::string ulBasePath = "theLights[" + std::to_string(lightIndex) + "].";
 
-        LightComponent* pLight = m_pSceneView->CurrentValue<LightComponent>();
+        LightComponent* pLight = SceneView::Get()->CurrentValue<LightComponent>();
         pLight->SetupLight(shaderID, ulBasePath);
         lightIndex++;
     }
@@ -36,10 +36,10 @@ void LightSystem::Update(double deltatime)
     using namespace glm;
 
     // Set lights to transform position of entity
-    for (m_pSceneView->First("light"); !m_pSceneView->IsDone(); m_pSceneView->Next())
+    for (SceneView::Get()->First("light"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
     {
-        LightComponent* pLight = m_pSceneView->CurrentValue<LightComponent>();
-        TransformComponent* pTransform = m_pSceneView->GetComponent<TransformComponent>(pLight->GetEntityID(),
+        LightComponent* pLight = SceneView::Get()->CurrentValue<LightComponent>();
+        TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(pLight->GetEntityID(),
                                                                                        "transform");
 
         // Light direction temporary just relative to the angle the transform is facing

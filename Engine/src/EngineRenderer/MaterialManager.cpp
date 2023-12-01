@@ -2,6 +2,7 @@
 #include "common/utils.h"
 #include "components/Texture.h"
 #include "common/constants.h"
+#include "scene/SceneView.h"
 
 MaterialManager::MaterialManager(std::string baseTexturesPath)
 {
@@ -14,7 +15,7 @@ MaterialManager::~MaterialManager()
 	delete m_pTextureManager;
 }
 
-bool MaterialManager::LoadMaterial(SceneView* pScene, MaterialComponent* pMaterial)
+bool MaterialManager::LoadMaterial(MaterialComponent* pMaterial)
 {
 	using namespace std;
 
@@ -23,7 +24,7 @@ bool MaterialManager::LoadMaterial(SceneView* pScene, MaterialComponent* pMateri
 	for (std::string textureName : pMaterial->colorTextures)
 	{
 		// Bind texture component
-		TextureComponent* pTexture = m_LoadTexture(pScene, textureName);
+		TextureComponent* pTexture = m_LoadTexture(textureName);
 		if (pTexture == nullptr)
 		{
 			return false;
@@ -35,7 +36,7 @@ bool MaterialManager::LoadMaterial(SceneView* pScene, MaterialComponent* pMateri
 	// Load heightmap texture
 	if (pMaterial->useHeightMap)
 	{
-		TextureComponent* pTexture = m_LoadTexture(pScene, pMaterial->heightMapTexture);
+		TextureComponent* pTexture = m_LoadTexture(pMaterial->heightMapTexture);
 		if (pTexture == nullptr)
 		{
 			return false;
@@ -47,7 +48,7 @@ bool MaterialManager::LoadMaterial(SceneView* pScene, MaterialComponent* pMateri
 	// Load normal texture
 	if (pMaterial->useNormalTexture)
 	{
-		TextureComponent* pTexture = m_LoadTexture(pScene, pMaterial->normalTexture);
+		TextureComponent* pTexture = m_LoadTexture(pMaterial->normalTexture);
 		if (pTexture == nullptr)
 		{
 			return false;
@@ -59,7 +60,7 @@ bool MaterialManager::LoadMaterial(SceneView* pScene, MaterialComponent* pMateri
 	// Load specular texture
 	if (pMaterial->useSpecularTexture)
 	{
-		TextureComponent* pTexture = m_LoadTexture(pScene, pMaterial->specularTexture);
+		TextureComponent* pTexture = m_LoadTexture(pMaterial->specularTexture);
 		if (pTexture == nullptr)
 		{
 			return false;
@@ -71,7 +72,7 @@ bool MaterialManager::LoadMaterial(SceneView* pScene, MaterialComponent* pMateri
 	// Load discard texture
 	if (pMaterial->useDiscardTexture)
 	{
-		TextureComponent* pTexture = m_LoadTexture(pScene, pMaterial->discardTexture);
+		TextureComponent* pTexture = m_LoadTexture(pMaterial->discardTexture);
 		if (pTexture == nullptr)
 		{
 			return false;
@@ -83,7 +84,7 @@ bool MaterialManager::LoadMaterial(SceneView* pScene, MaterialComponent* pMateri
 	// Load cube texture
 	if (pMaterial->useCubeTexture)
 	{
-		TextureComponent* pTexture = m_LoadTexture(pScene, pMaterial->cubeTexture);
+		TextureComponent* pTexture = m_LoadTexture(pMaterial->cubeTexture);
 		if (pTexture == nullptr)
 		{
 			return false;
@@ -198,10 +199,10 @@ void MaterialManager::UpdateOffset(ShaderManager::ShaderProgram* pShaderProgram,
 	pShaderProgram->SetUniformVec2("UVOffset", pMaterial->currOffset);
 }
 
-TextureComponent* MaterialManager::m_LoadTexture(SceneView* pScene, std::string textureName)
+TextureComponent* MaterialManager::m_LoadTexture(std::string textureName)
 {
 	// Bind texture component
-	TextureComponent* pTexture = pScene->GetComponentByTag<TextureComponent>(textureName, "texture");
+	TextureComponent* pTexture = SceneView::Get()->GetComponentByTag<TextureComponent>(textureName, "texture");
 
 	bool isLoaded;
 	std::string errorMsg = "";

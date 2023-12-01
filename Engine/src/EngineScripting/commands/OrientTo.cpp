@@ -1,13 +1,14 @@
 #include "EngineScripting/commands/OrientTo.h"
 #include "common/utils.h"
 #include "common/ParserJSON.h"
+#include "scene/SceneView.h"
 
 OrientTo::OrientTo() :
     m_elapsedTime(0), m_currPhase(ePhase::STARTUP)
 {
 }
 
-bool OrientTo::Initialize(SceneView* pScene, rapidjson::Value& document)
+bool OrientTo::Initialize(rapidjson::Value& document)
 {
     using namespace rapidjson;
     using namespace myutils;
@@ -42,8 +43,8 @@ bool OrientTo::Initialize(SceneView* pScene, rapidjson::Value& document)
         return false;
     }
 
-    m_pTransform = pScene->GetComponentByTag<TransformComponent>(entity, "transform");
-    m_pForce = pScene->GetComponentByTag<ForceComponent>(entity, "force");
+    m_pTransform = SceneView::Get()->GetComponentByTag<TransformComponent>(entity, "transform");
+    m_pForce = SceneView::Get()->GetComponentByTag<ForceComponent>(entity, "force");
 
     // Calculate time phases
     m_easyInTime = easyIn * m_time;

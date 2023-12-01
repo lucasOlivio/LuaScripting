@@ -2,7 +2,6 @@
 
 #include "common/types.h"
 #include "EngineScripting/commands/Command.h"
-#include "scene/SceneView.h"
 #include "components/Transform.h"
 #include "components/Force.h"
 #include <glm/vec3.hpp>
@@ -13,7 +12,7 @@ public:
 	MoveTo();
 	virtual ~MoveTo() {};
 
-	virtual bool Initialize(SceneView* pScene, rapidjson::Value& document);
+	virtual bool Initialize(rapidjson::Value& document);
 	// For subcommands initialization, avoids searching scene every time
 	void Initialize(TransformComponent* pTransform, ForceComponent* pForce, glm::vec3 location, float time);
 	void Initialize(TransformComponent* pTransform, ForceComponent* pForce, glm::vec3 location, glm::vec3 maxSpeed);

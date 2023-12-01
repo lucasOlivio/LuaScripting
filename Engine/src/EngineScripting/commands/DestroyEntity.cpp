@@ -1,16 +1,16 @@
 #include "EngineScripting/commands/DestroyEntity.h"
 #include "common/ParserJSON.h"
 #include "components/Transform.h"
+#include "scene/Scene.h"
+#include "scene/SceneView.h"
 
 DestroyEntity::DestroyEntity()
 {
 }
 
-bool DestroyEntity::Initialize(SceneView* pScene, rapidjson::Value& document)
+bool DestroyEntity::Initialize(rapidjson::Value& document)
 {
     using namespace rapidjson;
-
-    m_pScene = pScene;
 
     std::string entity;
     bool isValid = true;
@@ -24,7 +24,7 @@ bool DestroyEntity::Initialize(SceneView* pScene, rapidjson::Value& document)
     Value& objEntt = document["entity"];
     isValid &= parser.GetString(objEntt, entity);
 
-    m_entityID = pScene->GetEntityByTag(entity);
+    m_entityID = SceneView::Get()->GetEntityByTag(entity);
 
     return true;
 }
@@ -32,7 +32,7 @@ bool DestroyEntity::Initialize(SceneView* pScene, rapidjson::Value& document)
 bool DestroyEntity::Update(double deltaTime)
 {
     // Delete entity
-    m_pScene->DeleteEntity(m_entityID);
+    Scene::Get()->DeleteEntity(m_entityID);
 
     return true;
 }

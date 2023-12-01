@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
-    <ClCompile Include="src\EngineScripting\commands\LuaGetInfo.cpp" />
+    <ClCompile Include="src\EngineScripting\LuaBindings\LuaGetInfo.cpp" />
     <ClCompile Include="src\EngineScripting\commands\CreateEntity.cpp" />
     <ClCompile Include="src\EngineScripting\commands\DestroyEntity.cpp" />
     <ClCompile Include="src\EngineScripting\commands\Command.cpp" />
@@ -162,7 +162,6 @@
     <ClInclude Include="include\events\GLFWWrapper.h" />
     <ClInclude Include="include\common\iConfigReadWrite.h" />
     <ClInclude Include="include\common\ParserJSON.h" />
-    <ClInclude Include="include\scene\iScene.h" />
     <ClInclude Include="include\scene\iSceneDirector.h" />
     <ClInclude Include="include\scene\Scene.h" />
     <ClInclude Include="include\scene\SceneParserJSON.h" />

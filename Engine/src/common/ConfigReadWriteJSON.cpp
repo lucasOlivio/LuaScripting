@@ -1,6 +1,7 @@
 #include "common/ConfigReadWriteJSON.h"
 #include "common/constants.h"
 #include "scene/SceneParserJSON.h"
+#include "scene/Scene.h"
 #include "common/utils.h"
 #include <rapidjson/document.h>
 #include <rapidjson/filereadstream.h>
@@ -17,7 +18,7 @@ ConfigReadWriteJSON::~ConfigReadWriteJSON()
 {
 }
 
-bool ConfigReadWriteJSON::ReadScene(const std::string& filePath, iScene* pScene)
+bool ConfigReadWriteJSON::ReadScene(const std::string& filePath)
 {
     using namespace rapidjson;
 
@@ -43,7 +44,7 @@ bool ConfigReadWriteJSON::ReadScene(const std::string& filePath, iScene* pScene)
 
     // Parse scene and load into structure
     SceneParserJSON sceneParser = SceneParserJSON();
-    bool isParsed = sceneParser.ParseFromJsonObj(doc, pScene);
+    bool isParsed = sceneParser.ParseFromJsonObj(doc);
     if (!isParsed)
     {
         std::string errorMsg = "Error parsing file '" + filePath + "'";
@@ -54,7 +55,7 @@ bool ConfigReadWriteJSON::ReadScene(const std::string& filePath, iScene* pScene)
     return true;
 }
 
-bool ConfigReadWriteJSON::WriteScene(const std::string& filePath, SceneView* pScene)
+bool ConfigReadWriteJSON::WriteScene(const std::string& filePath)
 {
     using namespace rapidjson;
 
@@ -67,7 +68,7 @@ bool ConfigReadWriteJSON::WriteScene(const std::string& filePath, SceneView* pSc
 
     // Call the function to convert the iScene to a JSON document
     SceneParserJSON sceneParser = SceneParserJSON();
-    bool isParsed = sceneParser.ParseToJsonObj(pScene, doc, allocator);
+    bool isParsed = sceneParser.ParseToJsonObj(doc, allocator);
     if (!isParsed)
     {
         std::string errorMsg = "Error parsing file '" + filePath + "'";

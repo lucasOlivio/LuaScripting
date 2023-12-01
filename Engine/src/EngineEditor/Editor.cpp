@@ -6,6 +6,8 @@
 #include "common/constants.h"
 #include "common/Input.h"
 #include "EngineDebug/DebugSystem.h"
+#include "scene/SceneView.h"
+#include "scene/Scene.h"
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
@@ -15,8 +17,8 @@ int changeStepInt      = 1;
 
 DebugSystem* pDebug = DebugSystem::Get();
 
-Editor::Editor(KeyEvent* pKeyEvent, SceneView* pSceneView, iSceneDirector* pSceneDirector, WindowSystem* pWindow)
-			: m_pSceneView(pSceneView), m_pSceneDirector(pSceneDirector), m_pWindow(pWindow)
+Editor::Editor(KeyEvent* pKeyEvent, iSceneDirector* pSceneDirector, WindowSystem* pWindow)
+			: m_pSceneDirector(pSceneDirector), m_pWindow(pWindow)
 {
 	pKeyEvent->Attach(this);
 
@@ -49,9 +51,9 @@ void Editor::RedrawEntityUI()
 	system("cls");
 	printf("Editor / Play mode: P\n");
 
-	m_vecCompInfos = m_pSceneView->GetComponentsInfo(m_selectedEntity);
+	m_vecCompInfos = Scene::Get()->GetComponentsInfo(m_selectedEntity);
 	sComponentInfo componentInfo = m_vecCompInfos[m_selectedComponent];
-	TagComponent* pTag = m_pSceneView->GetComponent<TagComponent>(m_selectedEntity, "tag");
+	TagComponent* pTag = SceneView::Get()->GetComponent<TagComponent>(m_selectedEntity, "tag");
 
 	printf("Select entity: PAGE_UP/PAGE_DOWN\n");
 	printf("Select component: ARROW_RIGHT/ARROW_LEFT\n");
@@ -123,9 +125,9 @@ void Editor::RedrawEntityUI()
 		}
 		else
 		{
-			printf("warning '%s' of unkown type '%s'\n", 
-					parameterInfo.parameterName.c_str(), 
-					parameterInfo.parameterType.c_str());
+			printf("warning '%s' of unkown type '%s'\n",
+				parameterInfo.parameterName.c_str(),
+				parameterInfo.parameterType.c_str());
 		}
 	}
 
@@ -143,9 +145,9 @@ void Editor::DrawSelectedEntity()
 	int gizmoSize = 25;
 
 	// Bounding box and gizmo to selected element
-	iComponent* pModelComp = m_pSceneView->GetComponent(m_selectedEntity, "model");
+	iComponent* pModelComp = SceneView::Get()->GetComponent(m_selectedEntity, "model");
 
-	TransformComponent* pTransform = m_pSceneView->GetComponent<TransformComponent>(m_selectedEntity, "transform");
+	TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(m_selectedEntity, "transform");
 
 	if (pModelComp != nullptr)
 	{
@@ -176,15 +178,15 @@ void Editor::DrawSelectedEntity()
 
 bool Editor::LoadScene()
 {
-	m_pTransformCamera = m_pSceneView->GetComponentByTag<TransformComponent>("camera", "transform");
-	m_pCamera = m_pSceneView->GetComponentByTag<CameraComponent>("camera", "camera");
-	m_vecCompInfos = m_pSceneView->GetComponentsInfo(m_selectedEntity);
+	m_pTransformCamera = SceneView::Get()->GetComponentByTag<TransformComponent>("camera", "transform");
+	m_pCamera = SceneView::Get()->GetComponentByTag<CameraComponent>("camera", "camera");
+	m_vecCompInfos = Scene::Get()->GetComponentsInfo(m_selectedEntity);
 
 	return true;
 }
 
 void Editor::Update(double deltaTime)
-{	
+{
 	MouseActions();
 	MoveCamera(deltaTime);
 
@@ -216,8 +218,8 @@ void Editor::SetRunning(bool isRunning)
 {
 	if (isRunning)
 	{
-		m_pTransformCamera = m_pSceneView->GetComponentByTag<TransformComponent>("camera", "transform");
-		m_pCamera = m_pSceneView->GetComponentByTag<CameraComponent>("camera", "camera");
+		m_pTransformCamera = SceneView::Get()->GetComponentByTag<TransformComponent>("camera", "transform");
+		m_pCamera = SceneView::Get()->GetComponentByTag<CameraComponent>("camera", "camera");
 	}
 
 	m_isRunning = isRunning;
@@ -275,8 +277,8 @@ bool Editor::KeyActions(sKeyInfo keyInfo)
 	{
 		m_pSceneDirector->LoadScene();
 
-		m_pTransformCamera = m_pSceneView->GetComponentByTag<TransformComponent>("camera", "transform");
-		m_pCamera = m_pSceneView->GetComponentByTag<CameraComponent>("camera", "camera");
+		m_pTransformCamera = SceneView::Get()->GetComponentByTag<TransformComponent>("camera", "transform");
+		m_pCamera = SceneView::Get()->GetComponentByTag<CameraComponent>("camera", "camera");
 		return true;
 	}
 
@@ -373,7 +375,7 @@ bool Editor::KeyActions(sKeyInfo keyInfo)
 		// Duplicate entity
 		if (keyInfo.pressedKey == GLFW_KEY_D && (keyInfo.action == GLFW_PRESS))
 		{
-			m_pSceneView->CreateEntity(m_selectedEntity);
+			Scene::Get()->CreateEntity(m_selectedEntity);
 			return true;
 		}
 	}
@@ -456,7 +458,7 @@ void Editor::ChangeSelected(int& selected, int orientation, int count)
 
 void Editor::ChangeSelectedEntity(int orientation)
 {
-	int maxEntities = (int)m_pSceneView->GetNumEntities();
+	int maxEntities = (int)Scene::Get()->GetNumEntities();
 	ChangeSelected(m_selectedEntity, orientation, maxEntities);
 	m_selectedComponent = 0;
 	m_selectedParameter = 0;
@@ -561,7 +563,7 @@ void Editor::ModifySelectedParameter(int axis, int orientation)
 
 	sComponentInfo compInfo = m_vecCompInfos[m_selectedComponent];
 	sParameterInfo paramInfo = compInfo.componentParameters[m_selectedParameter];
-	
+
 	if (paramInfo.parameterType == "string")
 	{
 		// TODO: Been able to change models at name changes etc.
@@ -571,7 +573,7 @@ void Editor::ModifySelectedParameter(int axis, int orientation)
 	// Make sure we don't overstep
 	orientation = Sign(orientation);
 
-	if (paramInfo.parameterType == "int" || 
+	if (paramInfo.parameterType == "int" ||
 		paramInfo.parameterType == "bool" ||
 		paramInfo.parameterType == "float")
 	{
@@ -606,8 +608,8 @@ void Editor::ModifySelectedParameter(int axis, int orientation)
 		m_ModifySelected(paramInfo.parameterVecFloatValue, orientation, axis);
 	}
 
-	iComponent* pComponent = m_pSceneView->GetComponent<iComponent>(m_selectedEntity, 
-																		  compInfo.componentName);
+	iComponent* pComponent = SceneView::Get()->GetComponent<iComponent>(m_selectedEntity,
+		compInfo.componentName);
 	pComponent->SetParameter(paramInfo);
 
 	return;
@@ -620,7 +622,7 @@ void Editor::MoveCamera(double deltaTime)
 	vec3 cameraPosition = m_pTransformCamera->GetPosition();
 	vec3 cameraRotation = m_pTransformCamera->GetOrientation();
 	vec3 cameraUpVector = m_pCamera->upVector;
-	
+
 	vec3 cameraFront = normalize(m_pCamera->GetCameraFront(cameraPosition, cameraRotation));
 	vec3 cameraSides = normalize(cross(cameraFront, m_pCamera->upVector));
 	vec3 moveOffset = vec3(0.0f);
@@ -704,7 +706,7 @@ void Editor::SetParameterManually(int axis)
 		paramInfo.parameterVec4Value[axis] = std::stof(value);
 	}
 
-	iComponent* pComponent = m_pSceneView->GetComponent<iComponent>(m_selectedEntity,
+	iComponent* pComponent = SceneView::Get()->GetComponent<iComponent>(m_selectedEntity,
 		compInfo.componentName);
 	pComponent->SetParameter(paramInfo);
 }

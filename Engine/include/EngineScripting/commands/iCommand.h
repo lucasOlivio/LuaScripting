@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scene/SceneView.h"
 #include <string>
 #include <rapidjson/document.h>
 
@@ -13,7 +12,7 @@ public:
 	// should be able to receive n args of variable types without this coupling
 	// 
 	// Get all variables needed for the command from the json object
-	virtual bool Initialize(SceneView* pScene, rapidjson::Value& document) = 0;
+	virtual bool Initialize(rapidjson::Value& document) = 0;
 
 	/**
 	 * Called every frame/step

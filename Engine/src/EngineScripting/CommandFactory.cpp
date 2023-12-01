@@ -6,8 +6,7 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
-CommandFactory::CommandFactory(SceneView* pScene) :
-    m_pScene(pScene)
+CommandFactory::CommandFactory()
 {
 }
 
@@ -85,7 +84,7 @@ iCommand* CommandFactory::m_DeserializeCommand(rapidjson::Value& document, uint1
     // Should be a command group then
     CommandGroup* pCommandGroup = new CommandGroup();
 
-    pCommandGroup->Initialize(m_pScene, document);
+    pCommandGroup->Initialize(document);
 
     if (rootUUID > 0)
     {
@@ -161,7 +160,7 @@ iCommand* CommandFactory::m_CreateFinalCommand(rapidjson::Value& command)
         return nullptr;
     }
 
-    bool isValid = pCommand->Initialize(m_pScene, args);
+    bool isValid = pCommand->Initialize(args);
 
     if (!isValid)
     {

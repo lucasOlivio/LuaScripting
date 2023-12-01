@@ -1,16 +1,16 @@
 #include "EngineScripting/commands/CreateEntity.h"
 #include "common/ParserJSON.h"
 #include "components/Transform.h"
+#include "scene/Scene.h"
+#include "scene/SceneView.h"
 
 CreateEntity::CreateEntity()
 {
 }
 
-bool CreateEntity::Initialize(SceneView* pScene, rapidjson::Value& document)
+bool CreateEntity::Initialize(rapidjson::Value& document)
 {
     using namespace rapidjson;
-
-    m_pScene = pScene;
 
     std::string entity;
     glm::vec3 m_position;
@@ -31,18 +31,18 @@ bool CreateEntity::Initialize(SceneView* pScene, rapidjson::Value& document)
     Value& objOrient = document["orientation"];
     isValid &= parser.GetVec3(objOrient, m_orientation);
 
-    m_entityID = pScene->GetEntityByTag(entity);
+    m_entityID = SceneView::Get()->GetEntityByTag(entity);
 
-    return true;
+    return isValid;
 }
 
 bool CreateEntity::Update(double deltaTime)
 {
     // Create the entity
-    EntityID newEntity = m_pScene->CreateEntity(m_entityID);
+    EntityID newEntity = Scene::Get()->CreateEntity(m_entityID);
 
     // Set transform parameters
-    TransformComponent* pTransform = m_pScene->GetComponent<TransformComponent>(newEntity, "transform");
+    TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(newEntity, "transform");
 
     pTransform->SetPosition(m_position);
     pTransform->SetOrientation(m_orientation);

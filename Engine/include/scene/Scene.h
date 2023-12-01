@@ -1,13 +1,12 @@
 #pragma once
 
-#include "scene/SceneView.h"
 #include "components/iComponent.h"
 #include "events/iEvent.h"
 #include "common/types.h"
 #include <map>
 #include <string>
 
-class Scene : public SceneView
+class Scene
 {
 public:
 	~Scene();
@@ -37,8 +36,6 @@ public:
 	// Get the vector for the respective component
 	virtual bool GetMapComponents(std::string componentName, std::map<EntityID, iComponent*>& componentsOut);
 
-	// Get an entity from the scene by its tag name
-	virtual EntityID GetEntity(std::string tagName);
 	// Get a component from the scene by its entity id and component name
 	virtual iComponent* GetComponent(EntityID entityID, std::string componentName);
 	// Set a component to the entity by its entity id and component name
@@ -57,9 +54,6 @@ private:
 		std::map<EntityID, iComponent*>> m_components;
 
 	bool m_isPlaying;
-
-	iEvent* m_pKeyEvents;
-	iEvent* m_pCollisionEvents;
 
 	// Components and listeners that were already deleted and are waiting end of frame to 
 	// be completely removed

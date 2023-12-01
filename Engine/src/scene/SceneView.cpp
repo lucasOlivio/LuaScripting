@@ -1,5 +1,8 @@
 #include "scene/SceneView.h"
 #include "components/Tag.h"
+#include "scene/Scene.h"
+
+SceneView* SceneView::m_pInstance = nullptr;
 
 SceneView::SceneView()
 {
@@ -11,9 +14,18 @@ SceneView::~SceneView()
 {
 }
 
+SceneView* SceneView::Get()
+{
+	if (SceneView::m_pInstance == nullptr)
+	{
+		SceneView::m_pInstance = new SceneView();
+	}
+	return SceneView::m_pInstance;
+}
+
 void SceneView::First(std::string componentName)
 {
-	bool hasComponent = GetMapComponents(componentName, m_map);
+	bool hasComponent = Scene::Get()->GetMapComponents(componentName, m_map);
 	if (hasComponent)
 	{
 		m_currIterator = m_map.begin();
@@ -51,7 +63,7 @@ EntityID SceneView::CurrentKey()
 int SceneView::GetNumComponents(std::string componentName)
 {
 	std::map<EntityID, iComponent*> mapComponents;
-	GetMapComponents(componentName, mapComponents);
+	Scene::Get()->GetMapComponents(componentName, mapComponents);
 	return (int)mapComponents.size();
 }
 
@@ -65,7 +77,7 @@ int SceneView::GetEntityByTag(std::string tagName)
 
 	// Tag not in cache yet, so add it
 	std::map<EntityID, iComponent*> mapTags;
-	GetMapComponents("tag", mapTags);
+	Scene::Get()->GetMapComponents("tag", mapTags);
 	for (std::pair<EntityID, iComponent*> pairTag : mapTags)
 	{
 		TagComponent* pTag = (TagComponent*)pairTag.second;
@@ -93,11 +105,5 @@ iComponent* SceneView::GetComponentByTag(std::string tagName, std::string compon
 
 iComponent* SceneView::GetComponent(EntityID entityID, std::string componentName)
 {
-	auto entity = m_map.find(entityID);
-	if (entity == m_map.end())
-	{
-		return nullptr;
-	}
-
-	return entity->second;
+	return Scene::Get()->GetComponent(entityID, componentName);
 }

@@ -22,15 +22,14 @@ ScriptingSystem* ScriptingSystem::Get()
     return ScriptingSystem::m_pInstance;
 }
 
-bool ScriptingSystem::Initialize(std::string baseScriptsPath, SceneView* pScene)
+bool ScriptingSystem::Initialize(std::string baseScriptsPath)
 {
-    m_pScene = pScene;
-    m_pCommandFactory = new CommandFactory(m_pScene);
+    m_pCommandFactory = new CommandFactory();
 
     // Initializes lua settings 
     m_pLuaBrain = LuaBrain::Get();
 
-    bool isLuaInit = m_pLuaBrain->Initialize(baseScriptsPath, m_pScene);
+    bool isLuaInit = m_pLuaBrain->Initialize(baseScriptsPath);
     if (!isLuaInit)
     {
         CheckEngineError("Engine lua brain initialization");

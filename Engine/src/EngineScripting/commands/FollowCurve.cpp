@@ -3,12 +3,13 @@
 #include "EngineScripting/CommandGroup.h"
 #include "common/utils.h"
 #include "common/ParserJSON.h"
+#include "scene/SceneView.h"
 
 FollowCurve::FollowCurve()
 {
 }
 
-bool FollowCurve::Initialize(SceneView* pScene, rapidjson::Value& document)
+bool FollowCurve::Initialize(rapidjson::Value& document)
 {
     using namespace rapidjson;
 
@@ -48,8 +49,8 @@ bool FollowCurve::Initialize(SceneView* pScene, rapidjson::Value& document)
         return false;
     }
 
-    m_pTransform = pScene->GetComponentByTag<TransformComponent>(entity, "transform");
-    m_pForce = pScene->GetComponentByTag<ForceComponent>(entity, "force");
+    m_pTransform = SceneView::Get()->GetComponentByTag<TransformComponent>(entity, "transform");
+    m_pForce = SceneView::Get()->GetComponentByTag<ForceComponent>(entity, "force");
 
     // First point should aways be the current position for simplicity
     m_controlPoints.insert(m_controlPoints.begin(), m_pTransform->GetPosition());

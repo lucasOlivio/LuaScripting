@@ -4,15 +4,17 @@
 #include "components/Script.h"
 #include "components/ComponentBuilder.h"
 
+Scene* Scene::m_pInstance = nullptr;
+
 Scene::Scene()
 {
-    this->m_isPlaying = false;
-    this->m_numEntities = 0;
+    m_isPlaying = false;
+    m_numEntities = 0;
 }
 
 Scene::~Scene()
 {
-    this->m_components.clear();
+    m_components.clear();
 }
 
 Scene* Scene::Get()
@@ -26,47 +28,47 @@ Scene* Scene::Get()
 
 void Scene::Clear()
 {
-    for (auto& pairComponent : this->m_components) {
+    for (auto& pairComponent : m_components) {
         for (auto& pairEntityComp : pairComponent.second) {
             iComponent* pComp = pairEntityComp.second;
             pComp->SetDeleted(true);
-            this->m_compToDestroy.push_back(pairEntityComp.second);
+            m_compToDestroy.push_back(pairEntityComp.second);
         }
         pairComponent.second.clear();
     }
-    this->m_components.clear();
-    this->m_numEntities = 0;
+    m_components.clear();
+    m_numEntities = 0;
 }
 
 void Scene::ClearDeleted()
 {
-    for (iComponent* pComp : this->m_compToDestroy)
+    for (iComponent* pComp : m_compToDestroy)
     {
         delete pComp;
     }
-    this->m_compToDestroy.clear();
+    m_compToDestroy.clear();
 }
 
 EntityID Scene::GetNumEntities()
 {
-    return this->m_numEntities;
+    return m_numEntities;
 }
 
 EntityID Scene::CreateEntity()
 {
-    EntityID newEntityID = this->m_numEntities;
-    this->m_numEntities++;
+    EntityID newEntityID = m_numEntities;
+    m_numEntities++;
     return newEntityID;
 }
 
 EntityID Scene::CreateEntity(EntityID entityID, bool createAndActivate)
 {
-    EntityID newEntityID = this->CreateEntity();
+    EntityID newEntityID = CreateEntity();
     
-    std::vector<sComponentInfo> componentsInfo = this->GetComponentsInfo(entityID);
+    std::vector<sComponentInfo> componentsInfo = GetComponentsInfo(entityID);
 
     // Go for each component and copy it to the new one
-    ComponentBuilder compBuilder = ComponentBuilder(this);
+    ComponentBuilder compBuilder = ComponentBuilder();
     for (sComponentInfo sCompInfo : componentsInfo)
     {
         iComponent* pNewComp = compBuilder.BuildComponent(sCompInfo, newEntityID);
@@ -77,7 +79,7 @@ EntityID Scene::CreateEntity(EntityID entityID, bool createAndActivate)
         if (sCompInfo.componentName == "model")
         {
             ModelComponent* pNewModelComp = (ModelComponent*)pNewComp;
-            ModelComponent* pModelComp = (ModelComponent*)this->GetComponent(entityID, "model");
+            ModelComponent* pModelComp = (ModelComponent*)GetComponent(entityID, "model");
             pNewModelComp->SetMeshes(pModelComp->GetMeshes());
         }
     }
@@ -87,20 +89,20 @@ EntityID Scene::CreateEntity(EntityID entityID, bool createAndActivate)
 
 EntityID Scene::CreateEntity(EntityID entityID)
 {
-    EntityID newEntityID = this->CreateEntity(entityID, true);
+    EntityID newEntityID = CreateEntity(entityID, true);
 
     return newEntityID;
 }
 
 void Scene::DeleteEntity(EntityID entityID)
 {
-    for (auto& pairComponent : this->m_components) {
+    for (auto& pairComponent : m_components) {
         auto& innerMap = pairComponent.second;
         auto entityIter = innerMap.find(entityID);
         if (entityIter != innerMap.end()) {
             iComponent* pComp = entityIter->second;
             pComp->SetDeleted(true);
-            this->m_compToDestroy.push_back(pComp);
+            m_compToDestroy.push_back(pComp);
             innerMap.erase(entityIter);
         }
     }
@@ -110,9 +112,9 @@ bool Scene::GetMapComponents(std::string componentName, std::map<EntityID, iComp
 {
     std::map<std::string,
         std::map<EntityID, iComponent*>>::iterator it;
-    it = this->m_components.find(componentName);
+    it = m_components.find(componentName);
 
-    if (it == this->m_components.end())
+    if (it == m_components.end())
     {
         // No components of this type
         return false;
@@ -122,26 +124,11 @@ bool Scene::GetMapComponents(std::string componentName, std::map<EntityID, iComp
     return true;
 }
 
-EntityID Scene::GetEntity(std::string tagName)
-{
-    for (this->First("tag"); !this->IsDone(); this->Next())
-    {
-        TagComponent* pTag = this->CurrentValue<TagComponent>();
-
-        if (pTag->name == tagName)
-        {
-            return this->CurrentKey();
-        }
-    }
-    assert(false); // Error if not found. TODO: Better way to raise error here
-    return 0;
-}
-
 iComponent* Scene::GetComponent(EntityID entityID, std::string componentName)
 {
     std::map<EntityID, iComponent*> mapComponents;
 
-    this->GetMapComponents(componentName, mapComponents);
+    GetMapComponents(componentName, mapComponents);
 
     std::map<EntityID, iComponent*>::iterator it;
     it = mapComponents.find(entityID);
@@ -158,17 +145,17 @@ iComponent* Scene::GetComponent(EntityID entityID, std::string componentName)
 void Scene::SetComponent(EntityID entityID, std::string componentName, iComponent* componentIn)
 {
     // Check the entity already have this component
-    iComponent* compToDelete = this->GetComponent(entityID, componentName);
+    iComponent* compToDelete = GetComponent(entityID, componentName);
 
     // If already have, delete it first
     if (compToDelete)
     {
         compToDelete->SetDeleted(true);
-        this->m_compToDestroy.push_back(compToDelete);
+        m_compToDestroy.push_back(compToDelete);
     }
 
     // Now replace with the new component
-    this->m_components[componentName][entityID] = componentIn;
+    m_components[componentName][entityID] = componentIn;
 
     return;
 }
@@ -178,7 +165,7 @@ std::vector<sComponentInfo> Scene::GetComponentsInfo(EntityID entityID)
     std::vector<sComponentInfo> componentsInfo;
 
     // Go through each component type in the scene
-    for (const auto& pairComponents : this->m_components)
+    for (const auto& pairComponents : m_components)
     {
         // Check if user has this component
         const auto& itComponents = pairComponents.second.find(entityID);
@@ -202,7 +189,7 @@ std::map<std::string, iComponent*> Scene::GetComponents(EntityID entityID)
     std::map<std::string, iComponent*> components;
 
     // Go through each component type in the scene
-    for (const auto& pairComponents : this->m_components)
+    for (const auto& pairComponents : m_components)
     {
         // Check if user has this component
         const auto& itComponents = pairComponents.second.find(entityID);
@@ -220,7 +207,7 @@ std::map<std::string, iComponent*> Scene::GetComponents(EntityID entityID)
 
 bool Scene::IsPlaying()
 {
-    if (this->m_isPlaying)
+    if (m_isPlaying)
     {
         return true;
     } 
@@ -232,5 +219,5 @@ bool Scene::IsPlaying()
 
 void Scene::SetPlaying(bool isPlaying)
 {
-    this->m_isPlaying = isPlaying;
+    m_isPlaying = isPlaying;
 }

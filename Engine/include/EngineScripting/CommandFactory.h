@@ -1,11 +1,10 @@
 #pragma once
 #include "commands/iCommand.h"
-#include "scene/SceneView.h"
 
 class CommandFactory
 {
 public:
-    CommandFactory(SceneView* pScene);
+    CommandFactory();
 
     /**
      * Creates a command batch based on the json structure
@@ -17,8 +16,6 @@ public:
     std::string GetError();
 private:
     std::string m_errorMsg;
-
-    SceneView* m_pScene;
 
     // Deserialize command json into a nested CommanGroup
     iCommand* m_DeserializeCommand(rapidjson::Value& document, uint16_t rootUUID);

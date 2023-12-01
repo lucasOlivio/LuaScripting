@@ -2,12 +2,12 @@
 #include "common/utilsMat.h"
 #include "common/utils.h"
 #include "components/Tag.h"
+#include "scene/SceneView.h"
 #include <glm/gtx/string_cast.hpp>
 
-Physics::Physics(SceneView* pSceneView, CollisionEvent* pCollisionEvent)
+Physics::Physics(CollisionEvent* pCollisionEvent)
 {
 	m_isRunning = false;
-	m_pSceneView = pSceneView;
 	m_pCollisionEvent = pCollisionEvent;
 }
 
@@ -35,33 +35,33 @@ void Physics::Update(double deltaTime)
 	}
 
 	// Change position based on the acceleration and velocity
-	for (m_pSceneView->First("force"); !m_pSceneView->IsDone(); m_pSceneView->Next())
+	for (SceneView::Get()->First("force"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
 	{
-		EntityID entityID = m_pSceneView->CurrentKey();
-		ForceComponent* pForce = m_pSceneView->CurrentValue<ForceComponent>();
+		EntityID entityID = SceneView::Get()->CurrentKey();
+		ForceComponent* pForce = SceneView::Get()->CurrentValue<ForceComponent>();
 
 		if (!pForce->IsActive())
 		{
 			continue;
 		}
 
-		TransformComponent* pTransform = m_pSceneView->GetComponent<TransformComponent>(entityID, "transform");
+		TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(entityID, "transform");
 
 		m_ApplyForce(pForce, pTransform, deltaTime);
 	}
 
 	// Check if new position is intersecting with other entity
-	for (m_pSceneView->First("collision"); !m_pSceneView->IsDone(); m_pSceneView->Next())
+	for (SceneView::Get()->First("collision"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
 	{
-		EntityID entityID = m_pSceneView->CurrentKey();
-		CollisionComponent* pCollision = m_pSceneView->CurrentValue<CollisionComponent>();
+		EntityID entityID = SceneView::Get()->CurrentKey();
+		CollisionComponent* pCollision = SceneView::Get()->CurrentValue<CollisionComponent>();
 
 		if (!pCollision->IsActive())
 		{
 			continue;
 		}
 
-		TransformComponent* pTransform = m_pSceneView->GetComponent<TransformComponent>(entityID, "transform");
+		TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(entityID, "transform");
 
 		m_CheckCollisions(entityID, pCollision, pTransform);
 	}
@@ -69,19 +69,19 @@ void Physics::Update(double deltaTime)
 	// Apply respective response for each collision types
 	for (sCollisionData* pCollision : m_vecCollided)
 	{
-		TransformComponent* pTransformA = m_pSceneView->GetComponent<TransformComponent>(pCollision->entityA, "transform");
-		TransformComponent* pTransformB = m_pSceneView->GetComponent<TransformComponent>(pCollision->entityB, "transform");
+		TransformComponent* pTransformA = SceneView::Get()->GetComponent<TransformComponent>(pCollision->entityA, "transform");
+		TransformComponent* pTransformB = SceneView::Get()->GetComponent<TransformComponent>(pCollision->entityB, "transform");
 
 		// Static bodies won`t have force
 		ForceComponent* pForceA = nullptr;
 		if (pCollision->bodyTypeA != eBodyType::STATIC)
 		{
-			ForceComponent* pForceA = m_pSceneView->GetComponent<ForceComponent>(pCollision->entityA, "force");
+			ForceComponent* pForceA = SceneView::Get()->GetComponent<ForceComponent>(pCollision->entityA, "force");
 		}
 		ForceComponent* pForceB = nullptr;
 		if (pCollision->bodyTypeB != eBodyType::STATIC)
 		{
-			pForceB = m_pSceneView->GetComponent<ForceComponent>(pCollision->entityB, "force");
+			pForceB = SceneView::Get()->GetComponent<ForceComponent>(pCollision->entityB, "force");
 		}
 
 
@@ -102,10 +102,10 @@ void Physics::SetRunning(bool isRunning)
 	m_isRunning = isRunning;
 }
 
-bool Physics::AABBAABB_Test(sAABB* aabbA, glm::mat4 matTransfA, 
-							sAABB* aabbB, glm::mat4 matTransfB, 
-							glm::vec3& contactPointA, glm::vec3& contactPointB, 
-							glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
+bool Physics::AABBAABB_Test(sAABB* aabbA, glm::mat4 matTransfA,
+	sAABB* aabbB, glm::mat4 matTransfB,
+	glm::vec3& contactPointA, glm::vec3& contactPointB,
+	glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
 {
 	// Transform A in world space
 	glm::vec4 AminWorld = (matTransfA * glm::vec4(aabbA->minXYZ, 1.0f));
@@ -194,9 +194,9 @@ bool Physics::AABBAABB_Test(sAABB* aabbA, glm::mat4 matTransfA,
 }
 
 bool Physics::AABBAABB2D_Test(sAABB2D* aabb2dA, glm::mat4 matTransfA,
-								sAABB2D* aabb2dB, glm::mat4 matTransfB,
-								glm::vec3& contactPointA, glm::vec3& contactPointB,
-								glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
+	sAABB2D* aabb2dB, glm::mat4 matTransfB,
+	glm::vec3& contactPointA, glm::vec3& contactPointB,
+	glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
 {
 	// Transform A in world space
 	glm::vec4 AminWorld = (matTransfA * glm::vec4(aabb2dA->minXY, 1.0f, 1.0f));
@@ -285,9 +285,9 @@ void Physics::m_ApplyForce(ForceComponent* pForce, TransformComponent* pTransfor
 
 	// Apply centrifugal forces
 	// Same principle with movement velocity but applying adjusts to rotation
-	glm::vec3 rotationVel = myutils::IncreaseVelocity(pForce->GetCentrifugalVelocity(), 
-													  pForce->GetCentrifugalAcceleration(), 
-													  (float)deltaTime);
+	glm::vec3 rotationVel = myutils::IncreaseVelocity(pForce->GetCentrifugalVelocity(),
+		pForce->GetCentrifugalAcceleration(),
+		(float)deltaTime);
 	pForce->SetCentrifugalVelocity(rotationVel);
 	// New object position
 	glm::vec3 deltaRotation = rotationVel * (float)deltaTime;
@@ -320,8 +320,8 @@ void Physics::m_CheckCollisions(EntityID entityA, CollisionComponent* pCollA, Tr
 	for (EntityID entityB : m_vecCollVisited)
 	{
 		bool isCollision = false;
-		CollisionComponent* pCollB = m_pSceneView->GetComponent<CollisionComponent>(entityB, "collision");
-		TransformComponent* pTransformB = m_pSceneView->GetComponent<TransformComponent>(entityB, "transform");
+		CollisionComponent* pCollB = SceneView::Get()->GetComponent<CollisionComponent>(entityB, "collision");
+		TransformComponent* pTransformB = SceneView::Get()->GetComponent<TransformComponent>(entityB, "transform");
 		mat4 transformMatB = pTransformB->GetTransformNoRotation();
 
 		if (pCollA->Get_eBodyType() == eBodyType::STATIC && pCollB->Get_eBodyType() == eBodyType::STATIC)
@@ -357,8 +357,8 @@ void Physics::m_CheckCollisions(EntityID entityA, CollisionComponent* pCollA, Tr
 			continue;
 		}
 
-		TagComponent* tagA = m_pSceneView->GetComponent<TagComponent>(entityA, "tag");
-		TagComponent* tagB = m_pSceneView->GetComponent<TagComponent>(entityB, "tag");
+		TagComponent* tagA = SceneView::Get()->GetComponent<TagComponent>(entityA, "tag");
+		TagComponent* tagB = SceneView::Get()->GetComponent<TagComponent>(entityB, "tag");
 
 		// Set all collision data needed for others to handle it
 		sCollisionData* pCollision = new sCollisionData();

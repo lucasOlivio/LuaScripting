@@ -3,7 +3,6 @@
 #include "drawInfo.h"
 #include "EngineRenderer/ShaderManager.h"
 #include "EngineRenderer/VAOManager.h"
-#include "scene/SceneView.h"
 
 enum class eDebugMode
 {
@@ -18,7 +17,7 @@ public:
 
 	static DebugSystem* Get();
 
-	bool Initialize(SceneView* pScene, ShaderManager* pShaderManager, std::string baseModelsPath);
+	bool Initialize(ShaderManager* pShaderManager, std::string baseModelsPath);
 
 	void ResetDebugObjects();
 
@@ -41,8 +40,6 @@ private:
 	// Singleton
 	DebugSystem() {};
 	static DebugSystem* m_pInstance;
-
-	SceneView* m_pScene;
 
 	uint8_t m_debugMode;
 

@@ -70,11 +70,12 @@ bool Engine::Initialize(const std::string& sceneName)
 
 	printf("Creating systems...\n");
 	m_pScene = Scene::Get();
+	m_pSceneView = SceneView::Get();
 	m_pShaderManager = new ShaderManager(baseShadersPath);
 	m_pRenderer = new Renderer();
 	m_pWindowSystem = new WindowSystem(m_pShaderManager);
-	m_pEditor = new Editor(m_pKeyEvent, m_pScene, this, m_pWindowSystem);
-	m_pPhysics = new Physics(m_pScene, m_pCollisionEvent);
+	m_pEditor = new Editor(m_pKeyEvent, this, m_pWindowSystem);
+	m_pPhysics = new Physics(m_pCollisionEvent);
 	m_pInput = new Input(m_pKeyEvent, m_pMouseEvent);
 	m_pMediaPlayer = MediaPlayer::Get();
 	m_pDebugSystem = DebugSystem::Get();
@@ -108,22 +109,21 @@ bool Engine::Initialize(const std::string& sceneName)
 	bool isERInitialized = m_pRenderer->Initialize(baseModelPath,
 												   baseTexturesPath,
 												   m_pShaderManager,
-												   m_currShaderID,
-												   m_pScene);
+												   m_currShaderID);
 	if (!isERInitialized)
 	{
 		CheckEngineError("Engine renderer initialization");
 		return false;
 	}
 
-	bool isMediaInit = m_pMediaPlayer->Initialize(baseAudioPath, m_pScene);
+	bool isMediaInit = m_pMediaPlayer->Initialize(baseAudioPath);
 	if (!isMediaInit)
 	{
 		CheckEngineError("Engine media player initialization");
 		return false;
 	}
 
-	bool isScriptInit = m_pScriptingSystem->Initialize(baseScriptsPath, m_pScene);
+	bool isScriptInit = m_pScriptingSystem->Initialize(baseScriptsPath);
 	if (!isScriptInit)
 	{
 		CheckEngineError("Engine scripting initialization");
@@ -136,7 +136,7 @@ bool Engine::Initialize(const std::string& sceneName)
 		return false;
 	}
 
-	bool isDebugInit = m_pDebugSystem->Initialize(m_pScene, m_pShaderManager, baseModelPath);
+	bool isDebugInit = m_pDebugSystem->Initialize(m_pShaderManager, baseModelPath);
 	if (!isDebugInit)
 	{
 		CheckEngineError("Engine debug initialization");
@@ -257,6 +257,7 @@ void Engine::Exit()
 	delete m_pRenderer;
 	delete m_pEditor;
 	delete m_pScene;
+	delete m_pSceneView;
 
 	delete m_pKeyEvent;
 	delete m_pDebugSystem;
@@ -342,7 +343,7 @@ void Engine::SaveScene(std::string filePath)
 {
 	iConfigReadWrite* pConfigrw = ConfigReadWriteFactory::CreateConfigReadWrite(filePath);
 
-	bool isSceneSaved = pConfigrw->WriteScene(filePath, m_pScene);
+	bool isSceneSaved = pConfigrw->WriteScene(filePath);
 	if (!isSceneSaved)
 	{
 		CheckEngineError("Scene saving to file");
@@ -367,7 +368,7 @@ bool Engine::LoadScene(std::string filePath)
 
 	iConfigReadWrite* pConfigrw = ConfigReadWriteFactory::CreateConfigReadWrite("json");
 
-	bool isLoaded = pConfigrw->ReadScene(filePath, m_pScene);
+	bool isLoaded = pConfigrw->ReadScene(filePath);
 	if (!isLoaded)
 	{
 		Exit("Scene loading error\n\n");

@@ -2,7 +2,6 @@
 
 #include "common/types.h"
 #include "EngineScripting/CommandGroup.h"
-#include "scene/SceneView.h"
 #include "components/Transform.h"
 #include "components/Force.h"
 #include <glm/vec3.hpp>
@@ -13,7 +12,7 @@ public:
 	FollowCurve();
 	virtual ~FollowCurve() {};
 
-	virtual bool Initialize(SceneView* pScene, rapidjson::Value& document);
+	virtual bool Initialize(rapidjson::Value& document);
 
 	// Called every frame/step:
 	// Returns true when command is done

@@ -220,7 +220,7 @@
     <ClCompile Include="src\EngineScripting\commands\CreateEntity.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\EngineScripting\commands\LuaGetInfo.cpp">
+    <ClCompile Include="src\EngineScripting\LuaBindings\LuaGetInfo.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -337,9 +337,6 @@
       <Filter>EngineUtilities\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="include\scene\iSceneDirector.h">
-      <Filter>EngineUtilities\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\scene\iScene.h">
       <Filter>EngineUtilities\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="include\events\CollisionEvent.h">

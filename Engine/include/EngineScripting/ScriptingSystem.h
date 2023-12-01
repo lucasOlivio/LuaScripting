@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scene/SceneView.h"
 #include "CommandFactory.h"
 #include "CommandManager.h"
 #include "LuaBrain.h"
@@ -15,7 +14,7 @@ public:
 	static ScriptingSystem* Get();
 
 	// Where we really start/destroy everything that could go wrong
-	bool Initialize(std::string baseScriptsPath, SceneView* pScene);
+	bool Initialize(std::string baseScriptsPath);
 	bool LoadScene(); 
 	void Destroy();
 	void LoadScript(EntityID entityID, std::string scriptName);
@@ -38,7 +37,6 @@ public:
 private:
 	LuaBrain* m_pLuaBrain;
 	CommandManager* m_pCommandManager;
-	SceneView* m_pScene;
 
 	CommandFactory* m_pCommandFactory;
 

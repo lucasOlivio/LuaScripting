@@ -15,7 +15,7 @@ public:
 	void AddParallelCommand(iCommand* pTheCommand);
 
 	// iCommand
-	virtual bool Initialize(SceneView* pScene, rapidjson::Value& document);
+	virtual bool Initialize(rapidjson::Value& document);
 	virtual bool Initialize(std::string name);
 	virtual bool PreStart(void);
 	virtual bool PostEnd(void);

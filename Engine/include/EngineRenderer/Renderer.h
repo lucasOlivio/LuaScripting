@@ -6,7 +6,6 @@
 #include "ModelSystem.h"
 #include "LightSystem.h"
 #include "MaterialManager.h"
-#include "scene/SceneView.h"
 #include "components/Model.h"
 #include "components/Transform.h"
 
@@ -24,8 +23,7 @@ public:
 	bool Initialize(std::string baseModelsPath,
 					std::string baseTexturesPath,
 					ShaderManager* pShaderManager,
-					uint currShaderID,
-					SceneView* pSceneView);
+					uint currShaderID);
 	void Destroy();
 
 	// Go through the scene loading each model component to the VAO
@@ -65,6 +63,4 @@ private:
 	LightSystem* m_pLightSystem;
 
 	MaterialManager* m_pMaterialManager;
-
-	SceneView* m_pSceneView;
 };

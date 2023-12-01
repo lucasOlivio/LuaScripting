@@ -1,14 +1,8 @@
 #ifndef _LuaBrain_HG_
 #define _LuaBrain_HG_
 
-#include "scene/SceneView.h"
-
-extern "C" {
-#include <Lua5.4.6/lua.h>
-#include <Lua5.4.6/lauxlib.h>
-#include <Lua5.4.6/lualib.h>
-}
-
+#include "common/lua.h"
+#include "common/types.h"
 #include <string>
 #include <vector>
 #include <map>
@@ -20,7 +14,7 @@ public:
 
 	static LuaBrain* Get();
 
-	bool Initialize(std::string baseScriptsPath, SceneView* pScene);
+	bool Initialize(std::string baseScriptsPath);
 	void Destroy();
 
 	bool LoadScene();
@@ -46,7 +40,6 @@ private:
 	static LuaBrain* m_pInstance;
 
 	std::string m_baseScriptsPath;
-	SceneView* m_pScene;
 
 	std::map< EntityID,
 		      std::string /*scriptSource*/ > m_mapScripts;

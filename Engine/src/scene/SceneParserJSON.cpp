@@ -6,6 +6,8 @@
 #include "components.h" // TODO: Get rid of this
 #include "components/ComponentBuilder.h"
 #include "common/utils.h"
+#include"scene/Scene.h"
+#include"scene/SceneView.h"
 #include <sstream>
 #include <iomanip>
 
@@ -17,7 +19,7 @@ SceneParserJSON::~SceneParserJSON()
 {
 }
 
-bool SceneParserJSON::ParseFromJsonObj(rapidjson::Value& jsonObject, iScene* pSceneOut)
+bool SceneParserJSON::ParseFromJsonObj(rapidjson::Value& jsonObject)
 {
     using namespace rapidjson;
 
@@ -30,7 +32,7 @@ bool SceneParserJSON::ParseFromJsonObj(rapidjson::Value& jsonObject, iScene* pSc
     }
 
     ParserJSON parser = ParserJSON();
-    ComponentBuilder componentBuilder = ComponentBuilder(pSceneOut);
+    ComponentBuilder componentBuilder = ComponentBuilder();
 
     // TODO: Redo here so we don't need to edit everytime there is a new component.
     // Components should know how to serialize and deserialize themselves
@@ -40,7 +42,7 @@ bool SceneParserJSON::ParseFromJsonObj(rapidjson::Value& jsonObject, iScene* pSc
     {
         // This will be our entity ID count, 
         // so we can keep track easily later how many entities we heave
-        EntityID entityID = pSceneOut->CreateEntity();
+        EntityID entityID = Scene::Get()->CreateEntity();
 
         Value& entityObject = jsonObject[entityIndex];
         bool isValid = entityObject.IsObject();
@@ -98,8 +100,7 @@ bool SceneParserJSON::ParseFromJsonObj(rapidjson::Value& jsonObject, iScene* pSc
     return true;
 }
 
-bool SceneParserJSON::ParseToJsonObj(SceneView* pScene,
-                                     rapidjson::Value& jsonObjectOut,
+bool SceneParserJSON::ParseToJsonObj(rapidjson::Value& jsonObjectOut,
                                      rapidjson::Document::AllocatorType& allocator)
 {
     using namespace rapidjson;
@@ -108,21 +109,21 @@ bool SceneParserJSON::ParseToJsonObj(SceneView* pScene,
     ParserJSON parser = ParserJSON();
 
     jsonObjectOut.SetArray();
-    for (EntityID entityID = 0; entityID < pScene->GetNumEntities(); ++entityID)
+    for (EntityID entityID = 0; entityID < Scene::Get()->GetNumEntities(); ++entityID)
     {
         // Create a RapidJSON object for each entity
         Value entityObject;
         entityObject.SetObject();
 
         // Don't save debug info
-        TagComponent* pTag = pScene->GetComponent<TagComponent>(entityID, "tag");
+        TagComponent* pTag = SceneView::Get()->GetComponent<TagComponent>(entityID, "tag");
         if (pTag->name == "debuginfo")
         {
             continue;
         }
 
         // Iterate over the components of the entity
-        for (sComponentInfo component : pScene->GetComponentsInfo(entityID))
+        for (sComponentInfo component : Scene::Get()->GetComponentsInfo(entityID))
         {
             Value componentName(component.componentName, allocator);
 

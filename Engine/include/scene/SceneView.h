@@ -1,21 +1,17 @@
 #pragma once
 
-#include "scene/iScene.h"
 #include "components/iComponent.h"
 #include "common/types.h"
 #include <map>
 
 // TODO: Way to make a generic map iterator interface
 // Viewer mediator for scene and its components
-class SceneView : public iScene
+class SceneView
 {
-private:
-	std::map<EntityID, iComponent*> m_map;
-	std::map<std::string /*tag name*/, EntityID> m_mapTagEntity;
-	std::map<EntityID, iComponent*>::iterator m_currIterator;
-
 public:
 	virtual ~SceneView();
+
+	static SceneView* Get();
 
 	// TODO: Way to get the component based on the class name, not by a string
 	void First(std::string componentName);
@@ -24,8 +20,6 @@ public:
 	bool IsDone();
 
 	EntityID CurrentKey();
-
-	virtual EntityID CreateEntity(EntityID entityID) = 0;
 
 	// Get the component already casted to its class
 	template<typename Component>
@@ -65,4 +59,14 @@ public:
 		// Only if component found we convert it
 		return (Component*)comp;
 	}
+
+private:
+	std::map<EntityID, iComponent*> m_map;
+	std::map<std::string /*tag name*/, EntityID> m_mapTagEntity;
+	std::map<EntityID, iComponent*>::iterator m_currIterator;
+
+	//Singleton
+	SceneView();
+
+	static SceneView* m_pInstance;
 };

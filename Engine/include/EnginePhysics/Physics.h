@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scene/SceneView.h"
 #include "events/CollisionEvent.h"
 #include "components/Transform.h"
 #include "components/Model.h"
@@ -10,7 +9,7 @@
 class Physics
 {
 public:
-	Physics(SceneView* pSceneView, CollisionEvent* pCollisionEvent);
+	Physics(CollisionEvent* pCollisionEvent);
 	~Physics();
 
 	// Resets collisions
@@ -37,7 +36,6 @@ public:
 private:
 	bool m_isRunning;
 
-	SceneView* m_pSceneView;
 	CollisionEvent* m_pCollisionEvent;
 
 	// All the entities that we already tested in the frame (true or false)
