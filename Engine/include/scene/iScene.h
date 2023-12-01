@@ -19,7 +19,6 @@ public:
 
 	virtual EntityID CreateEntity() = 0;
 	virtual void DeleteEntity(EntityID entityID) = 0;
-	virtual void DeleteListener(iListener* pListener) = 0;
 
 	// Total number of this component in scene
 	virtual int GetNumComponents(std::string componentName) = 0;

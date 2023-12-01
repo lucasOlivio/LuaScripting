@@ -69,7 +69,7 @@ bool Engine::Initialize(const std::string& sceneName)
 	GLFWWrapper::SetMouseEvent(m_pMouseEvent);
 
 	printf("Creating systems...\n");
-	m_pScene = new Scene(m_pKeyEvent, m_pCollisionEvent);
+	m_pScene = Scene::Get();
 	m_pShaderManager = new ShaderManager(baseShadersPath);
 	m_pRenderer = new Renderer();
 	m_pWindowSystem = new WindowSystem(m_pShaderManager);
@@ -173,7 +173,6 @@ void Engine::Run()
 
 		m_pWindowSystem->EndFrame();
 
-		m_pScene->ClearListenerDeleted();
 		m_pScene->ClearDeleted();
 	}
 }

@@ -9,36 +9,16 @@
 
 class Scene : public SceneView
 {
-private:
-	EntityID m_numEntities;
-
-	// TODO: For now keep as a map for simplicity, 
-	// but later transform into a vector of entities
-	// and each entity with a bitmask of components
-	std::map<std::string /* component name */,
-			 std::map<EntityID, iComponent*>> m_components;
-
-	bool m_isPlaying;
-
-	iEvent* m_pKeyEvents;
-	iEvent* m_pCollisionEvents;
-
-	// Components and listeners that were already deleted and are waiting end of frame to 
-	// be completely removed
-	std::vector<iComponent*> m_compToDestroy;
-	std::vector<iListener*> m_listenerToDestroy;
-
 public:
-	Scene(iEvent* pKeyEvents, iEvent* pCollisionEvents);
 	~Scene();
+
+	static Scene* Get();
 
 	// Delete all components pointers and clear maps
 	virtual void Clear();
 
 	// Delete components that were marked
 	void ClearDeleted();
-	// Delete listeners that were marked
-	void ClearListenerDeleted();
 
 	virtual EntityID GetNumEntities();
 
@@ -48,7 +28,6 @@ public:
 	virtual EntityID CreateEntity(EntityID entityID, bool createAndActivate);
 
 	virtual void DeleteEntity(EntityID entityID);
-	virtual void DeleteListener(iListener* pListener);
 
 	// Get all parameters info from all the components
 	// this entity has attached to it
@@ -67,4 +46,28 @@ public:
 
 	virtual bool IsPlaying();
 	void SetPlaying(bool isPlaying);
+
+private:
+	EntityID m_numEntities;
+
+	// TODO: For now keep as a map for simplicity, 
+	// but later transform into a vector of entities
+	// and each entity with a bitmask of components
+	std::map<std::string /* component name */,
+		std::map<EntityID, iComponent*>> m_components;
+
+	bool m_isPlaying;
+
+	iEvent* m_pKeyEvents;
+	iEvent* m_pCollisionEvents;
+
+	// Components and listeners that were already deleted and are waiting end of frame to 
+	// be completely removed
+	std::vector<iComponent*> m_compToDestroy;
+	std::vector<iListener*> m_listenerToDestroy;
+
+	//Singleton
+	Scene();
+
+	static Scene* m_pInstance;
 };

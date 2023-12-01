@@ -4,17 +4,24 @@
 #include "components/Script.h"
 #include "components/ComponentBuilder.h"
 
-Scene::Scene(iEvent* pKeyEvents, iEvent* pCollisionEvents)
+Scene::Scene()
 {
     this->m_isPlaying = false;
-    this->m_pKeyEvents = pKeyEvents;
-    this->m_pCollisionEvents = pCollisionEvents;
     this->m_numEntities = 0;
 }
 
 Scene::~Scene()
 {
     this->m_components.clear();
+}
+
+Scene* Scene::Get()
+{
+    if (Scene::m_pInstance == nullptr)
+    {
+        Scene::m_pInstance = new Scene();
+    }
+    return Scene::m_pInstance;
 }
 
 void Scene::Clear()
@@ -38,15 +45,6 @@ void Scene::ClearDeleted()
         delete pComp;
     }
     this->m_compToDestroy.clear();
-}
-
-void Scene::ClearListenerDeleted()
-{
-    for (iListener* pListener : this->m_listenerToDestroy)
-    {
-        this->m_pCollisionEvents->Dettach(pListener);
-    }
-    this->m_listenerToDestroy.clear();
 }
 
 EntityID Scene::GetNumEntities()
@@ -106,11 +104,6 @@ void Scene::DeleteEntity(EntityID entityID)
             innerMap.erase(entityIter);
         }
     }
-}
-
-void Scene::DeleteListener(iListener* pListener)
-{
-    this->m_listenerToDestroy.push_back(pListener);
 }
 
 bool Scene::GetMapComponents(std::string componentName, std::map<EntityID, iComponent*>& componentsOut)

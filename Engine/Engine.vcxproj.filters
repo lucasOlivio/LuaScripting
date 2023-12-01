@@ -220,6 +220,9 @@
     <ClCompile Include="src\EngineScripting\commands\CreateEntity.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\EngineScripting\commands\LuaGetInfo.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\EngineRenderer\CameraSystem.h">
@@ -385,6 +388,8 @@
     <ClInclude Include="include\EngineScripting\commands\FollowObject.h" />
     <ClInclude Include="include\EngineScripting\commands\DestroyEntity.h" />
     <ClInclude Include="include\EngineScripting\commands\CreateEntity.h" />
+    <ClInclude Include="include\EngineScripting\LuaBindings\LuaGetInfo.h" />
+    <ClInclude Include="include\common\lua.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scene\SceneView.tpp">

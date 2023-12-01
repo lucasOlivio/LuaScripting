@@ -15,7 +15,6 @@ private:
 	std::map<EntityID, iComponent*>::iterator m_currIterator;
 
 public:
-	SceneView();
 	virtual ~SceneView();
 
 	// TODO: Way to get the component based on the class name, not by a string
