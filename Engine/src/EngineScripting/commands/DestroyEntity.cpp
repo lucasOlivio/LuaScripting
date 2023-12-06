@@ -12,7 +12,7 @@ bool DestroyEntity::Initialize(rapidjson::Value& document)
 {
     using namespace rapidjson;
 
-    std::string entity;
+    float entity;
     bool isValid = true;
 
     // Initialize default command variables
@@ -22,9 +22,9 @@ bool DestroyEntity::Initialize(rapidjson::Value& document)
     ParserJSON parser = ParserJSON();
 
     Value& objEntt = document["entity"];
-    isValid &= parser.GetString(objEntt, entity);
+    isValid &= parser.GetFloat(objEntt, entity);
 
-    m_entityID = SceneView::Get()->GetEntityByTag(entity);
+    m_entityID = entity;
 
     return true;
 }

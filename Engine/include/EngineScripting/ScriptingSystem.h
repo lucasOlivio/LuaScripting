@@ -3,7 +3,8 @@
 #include "CommandFactory.h"
 #include "CommandManager.h"
 #include "LuaBrain.h"
-#include "events/iCollisionListener.h"
+#include "events/CollisionProperties.h"
+#include "events/InputProperties.h"
 #include <glm/mat4x4.hpp>
 
 class ScriptingSystem
@@ -17,12 +18,13 @@ public:
 	bool Initialize(std::string baseScriptsPath);
 	bool LoadScene(); 
 	void Destroy();
-	void LoadScript(EntityID entityID, std::string scriptName);
+	void LoadScript(EntityID entityID);
 
 	// Lua commands
 	void OnStart();
 	void Update(double deltaTime);
 	void OnCollision(sCollisionData* pCollision);
+	void OnKeyInput(sKeyInfo keyInfo);
 
 	/**
 	 * Creates and send the new command to the command manager.
@@ -34,6 +36,9 @@ public:
 	 */
 	bool AddCommand(const char* json, bool isForever, uint16_t& UUIDOut);
 
+	// Delete commands from forever list
+	void DeleteForeverCommand(uint16_t UUID);
+
 private:
 	LuaBrain* m_pLuaBrain;
 	CommandManager* m_pCommandManager;
@@ -44,6 +49,4 @@ private:
 	ScriptingSystem();
 
 	static ScriptingSystem* m_pInstance;
-	
-	
 };

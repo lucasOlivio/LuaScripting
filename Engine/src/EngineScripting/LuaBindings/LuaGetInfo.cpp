@@ -2,13 +2,29 @@
 #include "scene/SceneView.h"
 #include "components.h"
 #include "common/Input.h"
+#include "common/utilsMat.h"
 #include <glm/vec3.hpp>
+
+int lua_GetFrontDirection(lua_State* L)
+{
+	EntityID entity = lua_tonumber(L, 1);
+
+	TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(entity, "transform");
+
+	glm::vec3 direction = pTransform->GetForwardVector();
+
+	lua_pushnumber(L, direction.x);
+	lua_pushnumber(L, direction.y);
+	lua_pushnumber(L, direction.z);
+
+	return 3;
+}
 
 int lua_GetTransform(lua_State* L)
 {
-	std::string entityTag = lua_tostring(L, 1);
+	EntityID entity = lua_tonumber(L, 1);
 
-	TransformComponent* pTransform = SceneView::Get()->GetComponentByTag<TransformComponent>(entityTag, "transform");
+	TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(entity, "transform");
 
 	glm::vec3 position = pTransform->GetPosition();
 	glm::vec3 orientation = pTransform->GetOrientation();
@@ -25,13 +41,13 @@ int lua_GetTransform(lua_State* L)
 	return 7;
 }
 
-int lua_Action(lua_State* L)
+int lua_GetKey(lua_State* L)
 {
-	const char* action = lua_tostring(L, 1);
+	int key = lua_tonumber(L, 1);
 	
-	bool isAction = Input::IsActionKeyPressed(action);
+	bool isKey = Input::IsKeyPressed(key);
 
-	lua_pushboolean(L, isAction);
+	lua_pushboolean(L, isKey);
 
 	return 1;
 }

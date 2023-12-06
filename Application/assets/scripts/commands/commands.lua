@@ -6,10 +6,28 @@ local Command = require("assets.scripts.commands.command")
 function MoveCommand(entity, location, time, easyIn, easyOut, stopAtEnd)
     easyIn    = easyIn or 0.2
     easyOut   = easyOut or 0.1
-    stopAtEnd =  (stopAtEnd ~= false) -- workaround to have stopatend default as true
-    return Command:new("MoveTo", {entity = entity, location = location, 
+    stopAtEnd = (stopAtEnd ~= false) -- workaround to have stopatend default as true
+    return Command:new("MoveTo", {entity = entity, endxyz = location, 
                                   time = time, easyIn = easyIn, easyOut = easyOut,
                                   stopAtEnd = stopAtEnd})
+end
+
+-- Accelerates towards the given direction indefinitely
+-- direction, normalized direction to acceleate towards, been:
+--            x = 1  - Relative right to the object
+--            y = 1  - Relative up of the object
+--            z = -1 - Relative forward of the object
+-- acceleration, acceleration value to go into direction
+-- maxSpeed, maximum speed the entity can reach
+function AccelerateTowards(entity, direction, acceleration, maxSpeed)
+    return Command:new("AccelerateTowards", {entity = entity, acceleration = acceleration, 
+                                             direction = direction, maxSpeed = maxSpeed})
+end
+
+-- Capute and follows the mouse indefinitely
+-- sensitivity, speed to follow the mouse movement
+function FollowMouse(entity, sensitivity)
+    return Command:new("FollowMouse", {entity = entity, sensitivity = sensitivity})
 end
 
 -- Rotate the entity to the referenced orientation in "time"
@@ -18,10 +36,11 @@ end
 function OrientCommand(entity, orientation, time, easyIn, easyOut, stopAtEnd)
     easyIn    = easyIn or 0.2
     easyOut   = easyOut or 0.1
-    stopAtEnd =  (stopAtEnd ~= false) -- workaround to have stopatend default as true
-    return Command:new("OrientTo", {entity = entity, orientation = orientation, 
-                                    time = time, easyIn = easyIn, easyOut = easyOut,
-                                    stopAtEnd = stopAtEnd})
+    stopAtEnd = (stopAtEnd ~= false) -- workaround to have stopatend default as true
+
+    return Command:new("OrientTo", {entity = entity, endxyz = orientation, 
+                                    time = time, easyIn = easyIn, 
+                                    easyOut = easyOut, stopAtEnd = stopAtEnd})
 end
 
 -- Move the object trough a bezier curve defined by the list of control points 
@@ -49,14 +68,14 @@ end
 -- offset optional, Offset from target position
 -- followForever optional, whether it should run forever or just get to target location
 -- easyIn and easyOut optional, set distance from target to accelerate/decelerate (in %)
-function FollowObjectCommand(entity, targetTag, timeStep, maxSpeed, followDistance, offset, followForever, easyIn, easyOut)
-    followDistance = followDistance or 1.0
+function FollowObjectCommand(entity, targetTag, timeStep, maxSpeed, maxRotationSpeed, followDistance, offset, followForever, easyIn, easyOut)
+    followDistance = followDistance or 0.0
     offset = offset or {0.0, 0.0, 0.0}
     followForever  =  (followForever ~= false) -- workaround to have default as true
     easyIn  = easyIn or 0.2
     easyOut = easyOut or 0.1
     return Command:new("FollowObject", {entity = entity, targetTag = targetTag, 
-                                    timeStep = timeStep, maxSpeed = maxSpeed, 
+                                    timeStep = timeStep, maxSpeed = maxSpeed, maxRotationSpeed = maxRotationSpeed,
                                     followDistance = followDistance, offset = offset,
                                     easyIn = easyIn, easyOut = easyOut,
                                     followForever = followForever})
@@ -75,10 +94,12 @@ function CreateEntityCommand(entity, position, orientation)
 end
 
 return {
-    MoveCommand = MoveCommand, 
-    OrientCommand = OrientCommand, 
-    FollowCurveCommand = FollowCurveCommand,
-    FollowObjectCommand = FollowObjectCommand,
+    MoveCommand          = MoveCommand, 
+    AccelerateTowards    = AccelerateTowards,
+    FollowMouse          = FollowMouse,
+    OrientCommand        = OrientCommand, 
+    FollowCurveCommand   = FollowCurveCommand,
+    FollowObjectCommand  = FollowObjectCommand,
     DestroyEntityCommand = DestroyEntityCommand,
-    CreateEntityCommand = CreateEntityCommand
+    CreateEntityCommand  = CreateEntityCommand
 }

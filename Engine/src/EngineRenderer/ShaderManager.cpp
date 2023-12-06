@@ -138,6 +138,7 @@ bool ShaderManager::m_LoadSourceFromFile(Shader& shader, std::string& errorText)
 		std::string tempString(pLineTemp);
 		shader.vecSource.push_back(tempString);
 	}
+	delete pLineTemp;
 
 	theFile.close();
 	return true;		// Return the string (from the sstream)

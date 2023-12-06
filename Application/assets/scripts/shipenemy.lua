@@ -1,34 +1,19 @@
-local commands = require("assets.scripts.commands")
-
-local entity = "shipenemy"
+local commands     = require("assets.scripts.commands")
+local gameplay     = require("assets.scripts.gameplay")
+local inputkeys    = require("assets.scripts.common.inputkeys")
+local inputactions = require("assets.scripts.common.inputactions")
 
 function onstart()
     print("startn entity: " .. entity)
-    
-    -- Example usage:
-    local followobjCommand = commands.FollowObjectCommand(entity, "ship", 0.1, 500, 50, {0.0, -400.0, 0.0})
 
-    -- Create the main command group
-    local followGroup = CommandGroup:new("followobjCommand")
-    followGroup:addCommand(followobjCommand, false)
-
-    local mainCommandGroup = CommandGroup:new("followGroup")
-    mainCommandGroup:addCommand(followGroup, false) 
-
-    commands.DispatchCommands(mainCommandGroup)
+   --gameplay.Follow(entity, "ship", 0.1, 500, 90, 50)
 end
 
-function update(deltatime)
+function onkeyinput(pressedkey, action, mods, scancode)
 
-    if Action("shoot") then
-        x, y, z, rx, ry, rz, scale = GetTransform(entity)
-
-        local shootCommand = commands.CreateEntityCommand("missle", {x, y, z}, {rx, ry, rz})
-
-        local mainCommandGroup = CommandGroup:new("shootgroup")
-        mainCommandGroup:addCommand(shootCommand, false) 
-
-        commands.DispatchCommands(mainCommandGroup)
+    print("entity shooting: " .. entity)
+    if (pressedkey == inputkeys.SPACE and (action == inputactions.PRESS)) then -- Space bar Pressed
+        gameplay.Shoot(entity)
     end
 end
 

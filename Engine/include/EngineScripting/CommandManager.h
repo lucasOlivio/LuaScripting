@@ -31,5 +31,4 @@ private:
 
 	std::vector< iCommand* > m_vecForeverCommands;
 	void m_UpdateForeverGroups(double deltaTime);
-
 };

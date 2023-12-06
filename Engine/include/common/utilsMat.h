@@ -60,6 +60,9 @@ namespace myutils
     // Impulse calculation for collision with a static object
     void ResolveVelocity(glm::vec3& velocity, glm::vec3 reflectionNormal, float inverseMass);
 
+    // Vector direction change projected by normal
+    void CalculateProjectedDirection(glm::vec3 oppositeNormal, glm::vec3& directionOut);
+
     // Calculate sin wave based on time
     float CalculateSinWave(float currentTime, float amplitude, float frequency, float phaseOffset);
 
@@ -74,4 +77,7 @@ namespace myutils
     glm::vec3 GetDirectionFromDegrees(const glm::vec3& rotation);
 
     std::vector<glm::vec3> GenerateRectangleVertices(const glm::vec3& minXYZ, const glm::vec3& maxXYZ);
+
+    // Function to calculate rotation as Euler angles (in degrees)
+    glm::vec3 CalculateRotation(const glm::vec3& sourcePosition, const glm::vec3& targetPosition);
 }

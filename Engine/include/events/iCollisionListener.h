@@ -2,7 +2,7 @@
 
 #include "common/types.h"
 #include "events/iListener.h"
-#include "events/sCollisionData.h"
+#include "events/CollisionProperties.h"
 
 class iCollisionListener : public iListener
 {

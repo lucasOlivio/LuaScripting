@@ -20,6 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="src\EnginePhysics\BroadPhaseCollision.cpp" />
+    <ClCompile Include="src\EnginePhysics\cAABB.cpp" />
+    <ClCompile Include="src\EngineScripting\commands\FollowMouse.cpp" />
+    <ClCompile Include="src\common\lua.cpp" />
+    <ClCompile Include="src\EngineScripting\commands\AccelerateTowards.cpp" />
+    <ClCompile Include="src\EngineScripting\commands\Motion.cpp" />
     <ClCompile Include="src\EngineScripting\LuaBindings\LuaGetInfo.cpp" />
     <ClCompile Include="src\EngineScripting\commands\CreateEntity.cpp" />
     <ClCompile Include="src\EngineScripting\commands\DestroyEntity.cpp" />
@@ -90,6 +96,8 @@
     <ClInclude Include="include\common\lua.h" />
     <ClInclude Include="include\common\opengl.h" />
     <ClInclude Include="include\common\openglerrors.h" />
+    <ClInclude Include="include\EnginePhysics\cAABB.h" />
+    <ClInclude Include="include\EnginePhysics\BroadPhaseCollision.h" />
     <ClInclude Include="include\EngineRenderer\TextureProperties.h" />
     <ClInclude Include="include\common\types.h" />
     <ClInclude Include="include\common\utils.h" />
@@ -123,11 +131,14 @@
     <ClInclude Include="include\EngineScripting\CommandGroup.h" />
     <ClInclude Include="include\EngineScripting\CommandManager.h" />
     <ClInclude Include="include\EngineScripting\commands.h" />
+    <ClInclude Include="include\EngineScripting\commands\AccelerateTowards.h" />
     <ClInclude Include="include\EngineScripting\commands\Command.h" />
     <ClInclude Include="include\EngineScripting\commands\CreateEntity.h" />
     <ClInclude Include="include\EngineScripting\commands\DestroyEntity.h" />
     <ClInclude Include="include\EngineScripting\commands\FollowCurve.h" />
+    <ClInclude Include="include\EngineScripting\commands\FollowMouse.h" />
     <ClInclude Include="include\EngineScripting\commands\FollowObject.h" />
+    <ClInclude Include="include\EngineScripting\commands\Motion.h" />
     <ClInclude Include="include\EngineScripting\commands\MoveTo.h" />
     <ClInclude Include="include\EngineScripting\commands\iCommand.h" />
     <ClInclude Include="include\EngineScripting\commands\OrientTo.h" />
@@ -137,8 +148,9 @@
     <ClInclude Include="include\EngineScripting\LuaBrain.h" />
     <ClInclude Include="include\EngineScripting\ScriptingSystem.h" />
     <ClInclude Include="include\events\iCollisionListener.h" />
+    <ClInclude Include="include\events\InputProperties.h" />
     <ClInclude Include="include\events\MouseEvent.h" />
-    <ClInclude Include="include\events\sCollisionData.h" />
+    <ClInclude Include="include\events\CollisionProperties.h" />
     <ClInclude Include="include\components\Model.h" />
     <ClInclude Include="include\components\Transform.h" />
     <ClInclude Include="include\common\ConfigReadWriteFactory.h" />

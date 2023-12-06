@@ -1,5 +1,6 @@
 #include "EngineScripting/commands/FollowObject.h"
 #include "EngineScripting/commands/MoveTo.h"
+#include "EngineScripting/commands/OrientTo.h"
 #include "EngineScripting/CommandGroup.h"
 #include "common/utils.h"
 #include "common/utilsMat.h"
@@ -15,7 +16,7 @@ bool FollowObject::Initialize(rapidjson::Value& document)
     using namespace rapidjson;
 
     std::string targetTag;
-    std::string entity;
+    float entity;
     float easyIn;
     float easyOut;
     bool isValid = true;
@@ -29,11 +30,13 @@ bool FollowObject::Initialize(rapidjson::Value& document)
     Value& objTarget = document["targetTag"];
     isValid &= parser.GetString(objTarget, targetTag);
     Value& objEntt = document["entity"];
-    isValid &= parser.GetString(objEntt, entity);
+    isValid &= parser.GetFloat(objEntt, entity);
     Value& objStep = document["timeStep"];
     isValid &= parser.GetFloat(objStep, m_timeStep);
     Value& objSpeed = document["maxSpeed"];
     isValid &= parser.GetFloat(objSpeed, m_maxSpeed);
+    Value& objRotat = document["maxRotationSpeed"];
+    isValid &= parser.GetFloat(objRotat, m_maxRotationSpeed);
     Value& objDist = document["followDistance"];
     isValid &= parser.GetFloat(objDist, m_followDistance);
     Value& objOffset = document["offset"];
@@ -52,8 +55,8 @@ bool FollowObject::Initialize(rapidjson::Value& document)
     }
 
     m_pTransformTarget = SceneView::Get()->GetComponentByTag<TransformComponent>(targetTag, "transform");
-    m_pTransform = SceneView::Get()->GetComponentByTag<TransformComponent>(entity, "transform");
-    m_pForce = SceneView::Get()->GetComponentByTag<ForceComponent>(entity, "force");
+    m_pTransform = SceneView::Get()->GetComponent<TransformComponent>(entity, "transform");
+    m_pForce = SceneView::Get()->GetComponent<ForceComponent>(entity, "force");
 
     m_lastTargetPosition = m_pTransformTarget->GetPosition();
 
@@ -115,14 +118,21 @@ bool FollowObject::PostEnd(void)
 
 void FollowObject::m_GenerateSubCommands()
 {
+    CommandGroup* pGroup = new CommandGroup();
+
     // Create a MoveTo command for the calculated position with the given max speed
     MoveTo* pMove = new MoveTo();
 
     pMove->Initialize(m_pTransform, m_pForce, m_lastTargetPosition, glm::vec3(m_maxSpeed));
     pMove->PreStart();
 
+    // OrientTo command to face the target
+
     // Set motion commands
-    this->CommandGroup::AddSerialCommand(pMove);
+    pGroup->AddParallelCommand(pMove);
+
+    // Set motion commands to list
+    this->CommandGroup::AddSerialCommand(pGroup);
 }
 
 void FollowObject::m_UpdateTargetPosition()

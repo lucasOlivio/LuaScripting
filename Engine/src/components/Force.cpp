@@ -2,8 +2,8 @@
 
 ForceComponent::ForceComponent()
 {
-    this->m_centrifugalAcceleration = glm::vec3(0);
-    this->m_centrifugalVelocity = glm::vec3(0);
+    m_centrifugalAcceleration = glm::vec3(0);
+    m_centrifugalVelocity = glm::vec3(0);
 }
 
 ForceComponent::~ForceComponent()
@@ -12,62 +12,72 @@ ForceComponent::~ForceComponent()
 
 void ForceComponent::SetInverseMass(float value)
 {
-    this->m_inverseMass = value;
+    m_inverseMass = value;
 }
 
 void ForceComponent::SetRestitution(float value)
 {
-    this->m_restitution = value;
+    m_restitution = value;
+}
+
+void ForceComponent::SetDrag(float value)
+{
+    m_drag = value;
 }
 
 void ForceComponent::SetAcceleration(glm::vec3 value)
 {
-    this->m_acceleration = value;
+    m_acceleration = value;
 }
 
 void ForceComponent::SetVelocity(glm::vec3 value)
 {
-    this->m_velocity = value;
+    m_velocity = value;
 }
 
 void ForceComponent::SetActive(bool isActive)
 {
-    this->m_isActive = isActive;
+    m_isActive = isActive;
 }
 
 void ForceComponent::SetCentrifugalAcceleration(glm::vec3 value)
 {
-    this->m_centrifugalAcceleration = value;
+    m_centrifugalAcceleration = value;
 }
 
 void ForceComponent::SetCentrifugalVelocity(glm::vec3 value)
 {
-    this->m_centrifugalVelocity = value;
+    m_centrifugalVelocity = value;
 }
 
 float ForceComponent::GetInverseMass()
 {
-    return this->m_inverseMass;
+    return m_inverseMass;
 }
 
 float ForceComponent::GetRestitution()
 {
-    return this->m_restitution;
+    return m_restitution;
+}
+
+float ForceComponent::GetDrag()
+{
+    return m_drag;
 }
 
 glm::vec3 ForceComponent::GetAcceleration()
 {
-    return this->m_acceleration;
+    return m_acceleration;
 }
 
 glm::vec3 ForceComponent::GetVelocity()
 {
-    return this->m_velocity;
+    return m_velocity;
 }
 
 bool ForceComponent::IsActive()
 {
-    if (this->m_isActive)
+    if (m_isActive)
     {
         return true;
     }
@@ -79,12 +89,12 @@ bool ForceComponent::IsActive()
 
 glm::vec3 ForceComponent::GetCentrifugalAcceleration()
 {
-    return this->m_centrifugalAcceleration;
+    return m_centrifugalAcceleration;
 }
 
 glm::vec3 ForceComponent::GetCentrifugalVelocity()
 {
-    return this->m_centrifugalVelocity;
+    return m_centrifugalVelocity;
 }
 
 void ForceComponent::GetInfo(sComponentInfo& compInfoOut)
@@ -92,39 +102,43 @@ void ForceComponent::GetInfo(sComponentInfo& compInfoOut)
     compInfoOut.componentName = "force";
     compInfoOut.componentParameters.clear();
 
-    this->AddCompParInfo("inverseMass", "float", this->GetInverseMass(), compInfoOut);
-    this->AddCompParInfo("restitution", "float", this->GetRestitution(), compInfoOut);
-    this->AddCompParInfo("acceleration", "vec3", this->GetAcceleration(), compInfoOut);
-    this->AddCompParInfo("velocity", "vec3", this->GetVelocity(), compInfoOut);
-    this->AddCompParInfo("centrifugalAcceleration", "vec3", this->GetCentrifugalAcceleration(), compInfoOut);
-    this->AddCompParInfo("centrifugalVelocity", "vec3", this->GetCentrifugalVelocity(), compInfoOut);
+    AddCompParInfo("inverseMass", "float", GetInverseMass(), compInfoOut);
+    AddCompParInfo("restitution", "float", GetRestitution(), compInfoOut);
+    AddCompParInfo("drag", "float", GetDrag(), compInfoOut);
+    AddCompParInfo("acceleration", "vec3", GetAcceleration(), compInfoOut);
+    AddCompParInfo("velocity", "vec3", GetVelocity(), compInfoOut);
+    AddCompParInfo("centrifugalAcceleration", "vec3", GetCentrifugalAcceleration(), compInfoOut);
+    AddCompParInfo("centrifugalVelocity", "vec3", GetCentrifugalVelocity(), compInfoOut);
 
-    this->Component::GetInfo(compInfoOut);
+    Component::GetInfo(compInfoOut);
 
     return;
 }
 
 void ForceComponent::SetParameter(sParameterInfo& parameterIn)
 {
-    this->Component::SetParameter(parameterIn);
+    Component::SetParameter(parameterIn);
 
     if (parameterIn.parameterName == "inverseMass") {
-        this->SetInverseMass(parameterIn.parameterFloatValue);
+        SetInverseMass(parameterIn.parameterFloatValue);
     }
     else if (parameterIn.parameterName == "restitution") {
-        this->SetRestitution(parameterIn.parameterFloatValue);
+        SetRestitution(parameterIn.parameterFloatValue);
+    }
+    else if (parameterIn.parameterName == "drag") {
+        SetDrag(parameterIn.parameterFloatValue);
     }
     else if (parameterIn.parameterName == "acceleration") {
-        this->SetAcceleration(parameterIn.parameterVec3Value);
+        SetAcceleration(parameterIn.parameterVec3Value);
     }
     else if (parameterIn.parameterName == "velocity") {
-        this->SetVelocity(parameterIn.parameterVec3Value);
+        SetVelocity(parameterIn.parameterVec3Value);
     }
     else if (parameterIn.parameterName == "centrifugalAcceleration") {
-        this->SetCentrifugalAcceleration(parameterIn.parameterVec3Value);
+        SetCentrifugalAcceleration(parameterIn.parameterVec3Value);
     }
     else if (parameterIn.parameterName == "centrifugalVelocity") {
-        this->SetCentrifugalVelocity(parameterIn.parameterVec3Value);
+        SetCentrifugalVelocity(parameterIn.parameterVec3Value);
     }
 
     return;

@@ -1,5 +1,38 @@
 [
     {
+        "model": {
+            "models": [
+                "sphereskybox.ply"
+            ],
+            "collisionName": "",
+            "material": "matcubetext",
+            "friendlyName": "sphere",
+            "parentTagName": "",
+            "isWireframe": false,
+            "doNotLight": false,
+            "useColorTexture": true,
+            "isActive": true
+        },
+        "tag": {
+            "name": "skybox",
+            "isActive": false
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 50000.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "isActive": false
+        }
+    },
+    {
         "collision": {
             "shape": 4,
             "bodyType": 0,
@@ -26,9 +59,9 @@
         },
         "transform": {
             "position": [
-                -1200.0,
-                1200.0,
-                0.0
+                0.0,
+                0.0,
+                -10000.0
             ],
             "scale": 1.0,
             "orientation": [
@@ -40,6 +73,16 @@
         }
     },
     {
+        "camera": {
+            "upVector": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "distance": 1215.0,
+            "height": 421.0,
+            "offsetTarget": 2708.0
+        },
         "collision": {
             "shape": 4,
             "bodyType": 1,
@@ -63,6 +106,7 @@
         "force": {
             "inverseMass": 0.10000000149011612,
             "restitution": 0.800000011920929,
+            "drag": 100.0,
             "acceleration": [
                 0.0,
                 0.0,
@@ -103,20 +147,20 @@
             "isActive": true
         },
         "tag": {
-            "name": "shipenemy",
+            "name": "camera",
             "isActive": true
         },
         "transform": {
             "position": [
-                0.0,
-                0.0,
-                0.0
+                -64.1875,
+                478.5595703125,
+                2997.270751953125
             ],
             "scale": 1.0,
             "orientation": [
-                0.0,
-                -0.0,
-                0.0
+                -1.1744199991226196,
+                -0.38651999831199646,
+                -0.000029999999242136255
             ],
             "isActive": true
         }
@@ -145,6 +189,7 @@
         "force": {
             "inverseMass": 0.10000000149011612,
             "restitution": 0.800000011920929,
+            "drag": 100.0,
             "acceleration": [
                 0.0,
                 0.0,
@@ -190,8 +235,8 @@
         },
         "transform": {
             "position": [
-                400.0,
-                400.0,
+                0.0,
+                0.0,
                 0.0
             ],
             "scale": 1.0,
@@ -212,9 +257,9 @@
                 1.0
             ],
             "direction": [
+                0.0,
+                0.0,
                 1.0,
-                -0.0,
-                -0.0,
                 1.0
             ],
             "distanceOffset": 0.0,
@@ -285,9 +330,9 @@
                 1.0
             ],
             "direction": [
+                0.0,
+                0.0,
                 1.0,
-                -0.0,
-                -0.0,
                 1.0
             ],
             "distanceOffset": 0.0,
@@ -345,33 +390,6 @@
                 -0.0,
                 -0.0,
                 -0.0
-            ],
-            "isActive": true
-        }
-    },
-    {
-        "camera": {
-            "upVector": [
-                0.0,
-                1.0,
-                0.0
-            ]
-        },
-        "tag": {
-            "name": "camera",
-            "isActive": true
-        },
-        "transform": {
-            "position": [
-                -193.77622985839844,
-                27.343059539794922,
-                3912.398193359375
-            ],
-            "scale": 1.0,
-            "orientation": [
-                -92.72382354736328,
-                11.524450302124023,
-                -0.00004999999873689376
             ],
             "isActive": true
         }
@@ -658,15 +676,16 @@
         "force": {
             "inverseMass": 0.10000000149011612,
             "restitution": 0.800000011920929,
+            "drag": 0.0,
             "acceleration": [
                 0.0,
                 0.0,
                 0.0
             ],
             "velocity": [
-                500.0,
-                500.0,
-                500.0
+                0.0,
+                0.0,
+                -2500.0
             ],
             "centrifugalAcceleration": [
                 0.0,
@@ -704,6 +723,86 @@
                 -0.0
             ],
             "scale": 25.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "isActive": false
+        }
+    },
+    {
+        "material": {
+            "materialName": "matcubetext",
+            "offsetMove": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "colorTextures": [],
+            "colorTexturesRatios": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "useHeightMap": false,
+            "heightMapTexture": "",
+            "heightScale": 3.0,
+            "useNormalTexture": false,
+            "normalTexture": "",
+            "useSpecularTexture": false,
+            "specularTexture": "",
+            "useDiscardTexture": false,
+            "discardTexture": "",
+            "useCubeTexture": true,
+            "cubeTexture": "textcube",
+            "alphaValue": 1.0,
+            "isActive": false
+        },
+        "tag": {
+            "name": "matcubetext",
+            "isActive": false
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "orientation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "isActive": false
+        }
+    },
+    {
+        "tag": {
+            "name": "textcube",
+            "isActive": false
+        },
+        "texture": {
+            "fileName": "textcube",
+            "textureType": 20,
+            "vecTextures": [
+                "cubetexture/TropicalSunnyDayLeft2048.bmp",
+                "cubetexture/TropicalSunnyDayRight2048.bmp",
+                "cubetexture/TropicalSunnyDayUp2048.bmp",
+                "cubetexture/TropicalSunnyDayDown2048.bmp",
+                "cubetexture/TropicalSunnyDayFront2048.bmp",
+                "cubetexture/TropicalSunnyDayBack2048.bmp"
+            ],
+            "isActive": false
+        },
+        "transform": {
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
             "orientation": [
                 0.0,
                 -0.0,

@@ -57,7 +57,8 @@ namespace myutils
     glm::vec3 CalculateVector(glm::vec3 startXYZ, glm::vec3 endXYZ, float ratio);
 
     // Calculate new velocity based on time, initial velocity and acceleration
-    glm::vec3 IncreaseVelocity(glm::vec3 initialVelocity, glm::vec3 acceleration, float deltaTime);
+    glm::vec3 IncreaseVelocity(glm::vec3 initialVelocity, glm::vec3 acceleration, 
+                               float drag, float deltaTime);
     // Calculate the needed velocity to go from start to end in the given time
     glm::vec3 CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ,
                                 float initialTime, float finalTime);

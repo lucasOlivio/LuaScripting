@@ -114,6 +114,11 @@ struct sAABB
 		this->offset = glm::vec3(0.0f);
 	}
 
+	glm::vec3 GetExtent()
+	{
+		return this->maxXYZ - this->minXYZ;
+	}
+
 	glm::vec3 minXYZ = glm::vec3(0.0f);
 	glm::vec3 maxXYZ = glm::vec3(0.0f);
 	glm::vec3 offset = glm::vec3(0.0f);
@@ -132,6 +137,11 @@ struct sAABB2D
 		this->minXY = glm::vec2(0.0f);
 		this->maxXY = glm::vec2(0.0f);
 		this->offset = glm::vec2(0.0f);
+	}
+
+	glm::vec2 GetExtent()
+	{
+		return this->maxXY - this->minXY;
 	}
 
 	glm::vec2 minXY = glm::vec2(0.0f);

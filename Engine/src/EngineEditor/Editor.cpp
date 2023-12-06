@@ -8,6 +8,7 @@
 #include "EngineDebug/DebugSystem.h"
 #include "scene/SceneView.h"
 #include "scene/Scene.h"
+#include "Engine.h"
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
@@ -33,7 +34,7 @@ Editor::Editor(KeyEvent* pKeyEvent, iSceneDirector* pSceneDirector, WindowSystem
 	m_lastY = 0;
 	m_yaw = 0;
 	m_pitch = 0;
-	m_sensitivity = 0.025f;
+	m_sensitivity = 0.00025f;
 }
 
 Editor::~Editor()
@@ -67,6 +68,10 @@ void Editor::RedrawEntityUI()
 
 	printf("Toggle collision mode: C\n");
 	printf("Debug collision mode: %d\n", (int)pDebug->IsModesOn(eDebugMode::COLLISION));
+	printf("Toggle broadphase mode: B\n");
+	printf("Debug broadphase mode: %d\n", (int)pDebug->IsModesOn(eDebugMode::BROADPHASE));
+	printf("Toggle broadphase triangles mode: T\n");
+	printf("Debug broadphase triangles mode: %d\n", (int)pDebug->IsModesOn(eDebugMode::BROADPHASE_TRIANGLES));
 	// printf("Toggle normal mode: N\n");
 	// printf("Debug normal mode: %d\n\n", (int)pDebug->IsModesOn(eDebugMode::NORMAL));
 
@@ -146,8 +151,14 @@ void Editor::DrawSelectedEntity()
 
 	// Bounding box and gizmo to selected element
 	iComponent* pModelComp = SceneView::Get()->GetComponent(m_selectedEntity, "model");
+	iComponent* pTransComp = SceneView::Get()->GetComponent(m_selectedEntity, "transform");
 
-	TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(m_selectedEntity, "transform");
+	if (!pTransComp)
+	{
+		return;
+	}
+
+	TransformComponent* pTransform = (TransformComponent*)pTransComp;
 
 	if (pModelComp != nullptr)
 	{
@@ -165,7 +176,8 @@ void Editor::DrawSelectedEntity()
 		pDebug->AddRectangle(
 			minXYZ,
 			maxXYZ,
-			SELECTED_COLOR
+			SELECTED_COLOR,
+			false
 		);
 	}
 	else
@@ -188,7 +200,7 @@ bool Editor::LoadScene()
 void Editor::Update(double deltaTime)
 {
 	MouseActions();
-	MoveCamera(deltaTime);
+	m_MoveCamera(deltaTime);
 
 	DrawSelectedEntity();
 }
@@ -387,6 +399,16 @@ bool Editor::KeyActions(sKeyInfo keyInfo)
 		pDebug->ToggleMode(eDebugMode::COLLISION);
 		return true;
 	}
+	if (keyInfo.pressedKey == GLFW_KEY_B && keyInfo.action == GLFW_PRESS)
+	{
+		pDebug->ToggleMode(eDebugMode::BROADPHASE);
+		return true;
+	}
+	if (keyInfo.pressedKey == GLFW_KEY_T && keyInfo.action == GLFW_PRESS)
+	{
+		pDebug->ToggleMode(eDebugMode::BROADPHASE_TRIANGLES);
+		return true;
+	}
 	//if (keyInfo.pressedKey == GLFW_KEY_N && keyInfo.action == GLFW_PRESS)
 	//{
 	//	pDebug->ToggleMode(eDebugMode::NORMAL);
@@ -481,77 +503,6 @@ void Editor::ChangeSelectedParameter(int orientation)
 	ChangeSelected(m_selectedParameter, orientation, numParameters);
 }
 
-void Editor::m_ModifySelected(int& value, int orientation)
-{
-	value += (int)(orientation * changeStepInt);
-}
-
-void Editor::m_ModifySelected(bool& value, int orientation)
-{
-	value += (orientation * changeStepInt);
-}
-
-void Editor::m_ModifySelected(float& value, int orientation)
-{
-	value += (float)(orientation * changeStepFloat);
-}
-
-void Editor::m_ModifySelected(glm::vec3& value, int orientation, int axis)
-{
-	if (axis > 2)
-	{
-		return;
-	}
-
-	value[axis] += (float)(orientation * changeStepFloat);
-}
-
-void Editor::m_ModifySelected(glm::vec4& value, int orientation, int axis)
-{
-	if (axis > 3)
-	{
-		return;
-	}
-
-	value[axis] += (float)(orientation * changeStepFloat);
-}
-
-void Editor::m_ModifySelected(std::vector<float>& value, int orientation, int axis)
-{
-	if (axis > value.size())
-	{
-		return;
-	}
-
-	value[axis] += (orientation * (float)changeStepFloat);
-}
-
-void Editor::m_UpdateCamera(float xpos, float ypos)
-{
-	using namespace glm;
-
-	if (m_firstUpdate)
-	{
-		m_lastX = xpos;
-		m_lastY = ypos;
-		m_firstUpdate = false;
-	}
-
-	float xoffset = xpos - m_lastX;
-	float yoffset = ypos - m_lastY;
-	m_lastX = xpos;
-	m_lastY = ypos;
-	xoffset *= m_sensitivity;
-	yoffset *= m_sensitivity;
-
-	vec3 rotation = m_pTransformCamera->GetOrientation();
-
-	rotation.x += xoffset;
-	rotation.y -= yoffset;
-
-	m_pTransformCamera->SetOrientation(rotation);
-}
-
 void Editor::ModifySelectedParameter(int axis, int orientation)
 {
 	using namespace myutils;
@@ -613,43 +564,6 @@ void Editor::ModifySelectedParameter(int axis, int orientation)
 	pComponent->SetParameter(paramInfo);
 
 	return;
-}
-
-void Editor::MoveCamera(double deltaTime)
-{
-	using namespace glm;
-
-	vec3 cameraPosition = m_pTransformCamera->GetPosition();
-	vec3 cameraRotation = m_pTransformCamera->GetOrientation();
-	vec3 cameraUpVector = m_pCamera->upVector;
-
-	vec3 cameraFront = normalize(m_pCamera->GetCameraFront(cameraPosition, cameraRotation));
-	vec3 cameraSides = normalize(cross(cameraFront, m_pCamera->upVector));
-	vec3 moveOffset = vec3(0.0f);
-
-	// No ctrl or shift been pressed
-	if (Input::GetKeyMods() != 0)
-	{
-		return;
-	}
-
-	// Handle key presses for movement
-	if (Input::IsKeyPressed(GLFW_KEY_W)) {
-		moveOffset = cameraSpeed * cameraFront * (float)deltaTime;
-	}
-	if (Input::IsKeyPressed(GLFW_KEY_S)) {
-		moveOffset = -(cameraSpeed * cameraFront * (float)deltaTime);
-	}
-	if (Input::IsKeyPressed(GLFW_KEY_A)) {
-		moveOffset = -(cameraSpeed * cameraSides * (float)deltaTime);
-	}
-	if (Input::IsKeyPressed(GLFW_KEY_D)) {
-		moveOffset = cameraSpeed * cameraSides * (float)deltaTime;
-	}
-
-	cameraPosition += moveOffset;
-
-	m_pTransformCamera->SetPosition(cameraPosition);
 }
 
 void Editor::SetParameterManually(int axis)
@@ -764,4 +678,109 @@ void Editor::m_PrintParameter(std::string parName, std::vector<float>& parValue)
 	}
 
 	printf("]\n");
+}
+
+void Editor::m_ModifySelected(int& value, int orientation)
+{
+	value += (int)(orientation * changeStepInt);
+}
+
+void Editor::m_ModifySelected(bool& value, int orientation)
+{
+	value += (orientation * changeStepInt);
+}
+
+void Editor::m_ModifySelected(float& value, int orientation)
+{
+	value += (float)(orientation * changeStepFloat);
+}
+
+void Editor::m_ModifySelected(glm::vec3& value, int orientation, int axis)
+{
+	if (axis > 2)
+	{
+		return;
+	}
+
+	value[axis] += (float)(orientation * changeStepFloat);
+}
+
+void Editor::m_ModifySelected(glm::vec4& value, int orientation, int axis)
+{
+	if (axis > 3)
+	{
+		return;
+	}
+
+	value[axis] += (float)(orientation * changeStepFloat);
+}
+
+void Editor::m_ModifySelected(std::vector<float>& value, int orientation, int axis)
+{
+	if (axis > value.size())
+	{
+		return;
+	}
+
+	value[axis] += (orientation * (float)changeStepFloat);
+}
+
+void Editor::m_UpdateCamera(float xpos, float ypos)
+{
+	using namespace glm;
+
+	if (m_firstUpdate)
+	{
+		m_lastX = xpos;
+		m_lastY = ypos;
+		m_firstUpdate = false;
+	}
+
+	float xoffset = xpos - m_lastX;
+	float yoffset = ypos - m_lastY;
+	m_lastX = xpos;
+	m_lastY = ypos;
+	xoffset *= m_sensitivity;
+	yoffset *= m_sensitivity;
+
+	quat transfQuat = m_pTransformCamera->GetQuatOrientation();
+	quat yaw = angleAxis(-xoffset, vec3(UP_VECTOR));
+	quat pitch = angleAxis(-yoffset, vec3(RIGHT_VECTOR));
+
+	transfQuat = yaw * transfQuat;
+	transfQuat = transfQuat * pitch;
+
+	m_pTransformCamera->SetOrientation(transfQuat);
+}
+
+void Editor::m_MoveCamera(double deltaTime)
+{
+	using namespace glm;
+
+	vec3 forward = m_pTransformCamera->GetForwardVector();
+	vec3 right = m_pTransformCamera->GetRightVector();
+
+	vec3 moveOffset = vec3(0.0f);
+
+	// CTRL of SHIFT been pressed
+	if (Input::GetKeyMods() != 0)
+	{
+		return;
+	}
+
+	// Handle key presses for movement
+	if (Input::IsKeyPressed(GLFW_KEY_W)) {
+		moveOffset = cameraSpeed * forward * (float)deltaTime;
+	}
+	else if (Input::IsKeyPressed(GLFW_KEY_S)) {
+		moveOffset = -(cameraSpeed * forward * (float)deltaTime);
+	}
+	else if (Input::IsKeyPressed(GLFW_KEY_A)) {
+		moveOffset = -(cameraSpeed * right * (float)deltaTime);
+	}
+	else if (Input::IsKeyPressed(GLFW_KEY_D)) {
+		moveOffset = cameraSpeed * right * (float)deltaTime;
+	}
+
+	m_pTransformCamera->Move(moveOffset);
 }

@@ -4,17 +4,6 @@
 
 class ForceComponent : public Component
 {
-private:
-	float m_inverseMass;
-	float m_restitution;
-
-	// Movement forces
-	glm::vec3 m_acceleration;
-	glm::vec3 m_velocity;
-
-	// Rotation forces (In degrees)
-	glm::vec3 m_centrifugalAcceleration;
-	glm::vec3 m_centrifugalVelocity;
 public:
 	ForceComponent();
 	~ForceComponent();
@@ -22,6 +11,7 @@ public:
 	// Setters
 	void SetInverseMass(float value);
 	void SetRestitution(float value);
+	void SetDrag(float value);
 	void SetAcceleration(glm::vec3 value);
 	void SetVelocity(glm::vec3 value);
 	void SetActive(bool isActive);
@@ -31,6 +21,7 @@ public:
 	// Getters
 	float GetInverseMass();
 	float GetRestitution();
+	float GetDrag();
 	glm::vec3 GetAcceleration();
 	glm::vec3 GetVelocity();
 	bool IsActive();
@@ -39,5 +30,20 @@ public:
 
 	virtual void GetInfo(sComponentInfo& compInfoOut);
 	virtual void SetParameter(sParameterInfo& parameterIn);
+
+private:
+	float m_inverseMass;
+	float m_restitution;
+
+	// Decceleration
+	float m_drag;
+
+	// Movement forces
+	glm::vec3 m_acceleration;
+	glm::vec3 m_velocity;
+
+	// Rotation forces (In degrees)
+	glm::vec3 m_centrifugalAcceleration;
+	glm::vec3 m_centrifugalVelocity;
 };
 

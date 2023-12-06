@@ -2,6 +2,8 @@
 
 CommandManager::CommandManager()
 {
+	m_vecForeverCommands = {};
+	m_vecCommands = {};
 	m_itNextGroup = m_vecCommands.begin();
 }
 
@@ -37,6 +39,8 @@ void CommandManager::DeleteForeverCommand(uint16_t UUID)
 			continue;
 		}
 
+		pGroup->PostEnd();
+
 		// Found the command, delete pointer, rm from vector
 		delete pGroup;
 
@@ -56,13 +60,13 @@ void CommandManager::Update(double deltaTime)
 
 void CommandManager::ClearCommands()
 {
-	for (iCommand* pCommand : m_vecCommands)
+	for (int i = 0; i < m_vecCommands.size(); i++)
 	{
-		delete pCommand;
+		delete m_vecCommands[i];
 	}
-	for (iCommand* pCommand : m_vecForeverCommands)
+	for (int i = 0; i < m_vecForeverCommands.size(); i++)
 	{
-		delete pCommand;
+		delete m_vecForeverCommands[i];
 	}
 
 	m_vecCommands.clear();

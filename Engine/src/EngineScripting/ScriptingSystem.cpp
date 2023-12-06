@@ -46,10 +46,9 @@ bool ScriptingSystem::LoadScene()
 {
     m_pCommandManager->ClearCommands();
 
-    bool isLoaded = m_pLuaBrain->LoadScene();
-    if (!isLoaded)
+    bool sceneLoaded = m_pLuaBrain->LoadScene();
+    if (!sceneLoaded)
     {
-        CheckEngineError("lua brain loading error\n\n");
         return false;
     }
 
@@ -63,9 +62,9 @@ void ScriptingSystem::Destroy()
     delete m_pCommandManager;
 }
 
-void ScriptingSystem::LoadScript(EntityID entityID, std::string scriptName)
+void ScriptingSystem::LoadScript(EntityID entityID)
 {
-    m_pLuaBrain->LoadScript(entityID, scriptName);
+    m_pLuaBrain->LoadScript(entityID);
 }
 
 void ScriptingSystem::OnStart()
@@ -83,6 +82,11 @@ void ScriptingSystem::OnCollision(sCollisionData* pCollision)
 {
     m_pLuaBrain->OnCollision(pCollision->entityA, pCollision->tagB);
     m_pLuaBrain->OnCollision(pCollision->entityB, pCollision->tagA);
+}
+
+void ScriptingSystem::OnKeyInput(sKeyInfo keyInfo)
+{
+    m_pLuaBrain->OnKeyInput(keyInfo);
 }
 
 bool ScriptingSystem::AddCommand(const char* json, bool isForever, uint16_t& UUIDOut)
@@ -111,4 +115,9 @@ bool ScriptingSystem::AddCommand(const char* json, bool isForever, uint16_t& UUI
     UUIDOut = pComm->GetUUID();
 
     return true;
+}
+
+void ScriptingSystem::DeleteForeverCommand(uint16_t UUID)
+{
+    m_pCommandManager->DeleteForeverCommand(UUID);
 }

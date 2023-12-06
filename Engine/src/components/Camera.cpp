@@ -3,6 +3,7 @@
 #include "common/constants.h"
 #include "common/utilsMat.h"
 #include <glm/gtx/string_cast.hpp>
+#include <cmath>
 
 void CameraComponent::GetInfo(sComponentInfo& compInfoOut)
 {
@@ -12,6 +13,9 @@ void CameraComponent::GetInfo(sComponentInfo& compInfoOut)
 	compInfoOut.componentParameters.clear();
 
     this->AddCompParInfo("upVector", "vec3", this->upVector, compInfoOut);
+    this->AddCompParInfo("distance", "float", this->distance, compInfoOut);
+    this->AddCompParInfo("height", "float", this->height, compInfoOut);
+    this->AddCompParInfo("offsetTarget", "float", this->offsetTarget, compInfoOut);
 }
 
 void CameraComponent::SetParameter(sParameterInfo& parameterIn)
@@ -21,18 +25,15 @@ void CameraComponent::SetParameter(sParameterInfo& parameterIn)
     if (parameterIn.parameterName == "upVector") {
         this->upVector = parameterIn.parameterVec3Value;
     }
+    else if (parameterIn.parameterName == "distance") {
+        this->distance = parameterIn.parameterFloatValue;
+    }
+    else if (parameterIn.parameterName == "height") {
+        this->height = parameterIn.parameterFloatValue;
+    }
+    else if (parameterIn.parameterName == "offsetTarget") {
+        this->offsetTarget = parameterIn.parameterFloatValue;
+    }
 
     return;
-}
-
-glm::vec3 CameraComponent::GetCameraFront(const glm::vec3& cameraPosition, const glm::vec3& rotation)
-{
-	glm::vec3 front = myutils::GetDirectionFromDegrees(rotation);
-
-	return front;
-}
-
-glm::vec3 CameraComponent::GetCameraTarget(const glm::vec3& cameraPosition, const glm::vec3& rotation)
-{
-	return cameraPosition + GetCameraFront(cameraPosition, rotation);
 }

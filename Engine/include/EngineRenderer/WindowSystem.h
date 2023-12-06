@@ -7,13 +7,6 @@
 
 class WindowSystem
 {
-private:
-	GLFWwindow* m_pWindow;
-	iShaderInfo* m_pShaderInfo;
-
-	int m_width;
-	int m_height;
-	float m_ratio;
 public:
 	// ctors & dtors
 	WindowSystem(iShaderInfo* pShaderInfo);
@@ -42,4 +35,12 @@ public:
 
 	void CaptureMouse();
 	void ReleaseMouse();
+
+private:
+	GLFWwindow* m_pWindow;
+	iShaderInfo* m_pShaderInfo;
+
+	int m_width;
+	int m_height;
+	float m_ratio;
 };

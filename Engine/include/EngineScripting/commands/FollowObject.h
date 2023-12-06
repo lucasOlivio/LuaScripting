@@ -24,10 +24,11 @@ public:
 
 	virtual bool PostEnd(void);
 private:
-	float m_timeStep;       // Frequency to update target location in seconds
-	float m_maxSpeed;       // Max speed to reach 
-	float m_followDistance; // Max it will get to the object
-	glm::vec3 m_offset;     // Offset from target position
+	float m_timeStep;         // Frequency to update target location in seconds
+	float m_maxSpeed;         // Max speed to reach 
+	float m_maxRotationSpeed; // Max rotation speed to reach 
+	float m_followDistance;   // Max it will get to the object
+	glm::vec3 m_offset;       // Offset from target position
 
 	bool m_followForever; // When reach object position should end command?
 

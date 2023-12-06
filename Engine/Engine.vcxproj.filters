@@ -223,6 +223,24 @@
     <ClCompile Include="src\EngineScripting\LuaBindings\LuaGetInfo.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\EngineScripting\commands\Motion.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineScripting\commands\AccelerateTowards.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\lua.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineScripting\commands\FollowMouse.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnginePhysics\cAABB.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnginePhysics\BroadPhaseCollision.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\EngineRenderer\CameraSystem.h">
@@ -344,7 +362,7 @@
     </ClInclude>
     <ClInclude Include="include\components\Spawner.h" />
     <ClInclude Include="include\components\Force.h" />
-    <ClInclude Include="include\events\sCollisionData.h" />
+    <ClInclude Include="include\events\CollisionProperties.h" />
     <ClInclude Include="include\events\iCollisionListener.h" />
     <ClInclude Include="include\components\Tag.h" />
     <ClInclude Include="include\components\Script.h" />
@@ -387,6 +405,12 @@
     <ClInclude Include="include\EngineScripting\commands\CreateEntity.h" />
     <ClInclude Include="include\EngineScripting\LuaBindings\LuaGetInfo.h" />
     <ClInclude Include="include\common\lua.h" />
+    <ClInclude Include="include\EngineScripting\commands\Motion.h" />
+    <ClInclude Include="include\EngineScripting\commands\AccelerateTowards.h" />
+    <ClInclude Include="include\events\InputProperties.h" />
+    <ClInclude Include="include\EngineScripting\commands\FollowMouse.h" />
+    <ClInclude Include="include\EnginePhysics\BroadPhaseCollision.h" />
+    <ClInclude Include="include\EnginePhysics\cAABB.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scene\SceneView.tpp">

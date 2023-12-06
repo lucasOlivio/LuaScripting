@@ -1,14 +1,7 @@
 #pragma once
 
 #include "Event.h"
-
-struct sKeyInfo
-{
-	int pressedKey;
-	int scanCode;
-	int action;
-	int mods;
-};
+#include "InputProperties.h"
 
 // Key callback events triggered by glfw on window
 class KeyEvent : public Event

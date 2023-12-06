@@ -130,26 +130,27 @@ bool CommandGroup::m_UpdateParallel(double deltaTime)
 	bool isDone = true;
 
 	for (std::vector< iCommand* >::iterator itCurCommand = m_vecParallelCommands.begin();
-		itCurCommand != m_vecParallelCommands.end();
-		itCurCommand++)
+		itCurCommand != m_vecParallelCommands.end();)
 	{
 
 		iCommand* pThisCommand = *itCurCommand;
 
+		bool commandDone = pThisCommand->Update(deltaTime);
+
 		// Is this done? 
-		if (pThisCommand->IsDone())
+		if (!pThisCommand->IsDone())
 		{
+			// This isn't done
+			isDone = false;
+			itCurCommand++;
 			continue;
 		}
 
-		bool commandDone = pThisCommand->Update(deltaTime);
-		if (commandDone)
-		{
-			pThisCommand->PostEnd();
-		}
+		// Done, so run post end and remove command from list 
+		pThisCommand->PostEnd();
 
-		// This isn't done
-		isDone = false;
+		itCurCommand = m_vecParallelCommands.erase(itCurCommand);
+		delete pThisCommand;
 	}//for ( std::vector< iCommand* >::iterator
 
 	return isDone;
@@ -179,12 +180,24 @@ bool CommandGroup::m_IsDoneParallel(void)
 
 bool CommandGroup::m_PostEndParallel()
 {
+	for (std::vector< iCommand* >::iterator itCurCommand = m_vecParallelCommands.begin();
+		itCurCommand != m_vecParallelCommands.end();
+		itCurCommand++)
+	{
+		iCommand* pThisCommand = *itCurCommand;
+
+		bool successEnd = pThisCommand->PostEnd();
+		if (!successEnd)
+		{
+			return false;
+		}
+	}
 	return true;
 }
 
 bool CommandGroup::m_IsDoneSerial(void)
 {
-	if (m_itNextSerialCommand == m_vecSerialCommands.end())
+	if (m_vecSerialCommands.size() == 0)
 	{
 		return true;
 	}
@@ -208,7 +221,7 @@ bool CommandGroup::m_PreStartSerial()
 bool CommandGroup::m_UpdateSerial(double deltaTime)
 {
 	// Are there any more commands? 
-	if (m_itNextSerialCommand == m_vecSerialCommands.end())
+	if (m_vecSerialCommands.size() == 0)
 	{
 		return true;
 	}
@@ -247,5 +260,13 @@ bool CommandGroup::m_UpdateSerial(double deltaTime)
 
 bool CommandGroup::m_PostEndSerial()
 {
-	return true;
+	if (m_vecSerialCommands.size() == 0)
+	{
+		return true;
+	}
+
+	iCommand* pNextCommand = *m_itNextSerialCommand;
+	bool successEnd = pNextCommand->PostEnd();
+
+	return successEnd;
 }

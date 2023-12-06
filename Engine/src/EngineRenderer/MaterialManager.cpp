@@ -105,7 +105,6 @@ void MaterialManager::BindMaterial(ShaderManager::ShaderProgram* pShaderProgram,
 		return;
 	}
 
-	UnbindMaterials(pShaderProgram);
 	m_currMaterial = pMaterial->materialName;
 	std::vector<TextureComponent*> vecTexturesComp = pMaterial->texturesComponents;
 

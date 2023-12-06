@@ -142,7 +142,7 @@ sMesh* VAOManager::LoadModelIntoVAO(std::string& fileName, int shaderID, bool bI
         glDisableVertexAttribArray(vNormal_location);
     }
 
-    if (hasNormals)
+    if (hasTexture)
     {
         glDisableVertexAttribArray(vTextureCoords_location);
     }

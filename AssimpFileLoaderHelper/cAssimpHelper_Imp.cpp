@@ -13,6 +13,7 @@
 #include <sstream>
 #include <float.h>
 #include <fstream>
+#include <glm/vec3.hpp>
 
 
 cFileLoader_Imp::cFileLoader_Imp()
@@ -37,6 +38,8 @@ bool cFileLoader_Imp::m_ProcessScene(const aiScene* scene, sMesh* drawInfo)
 		drawInfo->numberOfTriangles += currMesh->mNumFaces;
 		drawInfo->numberOfVertices += currMesh->mNumVertices;
 	}
+	// Load the triangles for organize structure
+	drawInfo->pTriangles = new sTriangleMesh[drawInfo->numberOfTriangles];
 	// Load the vertices in the opengl structure VBO
 	drawInfo->pVertices = new sVertex[drawInfo->numberOfVertices];
 	// Load the indices for the Index Buffer
@@ -116,14 +119,35 @@ bool cFileLoader_Imp::m_ProcessScene(const aiScene* scene, sMesh* drawInfo)
 
 		// Load the indices for the Index Buffer
 		// TODO: Load different indices numbers based on shape (For now we just will use triangles)
-		for (unsigned int currTriangleIndex = 0; currTriangleIndex < drawInfo->numberOfTriangles; currTriangleIndex++)
+
+		for (unsigned int currTriangleIndex = 0; 
+			 currTriangleIndex < drawInfo->numberOfTriangles; 
+			 currTriangleIndex++)
 		{
+			// Jump every 3 vertex index
 			unsigned int indicesIndex = currTriangleIndex * 3;
-			drawInfo->pIndices[indicesIndex] = currMesh->mFaces[currTriangleIndex].mIndices[0];
+
+			int v1 = currMesh->mFaces[currTriangleIndex].mIndices[0];
+			int v2 = currMesh->mFaces[currTriangleIndex].mIndices[1];
+			int v3 = currMesh->mFaces[currTriangleIndex].mIndices[2];
+
+			drawInfo->pIndices[indicesIndex] = v1;
 			indicesIndex += 1;
-			drawInfo->pIndices[indicesIndex] = currMesh->mFaces[currTriangleIndex].mIndices[1];
+			drawInfo->pIndices[indicesIndex] = v2;
 			indicesIndex += 1;
-			drawInfo->pIndices[indicesIndex] = currMesh->mFaces[currTriangleIndex].mIndices[2];
+			drawInfo->pIndices[indicesIndex] = v3;
+			indicesIndex += 1;
+
+			// Load vertices positions into triangles
+			drawInfo->pTriangles[currTriangleIndex].vertices[0] = glm::vec3(drawInfo->pVertices[v1].x, 
+																			drawInfo->pVertices[v1].y, 
+																			drawInfo->pVertices[v1].z);
+			drawInfo->pTriangles[currTriangleIndex].vertices[1] = glm::vec3(drawInfo->pVertices[v2].x,
+																			drawInfo->pVertices[v2].y, 
+																			drawInfo->pVertices[v2].z);
+			drawInfo->pTriangles[currTriangleIndex].vertices[2] = glm::vec3(drawInfo->pVertices[v3].x,
+																			drawInfo->pVertices[v3].y, 
+																			drawInfo->pVertices[v3].z);
 		}
 	}
 	drawInfo->minX = minX;
@@ -170,6 +194,7 @@ bool cFileLoader_Imp::Load3DModelFile(std::string filename, AssimpHelper::cFileL
 
 	this->m_ProcessScene(scene, drawInfo);
     // We're done. Everything will be cleaned up by the importer destructor
+	importer.FreeScene();
     return true;
 }
 

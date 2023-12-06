@@ -19,8 +19,21 @@ int lua_SendCommands(lua_State* L)
 		return 1;
 	}
 
+	lua_pop(L, 2);
+
 	lua_pushboolean(L, true);
 	lua_pushnumber(L, UUID);
 
 	return 2;
+}
+
+int lua_CancelCommand(lua_State* L)
+{
+	// Command UUID to be canceled
+	uint16_t commandUUID = lua_tonumber(L, 1);
+
+	// Send to system
+	ScriptingSystem::Get()->DeleteForeverCommand(commandUUID);
+
+	return 0;
 }

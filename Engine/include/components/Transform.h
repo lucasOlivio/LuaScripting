@@ -12,6 +12,7 @@ class TransformComponent : public Component
 public:
 	// Convert orientation from degrees angles to quaternions
 	void SetOrientation(glm::vec3 value);
+	void SetOrientation(glm::quat value);
 	// Change orientation by the given amount
 	void AdjustOrientation(glm::vec3 value);
 
@@ -43,6 +44,12 @@ public:
 	// Convert orientation from quaternions to degrees angles
 	glm::vec3 GetOrientation();
 
+	// Get the direction vectors relative to the object direction
+	glm::vec3 GetUpVector();
+	glm::vec3 GetRightVector();
+	glm::vec3 GetForwardVector();
+	glm::vec3 GetRelativeVector(const glm::vec3& directionIn);
+
 	void AdjustScale(float value);
 	void SetScale(float value);
 	float GetScale();
@@ -56,7 +63,7 @@ public:
 	virtual void SetParameter(sParameterInfo& parameterIn);
 
 private:
-	glm::quat m_qOrientation; // Rotation in quaternions
+	glm::quat m_qOrientation;    // Rotation in quaternions
 	glm::vec3 m_initialPosition;
 	glm::vec3 m_oldPosition;
 	glm::vec3 m_framePosition;

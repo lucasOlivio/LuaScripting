@@ -15,9 +15,6 @@ public:
 
 	static bool IsKeyPressed(int key);
 
-	static bool IsActionKeyPressed(const char* action);
-	static int GetActionKey(const char* action);
-
 	static glm::vec2 MousePosition();
 
 	static glm::vec2 MousePosRelative();

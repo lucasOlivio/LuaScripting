@@ -38,7 +38,6 @@ public:
 	void MouseActions();
 	// Actions to take based on key pressed
 	bool KeyActions(sKeyInfo keyInfo);
-	void MoveCamera(double deltaTime);
 
 	void ModifySelectedParameter(int axis, int orientation);
 	void SetParameterManually(int axis);
@@ -84,4 +83,5 @@ private:
 	void m_ModifySelected(std::vector<float>& value, int orientation, int axis);
 
 	void m_UpdateCamera(float xpos, float ypos);
+	void m_MoveCamera(double deltaTime);
 };

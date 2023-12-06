@@ -77,6 +77,7 @@ bool CTextureFromBMP::CreateNewTextureFromBMPFile2( std::string textureName, std
 	}
 
 
+
 	if ( !this->LoadBMP2( fileNameFullPath ) )
 	{
 		return false;
@@ -631,6 +632,8 @@ bool CTextureFromBMP::LoadBMP2( std::string fileName )
 		std::cout << "complete." << std::endl;
 	}
 	// BMP file is read....
+
+	delete pRawData;
 
 	return true;
 }

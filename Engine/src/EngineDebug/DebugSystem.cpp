@@ -20,7 +20,8 @@ DebugSystem* DebugSystem::Get()
 	return DebugSystem::m_pInstance;
 }
 
-bool DebugSystem::Initialize(ShaderManager* pShaderManager, std::string baseModelsPath)
+bool DebugSystem::Initialize(ShaderManager* pShaderManager, std::string baseModelsPath,
+                             Physics* pPhysics)
 {
     using namespace myutils;
 
@@ -28,6 +29,8 @@ bool DebugSystem::Initialize(ShaderManager* pShaderManager, std::string baseMode
     m_pVAOManager = new VAOManager(m_pShaderManager);
 
     m_pVAOManager->SetBasePath(baseModelsPath);
+
+    m_pPhysics = pPhysics;
 
     // Creates debug shader program
     m_debugShaderName = "debugshader";
@@ -99,6 +102,18 @@ void DebugSystem::ResetDebugObjects()
         delete pSphere;
     }
     m_vecSpheresToDraw.clear();
+
+    for (sDebugRectangle* pRect : m_vecRectanglesToDraw)
+    {
+        delete pRect;
+    }
+    m_vecRectanglesToDraw.clear();
+
+    for (sDebugTriangle* pTri : m_vecTrianglesToDraw)
+    {
+        delete pTri;
+    }
+    m_vecTrianglesToDraw.clear();
 }
 
 void DebugSystem::AddLine(glm::vec3 startXYZ, glm::vec3 endXYZ, glm::vec4 RGBA)
@@ -144,25 +159,51 @@ void DebugSystem::AddGizmo(glm::vec3 position, int size)
     AddLine(position, glm::vec3(position.x, position.y, position.z + size), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 }
 
-void DebugSystem::AddRectangle(glm::vec3 minXYZ, glm::vec3 maxXYZ, glm::vec4 RGBA)
+void DebugSystem::AddRectangle(glm::vec3 minXYZ, glm::vec3 maxXYZ, glm::vec4 RGBA, bool isStatic)
 {
-    // Bottom face
-    AddLine(glm::vec3(minXYZ.x, minXYZ.y, minXYZ.z), glm::vec3(maxXYZ.x, minXYZ.y, minXYZ.z), RGBA);
-    AddLine(glm::vec3(maxXYZ.x, minXYZ.y, minXYZ.z), glm::vec3(maxXYZ.x, minXYZ.y, maxXYZ.z), RGBA);
-    AddLine(glm::vec3(maxXYZ.x, minXYZ.y, maxXYZ.z), glm::vec3(minXYZ.x, minXYZ.y, maxXYZ.z), RGBA);
-    AddLine(glm::vec3(minXYZ.x, minXYZ.y, maxXYZ.z), glm::vec3(minXYZ.x, minXYZ.y, minXYZ.z), RGBA);
+    sDebugRectangle* debugRectangle = new sDebugRectangle();
 
-    // Top face
-    AddLine(glm::vec3(minXYZ.x, maxXYZ.y, minXYZ.z), glm::vec3(maxXYZ.x, maxXYZ.y, minXYZ.z), RGBA);
-    AddLine(glm::vec3(maxXYZ.x, maxXYZ.y, minXYZ.z), glm::vec3(maxXYZ.x, maxXYZ.y, maxXYZ.z), RGBA);
-    AddLine(glm::vec3(maxXYZ.x, maxXYZ.y, maxXYZ.z), glm::vec3(minXYZ.x, maxXYZ.y, maxXYZ.z), RGBA);
-    AddLine(glm::vec3(minXYZ.x, maxXYZ.y, maxXYZ.z), glm::vec3(minXYZ.x, maxXYZ.y, minXYZ.z), RGBA);
+    debugRectangle->color = RGBA;
 
-    // Vertical edges
-    AddLine(glm::vec3(minXYZ.x, minXYZ.y, minXYZ.z), glm::vec3(minXYZ.x, maxXYZ.y, minXYZ.z), RGBA);
-    AddLine(glm::vec3(maxXYZ.x, minXYZ.y, minXYZ.z), glm::vec3(maxXYZ.x, maxXYZ.y, minXYZ.z), RGBA);
-    AddLine(glm::vec3(maxXYZ.x, minXYZ.y, maxXYZ.z), glm::vec3(maxXYZ.x, maxXYZ.y, maxXYZ.z), RGBA);
-    AddLine(glm::vec3(minXYZ.x, minXYZ.y, maxXYZ.z), glm::vec3(minXYZ.x, maxXYZ.y, maxXYZ.z), RGBA);
+    // Populate bottom face vertices
+    debugRectangle->vb1 = glm::vec3(minXYZ.x, minXYZ.y, minXYZ.z);
+    debugRectangle->vb2 = glm::vec3(maxXYZ.x, minXYZ.y, minXYZ.z);
+    debugRectangle->vb3 = glm::vec3(maxXYZ.x, minXYZ.y, maxXYZ.z);
+    debugRectangle->vb4 = glm::vec3(minXYZ.x, minXYZ.y, maxXYZ.z);
+
+    // Populate top face vertices
+    debugRectangle->vt1 = glm::vec3(minXYZ.x, maxXYZ.y, minXYZ.z);
+    debugRectangle->vt2 = glm::vec3(maxXYZ.x, maxXYZ.y, minXYZ.z);
+    debugRectangle->vt3 = glm::vec3(maxXYZ.x, maxXYZ.y, maxXYZ.z);
+    debugRectangle->vt4 = glm::vec3(minXYZ.x, maxXYZ.y, maxXYZ.z);
+
+    // Populate vertical edges
+    debugRectangle->ve1 = debugRectangle->vt1 - debugRectangle->vb1;
+    debugRectangle->ve2 = debugRectangle->vt2 - debugRectangle->vb2;
+    debugRectangle->ve3 = debugRectangle->vt3 - debugRectangle->vb3;
+    debugRectangle->ve4 = debugRectangle->vt4 - debugRectangle->vb4;
+    
+    if (isStatic)
+    {
+        m_vecStaticRectanglesToDraw.push_back(debugRectangle);
+    }
+    else
+    {
+        m_vecRectanglesToDraw.push_back(debugRectangle);
+    }
+}
+
+void DebugSystem::AddTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec4 RGBA)
+{
+    sDebugTriangle* debugTriangle = new sDebugTriangle();
+
+    debugTriangle->color = RGBA;
+
+    debugTriangle->v1 = v1;
+    debugTriangle->v2 = v2;
+    debugTriangle->v3 = v3;
+
+    m_vecTrianglesToDraw.push_back(debugTriangle);
 }
 
 void DebugSystem::AddSphere(glm::vec3 position, float radius, glm::vec4 color)
@@ -188,6 +229,15 @@ void DebugSystem::Update(double deltaTime, glm::mat4 matView, glm::mat4 matProje
     {
         m_AddCollisions();
     }
+    
+    if (IsModesOn(eDebugMode::BROADPHASE))
+    {
+        m_AddBroadphase();
+    }
+    else
+    {
+        m_isBroadPhaseLoaded = false;
+    }
 
     if (IsModesOn(eDebugMode::NORMAL))
     {
@@ -196,6 +246,8 @@ void DebugSystem::Update(double deltaTime, glm::mat4 matView, glm::mat4 matProje
 
     m_DrawLines();
     m_DrawSpheres();
+    m_DrawRectangles();
+    m_DrawTriangles();
 
     ResetDebugObjects();
 
@@ -227,19 +279,20 @@ void DebugSystem::m_AddCollisions()
     using namespace glm;
 
     const vec4 COLLISION_COLOR = RED;
+    SceneView* pScene = SceneView::Get();
 
     // Draw each collision accordingly
-    for (SceneView::Get()->First("collision"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
+    for (pScene->First("collision"); !pScene->IsDone(); pScene->Next())
     {
-        EntityID entityID = SceneView::Get()->CurrentKey();
-        CollisionComponent* pCollision = SceneView::Get()->CurrentValue<CollisionComponent>();
+        EntityID entityID = pScene->CurrentKey();
+        CollisionComponent* pCollision = pScene->CurrentValue<CollisionComponent>();
 
         if (!pCollision->IsActive())
         {
             continue;
         }
 
-        TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(entityID, "transform");
+        TransformComponent* pTransform = pScene->GetComponent<TransformComponent>(entityID, "transform");
 
         mat4 worldMat = pTransform->GetTransform();
 
@@ -250,7 +303,7 @@ void DebugSystem::m_AddCollisions()
             vec3 minXYZ = worldMat * vec4(pAABB->minXYZ, 1.0f);
             vec3 maxXYZ = worldMat * vec4(pAABB->maxXYZ, 1.0f);
 
-            AddRectangle(minXYZ, maxXYZ, COLLISION_COLOR);
+            AddRectangle(minXYZ, maxXYZ, COLLISION_COLOR, false);
         }
         else if (pCollision->Get_eShape() == eShape::SPHERE)
         {
@@ -261,6 +314,26 @@ void DebugSystem::m_AddCollisions()
     }
 }
 
+void DebugSystem::m_AddBroadphase()
+{
+    if (m_isBroadPhaseLoaded)
+    {
+        return;
+    }
+
+    using namespace glm;
+
+    const vec4 COLLISION_COLOR = RED;
+    SceneView* pScene = SceneView::Get();
+
+    // Draw each collision accordingly
+    for (auto pairAABB : m_pPhysics->m_pBroadPhaseCollision->m_mapAABBs)
+    {
+        AddRectangle(pairAABB.second->minXYZ, pairAABB.second->maxXYZ, COLLISION_COLOR, true);
+        m_isBroadPhaseLoaded = true;
+    }
+}
+
 void DebugSystem::m_AddNormals()
 {
     // TODO: Improve performance, impossible to use in a medium scene size
@@ -268,12 +341,13 @@ void DebugSystem::m_AddNormals()
     using namespace glm;
 
     const int NORMAL_SIZE = 10;
+    SceneView* pScene = SceneView::Get();
 
-    for (SceneView::Get()->First("model"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
+    for (pScene->First("model"); !pScene->IsDone(); pScene->Next())
     {
-        EntityID entityID = SceneView::Get()->CurrentKey();
-        ModelComponent* pModel = SceneView::Get()->CurrentValue<ModelComponent>();
-        TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(entityID, "transform");
+        EntityID entityID = pScene->CurrentKey();
+        ModelComponent* pModel = pScene->CurrentValue<ModelComponent>();
+        TransformComponent* pTransform = pScene->GetComponent<TransformComponent>(entityID, "transform");
 
         mat4 worldMat = pTransform->GetTransform();
         sMesh* pMesh = pModel->GetCurrentMesh();
@@ -371,4 +445,101 @@ void DebugSystem::m_DrawSpheres()
             0);
         glBindVertexArray(0);
     }
+}
+
+void DebugSystem::m_DrawRectangles()
+{
+    using namespace glm;
+
+    mat4 matModel(1.0f);
+    mat4 matModelIT = inverse(transpose(matModel));
+
+    for (sDebugRectangle* pRect : m_vecRectanglesToDraw)
+    {
+        m_DrawARectangle(matModel, matModelIT, pRect);
+    }
+
+    for (sDebugRectangle* pRect : m_vecStaticRectanglesToDraw)
+    {
+        m_DrawARectangle(matModel, matModelIT, pRect);
+    }
+}
+
+void DebugSystem::m_DrawARectangle(glm::mat4 matModel, glm::mat4 matModelIT, sDebugRectangle* pRect)
+{
+    m_pShaderProgram->SetUniformMatrix4f("matModel", matModel);
+    m_pShaderProgram->SetUniformMatrix4f("matModel_IT", matModelIT);
+
+    m_pShaderProgram->SetUniformFloat("useDebugColor", true);
+    m_pShaderProgram->SetUniformVec4("debugColour", pRect->color);
+
+    glBegin(GL_QUADS);
+
+    // Top face
+    glVertex3f(pRect->vt1.x, pRect->vt1.y, pRect->vt1.z);
+    glVertex3f(pRect->vt2.x, pRect->vt2.y, pRect->vt2.z);
+    glVertex3f(pRect->vt3.x, pRect->vt3.y, pRect->vt3.z);
+    glVertex3f(pRect->vt4.x, pRect->vt4.y, pRect->vt4.z);
+
+    // Bottom face
+    glVertex3f(pRect->vb1.x, pRect->vb1.y, pRect->vb1.z);
+    glVertex3f(pRect->vb2.x, pRect->vb2.y, pRect->vb2.z);
+    glVertex3f(pRect->vb3.x, pRect->vb3.y, pRect->vb3.z);
+    glVertex3f(pRect->vb4.x, pRect->vb4.y, pRect->vb4.z);
+
+    // Front face
+    glVertex3f(pRect->vt1.x, pRect->vt1.y, pRect->vt1.z);
+    glVertex3f(pRect->vt4.x, pRect->vt4.y, pRect->vt4.z);
+    glVertex3f(pRect->vb4.x, pRect->vb4.y, pRect->vb4.z);
+    glVertex3f(pRect->vb1.x, pRect->vb1.y, pRect->vb1.z);
+
+    // Back face
+    glVertex3f(pRect->vt2.x, pRect->vt2.y, pRect->vt2.z);
+    glVertex3f(pRect->vt3.x, pRect->vt3.y, pRect->vt3.z);
+    glVertex3f(pRect->vb3.x, pRect->vb3.y, pRect->vb3.z);
+    glVertex3f(pRect->vb2.x, pRect->vb2.y, pRect->vb2.z);
+
+    // Left face
+    glVertex3f(pRect->vt2.x, pRect->vt2.y, pRect->vt2.z);
+    glVertex3f(pRect->vt1.x, pRect->vt1.y, pRect->vt1.z);
+    glVertex3f(pRect->vb1.x, pRect->vb1.y, pRect->vb1.z);
+    glVertex3f(pRect->vb2.x, pRect->vb2.y, pRect->vb2.z);
+
+    // Right face
+    glVertex3f(pRect->vt4.x, pRect->vt4.y, pRect->vt4.z);
+    glVertex3f(pRect->vt3.x, pRect->vt3.y, pRect->vt3.z);
+    glVertex3f(pRect->vb3.x, pRect->vb3.y, pRect->vb3.z);
+    glVertex3f(pRect->vb4.x, pRect->vb4.y, pRect->vb4.z);
+
+    glEnd();
+}
+
+void DebugSystem::m_DrawTriangles()
+{
+    using namespace glm;
+
+    mat4 matModel(1.0f);
+    mat4 matModelIT = inverse(transpose(matModel));
+
+    for (sDebugTriangle* pTri : m_vecTrianglesToDraw)
+    {
+        m_DrawATriangle(matModel, matModelIT, pTri);
+    }
+}
+
+void DebugSystem::m_DrawATriangle(glm::mat4 matModel, glm::mat4 matModelIT, sDebugTriangle* pTri)
+{
+    m_pShaderProgram->SetUniformMatrix4f("matModel", matModel);
+    m_pShaderProgram->SetUniformMatrix4f("matModel_IT", matModelIT);
+
+    m_pShaderProgram->SetUniformFloat("useDebugColor", true);
+    m_pShaderProgram->SetUniformVec4("debugColour", pTri->color);
+
+    glBegin(GL_TRIANGLES);
+
+    glVertex3f(pTri->v1.x, pTri->v1.y, pTri->v1.z);
+    glVertex3f(pTri->v2.x, pTri->v2.y, pTri->v2.z);
+    glVertex3f(pTri->v3.x, pTri->v3.y, pTri->v3.z);
+
+    glEnd();
 }

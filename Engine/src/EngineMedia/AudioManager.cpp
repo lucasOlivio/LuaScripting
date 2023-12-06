@@ -90,7 +90,9 @@ bool AudioManager::Initialize(int maxChannels)
 		return false;
 	}
 
-	result = this->m_pSystem->init(this->m_maxChannels, FMOD_INIT_NORMAL | FMOD_INIT_PROFILE_ENABLE, nullptr);
+	result = this->m_pSystem->init(this->m_maxChannels, 
+								   FMOD_INIT_NORMAL | FMOD_INIT_PROFILE_ENABLE | FMOD_INIT_CHANNEL_DISTANCEFILTER,
+								   nullptr);
 	if (result != FMOD_OK)
 	{
 		FMODCheckError(result);

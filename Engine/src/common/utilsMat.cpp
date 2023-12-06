@@ -281,6 +281,24 @@ namespace myutils
         velocity = reflectionNormal * newSpeed;
     }
 
+    void CalculateProjectedDirection(glm::vec3 oppositeNormal, glm::vec3& directionOut)
+    {
+        using namespace glm;
+
+        float maxSpeed = length(directionOut);
+        // Project direction onto the plane defined by the normal
+        vec3 velProj = dot(directionOut, oppositeNormal) * oppositeNormal;
+
+        // Remove the component of direction in the direction of the ground
+        directionOut -= velProj;
+
+        // clamp the direction magnitude to prevent it from increasing
+        float currentSpeed = glm::length(directionOut);
+        if (currentSpeed > maxSpeed) {
+            directionOut = normalize(directionOut) * maxSpeed;
+        }
+    }
+
     float CalculateSinWave(float currentTime, float amplitude, float frequency, float offset) {
         // Calculate the sine value
         float sineValue = (float)(amplitude * sin(2 * PI * frequency * currentTime));
@@ -340,9 +358,9 @@ namespace myutils
         vec3 rotationRadians = radians(rotation);
 
         vec3 direction;
-        direction.x = cos(rotationRadians.x) * cos(rotationRadians.y);
-        direction.y = sin(rotationRadians.y);
-        direction.z = sin(rotationRadians.x) * cos(rotationRadians.y);
+        direction.x = cos(rotationRadians.x) * sin(rotationRadians.y);
+        direction.y = sin(rotationRadians.x);
+        direction.z = cos(rotationRadians.y) * cos(rotationRadians.x);
 
         vec3 directionNormalized = normalize(direction);
 
@@ -366,5 +384,17 @@ namespace myutils
         vertices.push_back(v3);
 
         return vertices;
+    }
+
+    glm::vec3 CalculateRotation(const glm::vec3& sourcePosition, const glm::vec3& targetPosition) 
+    {
+        glm::mat4 viewMatrix = glm::lookAt(sourcePosition, targetPosition, glm::vec3(UP_VECTOR));
+
+        glm::quat rotationMatrix = glm::mat3(viewMatrix);
+
+        // Convert the rotation matrix to Euler angles (in degrees)
+        glm::vec3 rotationDegrees = glm::degrees(glm::eulerAngles(rotationMatrix));
+
+        return rotationDegrees;
     }
 }

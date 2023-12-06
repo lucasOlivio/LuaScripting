@@ -2,7 +2,7 @@
 
 #include "Event.h"
 #include "common/types.h"
-#include "events/sCollisionData.h"
+#include "events/CollisionProperties.h"
 #include <glm/vec3.hpp>
 #include <map>
 

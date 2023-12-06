@@ -112,7 +112,14 @@ void myutils::WrapMinMax(int min, int max, int& numOut)
 
 void myutils::WrapMinMax(float min, float max, float& numOut)
 {
-    numOut = std::min(std::max(numOut, 0.0f), max - 1);
+    if (numOut < min)
+    {
+        numOut = max;
+    }
+    else if (numOut > max)
+    {
+        numOut = min;
+    }
 }
 
 glm::vec4 myutils::StringToVec4(const std::string& glmstr)
@@ -254,9 +261,21 @@ glm::vec3 myutils::CalculateVector(glm::vec3 startXYZ, glm::vec3 endXYZ, float r
     return resultVec;
 }
 
-glm::vec3 myutils::IncreaseVelocity(glm::vec3 initialVelocity, glm::vec3 acceleration, float deltaTime)
+glm::vec3 myutils::IncreaseVelocity(glm::vec3 initialVelocity, glm::vec3 acceleration,
+                                    float drag, float deltaTime)
 {
-    return (acceleration * deltaTime) + initialVelocity;
+    glm::vec3 newVelocity = (acceleration * deltaTime) + initialVelocity;
+
+    if (glm::length(newVelocity) < 0.1)
+    {
+        return glm::vec3(0);
+    }
+
+    // Apply drag
+    glm::vec3 dragForce = -glm::normalize(newVelocity) * drag * deltaTime;
+    newVelocity += dragForce;
+
+    return newVelocity;
 }
 
 glm::vec3 myutils::CalculateVelocity(glm::vec3 startXYZ, glm::vec3 endXYZ,

@@ -1,5 +1,6 @@
 #include "EngineScripting/commands/FollowCurve.h"
 #include "EngineScripting/commands/MoveTo.h"
+#include "EngineScripting/commands/OrientTo.h"
 #include "EngineScripting/CommandGroup.h"
 #include "common/utils.h"
 #include "common/ParserJSON.h"
@@ -13,7 +14,7 @@ bool FollowCurve::Initialize(rapidjson::Value& document)
 {
     using namespace rapidjson;
 
-    std::string entity;
+    float entity;
     float accRatio;
     float deaccRatio;
     bool isValid = true;
@@ -25,7 +26,7 @@ bool FollowCurve::Initialize(rapidjson::Value& document)
     ParserJSON parser = ParserJSON();
 
     Value& objEntt = document["entity"];
-    isValid &= parser.GetString(objEntt, entity);
+    isValid &= parser.GetFloat(objEntt, entity);
     Value& objLoc = document["controlPoints"];
     isValid &= parser.GetVecVec3(objLoc, m_controlPoints);
     Value& objTime = document["time"];
@@ -49,8 +50,8 @@ bool FollowCurve::Initialize(rapidjson::Value& document)
         return false;
     }
 
-    m_pTransform = SceneView::Get()->GetComponentByTag<TransformComponent>(entity, "transform");
-    m_pForce = SceneView::Get()->GetComponentByTag<ForceComponent>(entity, "force");
+    m_pTransform = SceneView::Get()->GetComponent<TransformComponent>(entity, "transform");
+    m_pForce = SceneView::Get()->GetComponent<ForceComponent>(entity, "force");
 
     // First point should aways be the current position for simplicity
     m_controlPoints.insert(m_controlPoints.begin(), m_pTransform->GetPosition());
@@ -102,6 +103,7 @@ void FollowCurve::m_GenerateSubCommands()
     float step = m_time / m_timeStep;
 
     CommandGroup* pMoveGroup = new CommandGroup();
+    CommandGroup* pRotateGroup = new CommandGroup();
 
     // Generate MoveTo commands to follow the Bezier curve
     // Starting from 2 position (first position is current)
@@ -116,12 +118,16 @@ void FollowCurve::m_GenerateSubCommands()
 
         // Add the MoveTo command to the list of commands
         pMoveGroup->AddSerialCommand(pMove);
+
+        // OrientTo command to face the next step
     }
 
 
     // Setup new groups
     pMoveGroup->Initialize(m_name);
     pMoveGroup->PreStart();
+    pRotateGroup->Initialize(m_name);
+    pRotateGroup->PreStart();
 
     if (pMoveGroup->IsDone())
     {
@@ -131,4 +137,5 @@ void FollowCurve::m_GenerateSubCommands()
 
     // Set motion commands
     this->CommandGroup::AddParallelCommand(pMoveGroup);
+    this->CommandGroup::AddParallelCommand(pRotateGroup);
 }

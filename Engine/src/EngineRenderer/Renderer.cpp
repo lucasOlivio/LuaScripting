@@ -137,6 +137,7 @@ void Renderer::RenderAllModels(double deltaTime)
 			continue;
 		}
 
+		m_pMaterialManager->UnbindMaterials(m_pShaderProgram);
 		// Bind material
 		iComponent* pMaterialComp = SceneView::Get()->GetComponentByTag(pModel->material, "material");
 		if (pMaterialComp)
@@ -274,11 +275,6 @@ void Renderer::Draw(bool isWireFrame,
 	m_pShaderProgram->IsWireframe(isWireFrame);
 	m_pShaderProgram->SetUniformFloat("doNotLight", doNotLight);
 	m_pShaderProgram->SetUniformFloat("bUseColorTexture", useColorTexture);
-
-	if (useColorTexture == false)
-	{
-		printf("");
-	}
 
 	glBindVertexArray(VAO_ID); //  enable VAO (and everything else)
 	glDrawElements(GL_TRIANGLES,
