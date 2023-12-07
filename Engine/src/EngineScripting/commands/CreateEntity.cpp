@@ -35,6 +35,10 @@ bool CreateEntity::Initialize(rapidjson::Value& document)
 
     m_childEntity = SceneView::Get()->GetEntityByTag(spawnEntity);
 
+    TransformComponent* pTransfParent = pScene->GetComponent<TransformComponent>(m_parentEntity, "transform");
+
+    m_orientation = pTransfParent->GetRelativeVector(m_orientation);
+
     return isValid;
 }
 
@@ -49,14 +53,11 @@ bool CreateEntity::Update(double deltaTime)
     EntityID newEntity = Scene::Get()->CreateEntity(m_childEntity);
 
     // Convert to forward of orientation
-    TransformComponent* pTransfParent = pScene->GetComponent<TransformComponent>(m_parentEntity, "transform");
     TransformComponent* pTransfChild = pScene->GetComponent<TransformComponent>(newEntity, "transform");
-
-    vec3 orient = pTransfParent->GetRelativeVector(m_orientation);
 
     // Set transform parameters
     pTransfChild->SetPosition(m_position);
-    pTransfChild->AdjustOrientation(orient);
+    pTransfChild->AdjustOrientation(m_orientation);
 
     return true;
 }
