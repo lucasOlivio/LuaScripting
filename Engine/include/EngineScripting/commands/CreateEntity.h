@@ -3,6 +3,7 @@
 #include "EngineScripting/commands/Command.h"
 #include "common/types.h"
 #include <glm/vec3.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 class CreateEntity : public Command
 {
@@ -22,7 +23,8 @@ public:
 
 	virtual bool PostEnd(void);
 private:
-	EntityID m_entityID;        // Entity copy to create from
+	EntityID m_childEntity;        // Entity copy to create from
+	float m_parentEntity;
 
 	glm::vec3 m_position;
 	glm::vec3 m_orientation;

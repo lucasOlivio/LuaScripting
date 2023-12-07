@@ -3,6 +3,7 @@
 #include "components/Transform.h"
 #include "scene/Scene.h"
 #include "scene/SceneView.h"
+#include "common/utilsMat.h"
 
 CreateEntity::CreateEntity()
 {
@@ -12,7 +13,8 @@ bool CreateEntity::Initialize(rapidjson::Value& document)
 {
     using namespace rapidjson;
 
-    std::string entity;
+    std::string spawnEntity;
+    SceneView* pScene = SceneView::Get();
 
     bool isValid = true;
 
@@ -23,27 +25,38 @@ bool CreateEntity::Initialize(rapidjson::Value& document)
     ParserJSON parser = ParserJSON();
 
     Value& objEntt = document["entity"];
-    isValid &= parser.GetString(objEntt, entity);
+    isValid &= parser.GetFloat(objEntt, m_parentEntity);
+    Value& objSpawnEntt = document["spawnentity"];
+    isValid &= parser.GetString(objSpawnEntt, spawnEntity);
     Value& objPos = document["position"];
     isValid &= parser.GetVec3(objPos, m_position);
-    Value& objOrient = document["orientation"];
+    Value& objOrient = document["direction"];
     isValid &= parser.GetVec3(objOrient, m_orientation);
 
-    m_entityID = SceneView::Get()->GetEntityByTag(entity);
+    m_childEntity = SceneView::Get()->GetEntityByTag(spawnEntity);
 
     return isValid;
 }
 
 bool CreateEntity::Update(double deltaTime)
 {
+    using namespace glm;
+    using namespace myutils;
+
+    SceneView* pScene = SceneView::Get();
+
     // Create the entity
-    EntityID newEntity = Scene::Get()->CreateEntity(m_entityID);
+    EntityID newEntity = Scene::Get()->CreateEntity(m_childEntity);
+
+    // Convert to forward of orientation
+    TransformComponent* pTransfParent = pScene->GetComponent<TransformComponent>(m_parentEntity, "transform");
+    TransformComponent* pTransfChild = pScene->GetComponent<TransformComponent>(newEntity, "transform");
+
+    vec3 orient = pTransfParent->GetRelativeVector(m_orientation);
 
     // Set transform parameters
-    TransformComponent* pTransform = SceneView::Get()->GetComponent<TransformComponent>(newEntity, "transform");
-
-    pTransform->SetPosition(m_position);
-    pTransform->SetOrientation(m_orientation);
+    pTransfChild->SetPosition(m_position);
+    pTransfChild->AdjustOrientation(orient);
 
     return true;
 }

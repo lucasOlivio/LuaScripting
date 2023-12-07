@@ -6,6 +6,7 @@
 typedef std::map< uint /*index*/, cAABB* > mapIdxAABB;
 typedef std::map< uint /*index*/, cAABB* >::iterator itIdxAABB;
 typedef std::pair< uint /*index*/, cAABB* > pairIdxAABB;
+typedef std::unordered_set< EntityID >::iterator itEntities;
 
 class BroadPhaseCollision
 {
@@ -34,6 +35,15 @@ public:
 
 	// Remove entity from AABB using index
 	void RemoveEntityAABB(EntityID entityID, uint index);
+	// Remove entity from AABB using its iterator position
+	itEntities RemoveEntityAABB(itEntities it, uint index);
+
+	// Remove aabb from active map
+	size_t RemoveActiveAABB(uint idxAABB);
+
+	// Remove aabb from main map
+	size_t RemoveAABB(uint idxAABB);
+
 	// Add entity to aabb and activate aabb
 	void InsertEntityAABB(EntityID entityID, uint index);
 

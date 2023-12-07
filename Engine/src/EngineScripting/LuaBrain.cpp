@@ -100,6 +100,11 @@ bool LuaBrain::LoadScript(EntityID entityId)
 // scriptName is just so we can delete them later
 bool LuaBrain::LoadScript(EntityID entityId, ScriptComponent* pScript)
 {
+	if (!pScript->IsActive())
+	{
+		return true;
+	}
+
 	std::string scriptSource = m_ReadLuaScriptFile(pScript->scriptName);
 	if (scriptSource == "")
 	{
@@ -153,27 +158,37 @@ void LuaBrain::OnStart()
 	for (pScene->First("script"); !pScene->IsDone(); pScene->Next())
 	{
 		EntityID entityId = pScene->CurrentKey();
-		ScriptComponent* pScript = pScene->CurrentValue<ScriptComponent>();
-		int tbIdx = pScript->GetTableRegistry();
-		int fncIdx = pScript->GetLuaObject(ON_START_NAME);
-		int globalsIdx = pScript->GetLuaObject(GLOBALS_NAME);
-		int entityIdx = pScript->GetLuaObject(ENTITY_NAME);
 
-		if (fncIdx == LUA_REFNIL)
-		{
-			// Script doesn`t have this function
-			continue;
-		}
-
-		// For now we do this here separately because we haven't found a way
-		// to load the function then load the parameters in a generic way
-		m_PreFunctionCall(tbIdx, entityIdx, globalsIdx, fncIdx);
-
-		// Call the onstart function for each object
-		int result = m_CallFunction(0, 0);
-
-		m_PosFunctionCall(result);
+		OnStart(entityId);
 	}
+
+	return;
+}
+
+void LuaBrain::OnStart(EntityID entityId)
+{
+	SceneView* pScene = SceneView::Get();
+	ScriptComponent* pScript = pScene->GetComponent<ScriptComponent>(entityId, "script");
+
+	int tbIdx = pScript->GetTableRegistry();
+	int fncIdx = pScript->GetLuaObject(ON_START_NAME);
+	int globalsIdx = pScript->GetLuaObject(GLOBALS_NAME);
+	int entityIdx = pScript->GetLuaObject(ENTITY_NAME);
+
+	if (fncIdx == LUA_REFNIL)
+	{
+		// Script doesn`t have this function
+		return;
+	}
+
+	// For now we do this here separately because we haven't found a way
+	// to load the function then load the parameters in a generic way
+	m_PreFunctionCall(tbIdx, entityIdx, globalsIdx, fncIdx);
+
+	// Call the onstart function for each object
+	int result = m_CallFunction(0, 0);
+
+	m_PosFunctionCall(result);
 
 	return;
 }

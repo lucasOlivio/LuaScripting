@@ -3,6 +3,7 @@
 #include "components/Tag.h"
 #include "components/Script.h"
 #include "components/ComponentBuilder.h"
+#include "EngineScripting/LuaBrain.h"
 
 Scene* Scene::m_pInstance = nullptr;
 
@@ -82,6 +83,18 @@ EntityID Scene::CreateEntity(EntityID entityID, bool createAndActivate)
             ModelComponent* pModelComp = (ModelComponent*)GetComponent(entityID, "model");
             pNewModelComp->SetMeshes(pModelComp->GetMeshes());
         }
+    }
+
+    // Initializes script after because the script can uses other components
+    iComponent* pComp = GetComponent(newEntityID, "script");
+    if (pComp)
+    {
+        ScriptComponent* pNewScript = (ScriptComponent*)pComp;
+
+        LuaBrain* pLua = LuaBrain::Get();
+        // Initialize script
+        pLua->LoadScript(newEntityID, pNewScript);
+        pLua->OnStart(newEntityID);
     }
 
     return newEntityID;

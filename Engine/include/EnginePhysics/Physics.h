@@ -49,6 +49,11 @@ public:
 							 sTriangle triangle,
 							 glm::vec3& contactPointA, glm::vec3& contactPointB,
 							 glm::vec3& collisionNormalA, glm::vec3& collisionNormalB);
+
+	bool SphereSphere_Test(sSphere* pSphereA, glm::vec3 sphereAPosition,
+						   sSphere* pSphereB, glm::vec3 sphereBPosition,
+						   glm::vec3& contactPointA, glm::vec3& contactPointB,
+						   glm::vec3& collisionNormalA, glm::vec3& collisionNormalB);
 private:
 	bool m_isRunning;
 

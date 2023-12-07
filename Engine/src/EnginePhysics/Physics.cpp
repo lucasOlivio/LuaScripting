@@ -59,12 +59,20 @@ void Physics::Update(double deltaTime)
 		ForceComponent* pForceA = nullptr;
 		if (pCollision->bodyTypeA != eBodyType::STATIC)
 		{
-			pForceA = pScene->GetComponent<ForceComponent>(pCollision->entityA, "force");
+			iComponent* pComp = pScene->GetComponent(pCollision->entityA, "force");
+			if(pComp)
+			{
+				pForceA = (ForceComponent*)pComp;
+			}
 		}
 		ForceComponent* pForceB = nullptr;
 		if (pCollision->bodyTypeB != eBodyType::STATIC)
 		{
-			pForceB = pScene->GetComponent<ForceComponent>(pCollision->entityB, "force");
+			iComponent* pComp = pScene->GetComponent(pCollision->entityB, "force");
+			if (pComp)
+			{
+				pForceB = (ForceComponent*)pComp;
+			}
 		}
 
 
@@ -367,6 +375,32 @@ bool Physics::SphereTriangle_Test(sSphere* sphereA, glm::vec3 sphereAPosition,
 	return true;
 }
 
+bool Physics::SphereSphere_Test(sSphere* pSphereA, glm::vec3 sphereAPosition, 
+								sSphere* pSphereB, glm::vec3 sphereBPosition, 
+								glm::vec3& contactPointA, glm::vec3& contactPointB, 
+								glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
+{
+	// Calculate squared distance between centers
+	glm::vec3 d = sphereAPosition - sphereBPosition;
+	float dist2 = glm::dot(d, d);
+	// Spheres intersect if squared distance is less than squared sum of radii
+	float radiusSum = pSphereA->radius + pSphereB->radius;
+	if (dist2 > radiusSum * radiusSum)
+	{
+		// Not hit
+		return false;
+	}
+
+	contactPointA = myutils::GetSpheresContactPont(sphereAPosition, pSphereA->radius,
+												   sphereBPosition, pSphereB->radius);
+	contactPointB = myutils::GetSpheresContactPont(sphereBPosition, pSphereB->radius,
+												   sphereAPosition, pSphereA->radius);
+	collisionNormalA = myutils::GetNormal(contactPointB, sphereBPosition);
+	collisionNormalB = myutils::GetNormal(contactPointA, sphereAPosition);
+
+	return true;
+}
+
 void Physics::m_ApplyForce(ForceComponent* pForce, TransformComponent* pTransform, double deltaTime)
 {
 	using namespace glm;
@@ -436,9 +470,6 @@ void Physics::m_CheckCollisions()
 		// Check collisions between entities inside aabbs
 		for (EntityID entityA : pAABB->vecEntities)
 		{
-			// Test collision only against already visited to avoid repeated checks
-			m_vecCollVisited.push_back(entityA);
-
 			std::vector<sTriangle> vecTriangles;
 
 			// Get all inside this aabb
@@ -494,6 +525,8 @@ void Physics::m_CheckNarrowPhaseCollision(EntityID entityA,
 	// TODO: Narrow phase should go through only non-static entities
 	if (pCollA->Get_eBodyType() == eBodyType::STATIC)
 	{
+		// Test collision only against already visited to avoid repeated checks
+		m_vecCollVisited.push_back(entityA);
 		return;
 	}
 
@@ -526,6 +559,16 @@ void Physics::m_CheckNarrowPhaseCollision(EntityID entityA,
 			isCollision = AABBAABB_Test(pAABB_A, transformMatA, pAABB_B, transformMatB,
 				contactPointA, contactPointB, collisionNormalA,
 				collisionNormalB);
+		}
+		else if (pCollA->Get_eShape() == eShape::SPHERE && pCollB->Get_eShape() == eShape::SPHERE)
+		{
+			sSphere* pSphereA = pCollA->GetShape<sSphere>();
+			sSphere* pSphereB = pCollB->GetShape<sSphere>();
+
+			isCollision = SphereSphere_Test(pSphereA, pTransformA->GetPosition(),
+											pSphereB, pTransformB->GetPosition(),
+											contactPointA, contactPointB, 
+											collisionNormalA, collisionNormalB);
 		}
 		else
 		{
@@ -562,6 +605,9 @@ void Physics::m_CheckNarrowPhaseCollision(EntityID entityA,
 		// TODO: we can only handle 1 collision right now, find a way to accumulate the opposite force
 		return;
 	}
+
+	// Test collision only against already visited to avoid repeated checks
+	m_vecCollVisited.push_back(entityA);
 
 	// Now test all triangles that can be colliding
 	for (sTriangle triangle : vecTrianglesIn)

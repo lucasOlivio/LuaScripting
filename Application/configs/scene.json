@@ -19,9 +19,9 @@
         },
         "transform": {
             "position": [
-                0.0,
-                0.0,
-                0.0
+                50000.0,
+                50000.0,
+                50000.0
             ],
             "scale": 50000.0,
             "orientation": [
@@ -34,23 +34,22 @@
     },
     {
         "collision": {
-            "shape": 4,
-            "bodyType": 0,
-            "minXYZ": [
-                -200.0,
-                -200.0,
-                -200.0
+            "shape": 1,
+            "bodyType": 1,
+            "radius": 200.0,
+            "isActive": true
+        },
+        "model": {
+            "models": [
+                "mine.ply"
             ],
-            "maxXYZ": [
-                200.0,
-                200.0,
-                200.0
-            ],
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ],
+            "collisionName": "",
+            "material": "matmine",
+            "friendlyName": "",
+            "parentTagName": "",
+            "isWireframe": false,
+            "doNotLight": false,
+            "useColorTexture": true,
             "isActive": true
         },
         "tag": {
@@ -59,11 +58,11 @@
         },
         "transform": {
             "position": [
-                0.0,
-                0.0,
-                5000.0
+                50000.0,
+                50000.0,
+                10000.0
             ],
-            "scale": 1.0,
+            "scale": 7.0,
             "orientation": [
                 0.0,
                 -0.0,
@@ -84,23 +83,9 @@
             "offsetTarget": 3000.0
         },
         "collision": {
-            "shape": 4,
+            "shape": 1,
             "bodyType": 1,
-            "minXYZ": [
-                -250.0,
-                -80.0,
-                -200.0
-            ],
-            "maxXYZ": [
-                250.0,
-                80.0,
-                200.0
-            ],
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ],
+            "radius": 200.0,
             "isActive": true
         },
         "force": {
@@ -153,38 +138,24 @@
         },
         "transform": {
             "position": [
-                244.8853302001953,
-                11471.9208984375,
-                11182.6064453125
+                53854.53515625,
+                51909.125,
+                55048.87890625
             ],
             "scale": 1.0,
             "orientation": [
-                -45.66395950317383,
-                -5.32820987701416,
-                0.0
+                -9.251290321350098,
+                22.10201072692871,
+                -0.00011999999696854502
             ],
             "isActive": true
         }
     },
     {
         "collision": {
-            "shape": 4,
+            "shape": 1,
             "bodyType": 1,
-            "minXYZ": [
-                -250.0,
-                -80.0,
-                -200.0
-            ],
-            "maxXYZ": [
-                250.0,
-                80.0,
-                200.0
-            ],
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ],
+            "radius": 200.0,
             "isActive": true
         },
         "force": {
@@ -237,9 +208,9 @@
         },
         "transform": {
             "position": [
-                0.0,
-                0.0,
-                5000.0
+                50000.0,
+                50000.0,
+                45000.0
             ],
             "scale": 1.0,
             "orientation": [
@@ -548,6 +519,41 @@
     },
     {
         "material": {
+            "materialName": "matmine",
+            "offsetMove": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "colorTextures": [
+                "textmine"
+            ],
+            "colorTexturesRatios": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "useHeightMap": false,
+            "heightMapTexture": "",
+            "heightScale": 0.0,
+            "useNormalTexture": false,
+            "normalTexture": "",
+            "useSpecularTexture": false,
+            "specularTexture": "",
+            "useDiscardTexture": false,
+            "discardTexture": "",
+            "useCubeTexture": false,
+            "cubeTexture": "",
+            "alphaValue": 1.0,
+            "isActive": true
+        },
+        "tag": {
+            "name": "matmine",
+            "isActive": true
+        }
+    },
+    {
+        "material": {
             "materialName": "matmissle",
             "offsetMove": [
                 0.0,
@@ -592,6 +598,18 @@
                 -0.0,
                 0.0
             ],
+            "isActive": true
+        }
+    },
+    {
+        "tag": {
+            "name": "textmine",
+            "isActive": true
+        },
+        "texture": {
+            "fileName": "mine.bmp",
+            "textureType": 0,
+            "vecTextures": [],
             "isActive": true
         }
     },
@@ -656,23 +674,9 @@
     },
     {
         "collision": {
-            "shape": 4,
+            "shape": 1,
             "bodyType": 0,
-            "minXYZ": [
-                -1.0,
-                -1.0,
-                -1.0
-            ],
-            "maxXYZ": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ],
+            "radius": 200.0,
             "isActive": false
         },
         "force": {
@@ -688,7 +692,7 @@
             "velocity": [
                 0.0,
                 0.0,
-                -2500.0
+                0.0
             ],
             "centrifugalAcceleration": [
                 0.0,
@@ -713,6 +717,10 @@
             "isWireframe": false,
             "doNotLight": false,
             "useColorTexture": true,
+            "isActive": false
+        },
+        "script": {
+            "scriptName": "missle.lua",
             "isActive": false
         },
         "tag": {

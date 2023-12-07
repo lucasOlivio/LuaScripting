@@ -6,6 +6,7 @@
 #include "common/utilsMat.h"
 #include "common/ParserJSON.h"
 #include "scene/SceneView.h"
+#include <float.h>
 
 FollowObject::FollowObject() : m_elapsedTime(0)
 {
@@ -146,6 +147,13 @@ void FollowObject::m_UpdateTargetPosition()
     using namespace myutils;
 
     vec3 currTargetPos = m_pTransformTarget->GetPosition();
+
+    // TODO: better way to check if entity is destroied
+    if (currTargetPos.x <= FLT_MIN)
+    {
+        return;
+    }
+
     vec3 currPos = m_pTransform->GetPosition();
     
     m_lastTargetPosition = currTargetPos + m_offset;

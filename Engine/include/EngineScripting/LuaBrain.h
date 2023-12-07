@@ -27,6 +27,8 @@ public:
 
 	// Call all onstart for each script
 	void OnStart();
+	// Call all onstart for this entity
+	void OnStart(EntityID entityId);
 
 	// Call all onupdate for each script
 	void Update(float deltaTime);

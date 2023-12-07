@@ -88,9 +88,10 @@ function DestroyEntityCommand(entity)
 end
 
 -- Create an entity copied from the "entity" parameter
--- entity, entity id to create copy from
-function CreateEntityCommand(entity, position, orientation)
-    return Command:new("CreateEntity", {entity = entity, position = position, orientation = orientation})
+-- spawnentity, entity tag to create copy from
+function CreateEntityCommand(entity, spawnentity, position, direction)
+    return Command:new("CreateEntity", {entity = entity, spawnentity = spawnentity, 
+                                        position = position, direction = direction})
 end
 
 return {

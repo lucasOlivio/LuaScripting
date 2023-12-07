@@ -9,7 +9,7 @@ end
 
 function onkeyinput(pressedkey, action, mods, scancode)
     if (pressedkey == inputkeys.W and (action == inputactions.PRESS)) then 
-        MoveForwardZigZag(entity, {0.0, 0.0, -10000.0}, 1500.0, 10, 10.0, 100.0)
+        MoveForwardZigZag(entity, {50000.0, 50000.0, 10000.0}, 1500.0, 10, 10.0, 100.0)
     end
 end
 

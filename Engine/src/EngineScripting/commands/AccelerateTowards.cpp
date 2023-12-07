@@ -36,8 +36,9 @@ bool AccelerateTowards::Initialize(rapidjson::Value& document)
         return false;
     }
 
-    m_pTransform = SceneView::Get()->GetComponent<TransformComponent>(entity, "transform");
-    m_pForce = SceneView::Get()->GetComponent<ForceComponent>(entity, "force");
+    SceneView* pScene = SceneView::Get();
+    m_pTransform = pScene->GetComponent<TransformComponent>(entity, "transform");
+    m_pForce = pScene->GetComponent<ForceComponent>(entity, "force");
 
     return true;
 }

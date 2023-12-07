@@ -5,10 +5,6 @@
 #include "components/Model.h"
 #include <math.h>
 
-typedef std::pair< uint, cAABB* > pairAABBs;
-typedef std::map< uint, cAABB* >::iterator itAABBs;
-typedef std::unordered_set< EntityID >::iterator itEntities;
-
 BroadPhaseCollision::BroadPhaseCollision()
 {
 	// TODO: For non-static grid aabbs this should be dynamic, comming from component size or map
@@ -49,7 +45,7 @@ void BroadPhaseCollision::LoadScene()
 
 void BroadPhaseCollision::ClearAABBs()
 {
-	for (pairAABBs pairAABB : m_mapAABBs)
+	for (pairIdxAABB pairAABB : m_mapAABBs)
 	{
 		delete pairAABB.second;
 	}
@@ -89,7 +85,7 @@ glm::vec3 BroadPhaseCollision::ReverseLocatePoint(uint theIndex)
 
 cAABB* BroadPhaseCollision::GetAABB(uint idxAABB)
 {
-	itAABBs itAABB = m_mapAABBs.find(idxAABB);
+	itIdxAABB itAABB = m_mapAABBs.find(idxAABB);
 	if (itAABB == m_mapAABBs.end())
 	{
 		return nullptr;
@@ -114,7 +110,16 @@ void BroadPhaseCollision::UpdateDynamicEntities()
 		{
 			EntityID entityID = *it;
 
-			TransformComponent* pTransf = pScene->GetComponent<TransformComponent>(entityID, "transform");
+			// TODO: Entity delete event to propagate and all systems that need can deal accordingly
+			TransformComponent* pTransf = nullptr;
+			iComponent* pComp = pScene->GetComponent(entityID, "transform");
+			if (!pComp)
+			{
+				it = RemoveEntityAABB(it, oldIdx);
+				continue;
+			}
+			pTransf = (TransformComponent*)pComp;
+
 			CollisionComponent* pCollision = pScene->GetComponent<CollisionComponent>(entityID, "collision");
 
 			uint newIdx = LocatePoint(pTransf->GetPosition());
@@ -126,22 +131,18 @@ void BroadPhaseCollision::UpdateDynamicEntities()
 			}
 
 			// Entity changed aabb location, so update maps
-			RemoveEntityAABB(entityID, oldIdx);
+			it = RemoveEntityAABB(it, oldIdx);
 
 			InsertEntityAABB(entityID, newIdx);
 
-			// TODO: Avoid deleting inside the vector iteration
-			if (pAABB->vecEntities.size() == 0)
+			if (pAABB->GetNumChildren() == 0)
 			{
 				break;
 			}
 		}
 
-		// and delete AABB if no more children
 		if (pAABB->GetNumChildren() == 0)
 		{
-			m_mapAABBs.erase(oldIdx);
-			delete pAABB;
 			break;
 		}
 	}
@@ -160,8 +161,61 @@ void BroadPhaseCollision::RemoveEntityAABB(EntityID entityID, uint index)
 	// remove AABB from active if no entities left
 	if (pAABB->GetNumEntities() == 0)
 	{
-		m_mapActiveAABBs.erase(index);
+		RemoveActiveAABB(index);
 	}
+}
+
+itEntities BroadPhaseCollision::RemoveEntityAABB(itEntities it, uint index)
+{
+	cAABB* pAABB = GetAABB(index);
+	if (!pAABB)
+	{
+		return itEntities();
+	}
+
+	// Remove from aabb
+	it = pAABB->vecEntities.erase(it);
+
+	// remove AABB from active if no entities left
+	if (pAABB->GetNumEntities() == 0)
+	{
+		RemoveActiveAABB(index);
+	}
+
+	return it;
+}
+
+size_t BroadPhaseCollision::RemoveActiveAABB(uint idxAABB)
+{
+	cAABB* pAABB = GetAABB(idxAABB);
+	if (!pAABB)
+	{
+		return 0;
+	}
+
+	size_t left = m_mapActiveAABBs.erase(idxAABB);
+
+	// and delete AABB if no more children
+	if (pAABB->GetNumChildren() == 0)
+	{
+		return left;
+	}
+
+	return left;
+}
+
+size_t BroadPhaseCollision::RemoveAABB(uint idxAABB)
+{
+	cAABB* pAABB = GetAABB(idxAABB);
+	if (!pAABB)
+	{
+		return 0;
+	}
+
+	size_t left = m_mapAABBs.erase(idxAABB);
+	delete pAABB;
+
+	return left;
 }
 
 void BroadPhaseCollision::InsertEntityAABB(EntityID entityID, uint index)
