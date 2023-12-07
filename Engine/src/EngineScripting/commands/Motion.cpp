@@ -135,7 +135,7 @@ bool Motion::IsDone(void)
         return true;
     }
 
-    if (m_elapsedTime >= m_time)
+    if (m_elapsedTime >= m_time && m_time > 0.0)
     {
         // Did not reach destination but ran out of time so probably can't reach it
         return true;
@@ -220,5 +220,5 @@ void Motion::m_SetAccMaxVel(glm::vec3 currPoint, glm::vec3 targetPos)
 
     vec3 normal = GetNormal(targetPos, currPoint);
 
-    m_pForce->SetVelocity(m_maxVelocity * normal);
+    m_SetMotionVelocity(m_maxVelocity * normal);
 }

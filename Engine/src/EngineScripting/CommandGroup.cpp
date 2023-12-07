@@ -138,7 +138,7 @@ bool CommandGroup::m_UpdateParallel(double deltaTime)
 		bool commandDone = pThisCommand->Update(deltaTime);
 
 		// Is this done? 
-		if (!pThisCommand->IsDone())
+		if (!commandDone)
 		{
 			// This isn't done
 			isDone = false;

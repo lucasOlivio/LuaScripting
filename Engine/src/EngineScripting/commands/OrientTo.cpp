@@ -1,36 +1,92 @@
 #include "EngineScripting/commands/OrientTo.h"
+#include "common/ParserJSON.h"
+#include "scene/SceneView.h"
+#include "common/Input.h"
+#include "Engine.h"
 
 OrientTo::OrientTo()
 {
 }
 
-glm::vec3 OrientTo::m_GetMotionPoint()
+bool OrientTo::Initialize(rapidjson::Value& document)
 {
-    return m_pTransform->GetOrientation();
+    using namespace rapidjson;
+
+    float entity;
+    bool isValid = true;
+
+    // Initialize default command variables
+    isValid &= this->Command::Initialize();
+    m_name = "OrientTo";
+
+    ParserJSON parser = ParserJSON();
+
+    Value& objEntt = document["entity"];
+    isValid &= parser.GetFloat(objEntt, entity);
+    Value& objEnd = document["endxyz"];
+    isValid &= parser.GetVec3(objEnd, m_endxyz);
+
+    if (!isValid)
+    {
+        // Invalid arguments
+        return false;
+    }
+
+    m_pTransform = SceneView::Get()->GetComponent<TransformComponent>(entity, "transform");
+
+    return true;
 }
 
-glm::vec3 OrientTo::m_GetMotionAcceleration()
+void OrientTo::Initialize(TransformComponent* pTransform, glm::vec3 endxyz)
 {
-    return m_pForce->GetCentrifugalAcceleration();
+    m_endxyz = endxyz;
+
+    m_pTransform = pTransform;
 }
 
-glm::vec3 OrientTo::m_GetMotionVelocity()
+bool OrientTo::Update(double deltaTime)
 {
-    return m_pForce->GetCentrifugalVelocity();
+    using namespace glm;
+
+    vec2 mouse = Input::MousePosition();
+
+    // Calculate offset to new position
+    float xoffset = mouse.x - m_lastX;
+    float yoffset = mouse.y - m_lastY;
+    m_lastX = mouse.x;
+    m_lastY = mouse.y;
+    xoffset *= deltaTime * deltaTime;
+    yoffset *= deltaTime * deltaTime;
+
+    // Update the new rotation based on current rotation
+    quat transfQuat = m_pTransform->GetQuatOrientation();
+    quat yaw = angleAxis(-xoffset, vec3(UP_VECTOR));
+    quat pitch = angleAxis(-yoffset, vec3(RIGHT_VECTOR));
+
+    transfQuat = yaw * transfQuat;
+    transfQuat = transfQuat * pitch;
+
+    m_pTransform->SetOrientation(transfQuat);
+
+    return true;
 }
 
-void OrientTo::m_SetMotionPoint(glm::vec3 value)
+bool OrientTo::IsDone(void)
 {
-
-    m_pTransform->SetOrientation(value);
+    return true;
 }
 
-void OrientTo::m_SetMotionAcceleration(glm::vec3 value)
+bool OrientTo::PreStart(void)
 {
-    m_pForce->SetCentrifugalAcceleration(value);
+    using namespace glm;
+
+    m_lastX = m_endxyz.x;
+    m_lastY = m_endxyz.y;
+
+    return true;
 }
 
-void OrientTo::m_SetMotionVelocity(glm::vec3 value)
+bool OrientTo::PostEnd(void)
 {
-    m_pForce->SetCentrifugalVelocity(value);
+    return false;
 }

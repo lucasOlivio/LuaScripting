@@ -743,14 +743,7 @@ void Editor::m_UpdateCamera(float xpos, float ypos)
 	xoffset *= m_sensitivity;
 	yoffset *= m_sensitivity;
 
-	quat transfQuat = m_pTransformCamera->GetQuatOrientation();
-	quat yaw = angleAxis(-xoffset, vec3(UP_VECTOR));
-	quat pitch = angleAxis(-yoffset, vec3(RIGHT_VECTOR));
-
-	transfQuat = yaw * transfQuat;
-	transfQuat = transfQuat * pitch;
-
-	m_pTransformCamera->SetOrientation(transfQuat);
+	m_pTransformCamera->AdjustOrientation(vec2(xoffset, yoffset));
 }
 
 void Editor::m_MoveCamera(double deltaTime)

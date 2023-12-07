@@ -50,6 +50,11 @@ void ForceComponent::SetCentrifugalVelocity(glm::vec3 value)
     m_centrifugalVelocity = value;
 }
 
+void ForceComponent::SetCentrifugalDrag(float value)
+{
+    m_centrifugalDrag = value;
+}
+
 float ForceComponent::GetInverseMass()
 {
     return m_inverseMass;
@@ -73,6 +78,11 @@ glm::vec3 ForceComponent::GetAcceleration()
 glm::vec3 ForceComponent::GetVelocity()
 {
     return m_velocity;
+}
+
+float ForceComponent::GetCentrifugalDrag()
+{
+    return m_centrifugalDrag;
 }
 
 bool ForceComponent::IsActive()
@@ -105,6 +115,7 @@ void ForceComponent::GetInfo(sComponentInfo& compInfoOut)
     AddCompParInfo("inverseMass", "float", GetInverseMass(), compInfoOut);
     AddCompParInfo("restitution", "float", GetRestitution(), compInfoOut);
     AddCompParInfo("drag", "float", GetDrag(), compInfoOut);
+    AddCompParInfo("centrifugalDrag", "float", GetCentrifugalDrag(), compInfoOut);
     AddCompParInfo("acceleration", "vec3", GetAcceleration(), compInfoOut);
     AddCompParInfo("velocity", "vec3", GetVelocity(), compInfoOut);
     AddCompParInfo("centrifugalAcceleration", "vec3", GetCentrifugalAcceleration(), compInfoOut);
@@ -127,6 +138,9 @@ void ForceComponent::SetParameter(sParameterInfo& parameterIn)
     }
     else if (parameterIn.parameterName == "drag") {
         SetDrag(parameterIn.parameterFloatValue);
+    }
+    else if (parameterIn.parameterName == "centrifugalDrag") {
+        SetCentrifugalDrag(parameterIn.parameterFloatValue);
     }
     else if (parameterIn.parameterName == "acceleration") {
         SetAcceleration(parameterIn.parameterVec3Value);

@@ -32,7 +32,7 @@ public:
 protected:
 	TransformComponent* m_pTransform;
 	ForceComponent* m_pForce;
-private:
+
 	enum ePhase
 	{
 		STARTUP,

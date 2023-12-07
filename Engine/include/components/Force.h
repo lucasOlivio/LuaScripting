@@ -17,6 +17,7 @@ public:
 	void SetActive(bool isActive);
 	void SetCentrifugalAcceleration(glm::vec3 value);
 	void SetCentrifugalVelocity(glm::vec3 value);
+	void SetCentrifugalDrag(float value);
 
 	// Getters
 	float GetInverseMass();
@@ -27,6 +28,7 @@ public:
 	bool IsActive();
 	glm::vec3 GetCentrifugalAcceleration();
 	glm::vec3 GetCentrifugalVelocity();
+	float GetCentrifugalDrag();
 
 	virtual void GetInfo(sComponentInfo& compInfoOut);
 	virtual void SetParameter(sParameterInfo& parameterIn);
@@ -37,6 +39,7 @@ private:
 
 	// Decceleration
 	float m_drag;
+	float m_centrifugalDrag;
 
 	// Movement forces
 	glm::vec3 m_acceleration;

@@ -27,17 +27,20 @@ void TransformComponent::SetOrientation(glm::quat value)
 	m_qOrientation = value;
 }
 
-void TransformComponent::AdjustOrientation(glm::vec3 value)
+void TransformComponent::AdjustOrientation(glm::vec2 value)
 {
 	using namespace glm;
 
-	// To combine quaternion values, you multiply them together
-	// Make a quaternion that represents that CHANGE in angle
-	quat qChange = quat(radians(value));
+	// Get the angle to change in quaternions
+	quat transfQuat = GetQuatOrientation();
+	quat yaw = angleAxis(-value.x, vec3(UP_VECTOR));
+	quat pitch = angleAxis(-value.y, vec3(RIGHT_VECTOR));
 
-	// Multiply them together to get the change
-	// Just like with matrix math
-	m_qOrientation *= qChange;
+	// Add to current quat by multiplying in the right order
+	transfQuat = yaw * transfQuat;
+	transfQuat = transfQuat * pitch;
+
+	SetOrientation(transfQuat);
 }
 
 void TransformComponent::Move(glm::vec3 deltaValue)

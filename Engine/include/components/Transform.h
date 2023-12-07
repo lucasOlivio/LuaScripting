@@ -14,7 +14,7 @@ public:
 	void SetOrientation(glm::vec3 value);
 	void SetOrientation(glm::quat value);
 	// Change orientation by the given amount
-	void AdjustOrientation(glm::vec3 value);
+	void AdjustOrientation(glm::vec2 value);
 
 	void Move(glm::vec3 deltaValue);
 	// This won't set the initial position, only update the old position

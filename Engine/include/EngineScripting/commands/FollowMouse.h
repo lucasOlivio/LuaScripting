@@ -1,12 +1,12 @@
 #pragma once
 
 #include "common/types.h"
-#include "EngineScripting/CommandGroup.h"
+#include "EngineScripting/commands/Command.h"
 #include "components/Transform.h"
 #include "components/Force.h"
 #include <glm/vec3.hpp>
 
-class FollowMouse : public CommandGroup
+class FollowMouse : public Command
 {
 public:
 	FollowMouse();

@@ -5,7 +5,7 @@ function MoveHalfCircleForwardZ(startPos, endPos, radius)
     local offset = radius * (math.pi * 0.42)
 
     local x2 = startPos[1] + offset
-    local z2 = startPos[3] 
+    local z2 = startPos[3]
 
     local x3 = endPos[1] + offset
     local z3 = endPos[3]
