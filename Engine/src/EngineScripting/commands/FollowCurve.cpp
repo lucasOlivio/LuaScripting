@@ -53,9 +53,6 @@ bool FollowCurve::Initialize(rapidjson::Value& document)
     m_pTransform = SceneView::Get()->GetComponent<TransformComponent>(entity, "transform");
     m_pForce = SceneView::Get()->GetComponent<ForceComponent>(entity, "force");
 
-    // First point should aways be the current position for simplicity
-    m_controlPoints.insert(m_controlPoints.begin(), m_pTransform->GetPosition());
-
     m_GenerateSubCommands();
 
     return true;

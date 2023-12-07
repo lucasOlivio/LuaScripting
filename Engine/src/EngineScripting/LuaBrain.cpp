@@ -65,11 +65,12 @@ bool LuaBrain::LoadScene()
 {
 	printf("Loading scripts...\n");
 	
+	SceneView* pScene = SceneView::Get();
 	// Lua functions bindings
-	for (SceneView::Get()->First("script"); !SceneView::Get()->IsDone(); SceneView::Get()->Next())
+	for (pScene->First("script"); !pScene->IsDone(); pScene->Next())
 	{
-		EntityID entityId = SceneView::Get()->CurrentKey();
-		ScriptComponent* pScript = SceneView::Get()->CurrentValue<ScriptComponent>();
+		EntityID entityId = pScene->CurrentKey();
+		ScriptComponent* pScript = pScene->CurrentValue<ScriptComponent>();
 
 		if (!pScript->IsActive())
 		{
@@ -386,8 +387,10 @@ int LuaBrain::m_LoadObjectRegistry(int tableIdx, const char* objName)
 	// (-2 table is 2 places up the current stack)
 	int funcIdx = luaL_ref(m_pLuaState, -2); 
 
-	// Done with the object table, so pop it
-	lua_pop(m_pLuaState, 1); 
+	// Done with the object table, so empty stack and reset varible
+	lua_settop(m_pLuaState, 0);
+	lua_pushnil(m_pLuaState);
+	lua_setglobal(m_pLuaState, objName);
 
 	return funcIdx;
 }

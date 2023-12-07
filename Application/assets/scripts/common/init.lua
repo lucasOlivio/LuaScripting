@@ -3,6 +3,6 @@ local inputkeys = require("assets.scripts.common.inputkeys")
 
 return {
     directions = directions,
-    inputkeys= inputkeys
+    inputkeys  = inputkeys
 }
 

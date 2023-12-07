@@ -6,12 +6,10 @@ local inputactions = require("assets.scripts.common.inputactions")
 function onstart()
     print("startn entity: " .. entity)
 
-   --gameplay.Follow(entity, "ship", 0.1, 500, 90, 50)
+   gameplay.Follow(entity, "ship", 0.1, 2000, 90, 500)
 end
 
 function onkeyinput(pressedkey, action, mods, scancode)
-
-    print("entity shooting: " .. entity)
     if (pressedkey == inputkeys.SPACE and (action == inputactions.PRESS)) then -- Space bar Pressed
         gameplay.Shoot(entity)
     end
