@@ -117,6 +117,12 @@ void FollowCurve::m_GenerateSubCommands()
         pMoveGroup->AddSerialCommand(pMove);
 
         // OrientTo command to face the next step
+        OrientTo* pOrient = new OrientTo();
+
+        pOrient->Initialize(m_pTransform, m_pForce, position, step);
+
+        // Add the OrientTo command to the list of commands
+        pRotateGroup->AddSerialCommand(pOrient);
     }
 
 

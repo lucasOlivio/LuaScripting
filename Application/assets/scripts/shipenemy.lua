@@ -15,7 +15,7 @@ function onkeyinput(pressedkey, action, mods, scancode)
 
     
     if (pressedkey == inputkeys.W and (action == inputactions.PRESS)) then 
-        gameplay.Follow(entity, "ship", 0.1, 2500, 180, 500, {0.0, 0.0, 0.0})
+        gameplay.Follow(entity, "ship", 0.1, 2500, 0.5, 1500, {0.0, 0.0, 0.0})
     end
 end
 

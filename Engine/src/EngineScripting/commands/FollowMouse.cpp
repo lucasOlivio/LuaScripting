@@ -51,15 +51,7 @@ bool FollowMouse::Update(double deltaTime)
     xoffset *= m_sensitivity * deltaTime;
     yoffset *= m_sensitivity * deltaTime;
 
-    // Update the new rotation based on current rotation
-    quat transfQuat = m_pTransform->GetQuatOrientation();
-    quat yaw = angleAxis(-xoffset, vec3(UP_VECTOR));
-    quat pitch = angleAxis(-yoffset, vec3(RIGHT_VECTOR));
-
-    transfQuat = yaw * transfQuat;
-    transfQuat = transfQuat * pitch;
-
-    m_pTransform->SetOrientation(transfQuat);
+    m_pTransform->AdjustOrientation(vec2(xoffset, yoffset));
 
     return false;
 }

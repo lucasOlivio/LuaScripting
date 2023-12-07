@@ -1,34 +1,27 @@
 #pragma once
 
-#include "common/types.h"
-#include "EngineScripting/commands/Command.h"
-#include "components/Transform.h"
-#include "components/Force.h"
+#include "EngineScripting/commands/Motion.h"
 #include <glm/vec3.hpp>
 
-class OrientTo : public Command
+class OrientTo : public Motion
 {
 public:
 	OrientTo();
 	virtual ~OrientTo() {};
 
-	virtual bool Initialize(rapidjson::Value& document);
-	// For subcommands initialization, avoids searching scene every time
-	virtual void Initialize(TransformComponent* pTransform, glm::vec3 endxyz);
-
-	// Orient towards the end point
-	virtual bool Update(double deltaTime);
-
-	virtual bool IsDone(void);
-
-	virtual bool PreStart(void);
-
-	virtual bool PostEnd(void);
 private:
-	glm::vec3 m_endxyz;
+	// Get the current motion vectors, 
+	// child class just need to set these to the respective motion it will perform
+	virtual glm::vec3 m_GetMotionPoint();
+	virtual glm::vec3 m_GetMotionAcceleration();
+	virtual glm::vec3 m_GetMotionVelocity();
+	// Set the respective motion vector
+	virtual void m_SetMotionPoint(glm::vec3 value);
+	virtual void m_SetMotionAcceleration(glm::vec3 value);
+	virtual void m_SetMotionVelocity(glm::vec3 value);
 
-	float m_lastX;
-	float m_lastY;
-
-	TransformComponent* m_pTransform;
+	// Overrides to get the right orientation velocity based on time
+	virtual void m_SetAccTime(glm::vec3 currPoint, glm::vec3 currVelocity);
+	// Overrides to get the right orientation velocity
+	virtual void m_SetAccMaxVel(glm::vec3 currPoint, glm::vec3 targetPos);
 };

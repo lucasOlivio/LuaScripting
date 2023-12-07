@@ -57,9 +57,9 @@ protected:
 	float m_elapsedTime;
 
 	// Update the acceleration based on a fixed time
-	void m_SetAccTime(glm::vec3 currPoint, glm::vec3 currVelocity);
+	virtual void m_SetAccTime(glm::vec3 currPoint, glm::vec3 currVelocity);
 	// Update the acceleration based on a fixed max velocity
-	void m_SetAccMaxVel(glm::vec3 currPoint, glm::vec3 targetPos);
+	virtual void m_SetAccMaxVel(glm::vec3 currPoint, glm::vec3 targetPos);
 
 	// Get the current motion vectors, 
 	// child class just need to set these to the respective motion it will perform

@@ -79,9 +79,9 @@
                 1.0,
                 0.0
             ],
-            "distance": 1215.0,
-            "height": 421.0,
-            "offsetTarget": 2708.0
+            "distance": 1500.0,
+            "height": 560.0,
+            "offsetTarget": 3000.0
         },
         "collision": {
             "shape": 4,
@@ -107,7 +107,7 @@
             "inverseMass": 0.10000000149011612,
             "restitution": 0.800000011920929,
             "drag": 100.0,
-            "centrifugalDrag": 0.0,
+            "centrifugalDrag": 0.5,
             "acceleration": [
                 0.0,
                 0.0,
@@ -125,7 +125,7 @@
             ],
             "centrifugalVelocity": [
                 0.0,
-                2.0,
+                0.0,
                 0.0
             ],
             "isActive": true
@@ -153,9 +153,9 @@
         },
         "transform": {
             "position": [
-                239.81591796875,
-                11527.791015625,
-                11236.9619140625
+                244.8853302001953,
+                11471.9208984375,
+                11182.6064453125
             ],
             "scale": 1.0,
             "orientation": [

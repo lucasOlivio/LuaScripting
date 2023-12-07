@@ -1,92 +1,75 @@
 #include "EngineScripting/commands/OrientTo.h"
-#include "common/ParserJSON.h"
-#include "scene/SceneView.h"
-#include "common/Input.h"
-#include "Engine.h"
+#include "EngineDebug/DebugSystem.h"
+#include "common/constants.h"
+#include "common/utilsMat.h"
 
 OrientTo::OrientTo()
 {
 }
 
-bool OrientTo::Initialize(rapidjson::Value& document)
+glm::vec3 OrientTo::m_GetMotionPoint()
 {
-    using namespace rapidjson;
-
-    float entity;
-    bool isValid = true;
-
-    // Initialize default command variables
-    isValid &= this->Command::Initialize();
-    m_name = "OrientTo";
-
-    ParserJSON parser = ParserJSON();
-
-    Value& objEntt = document["entity"];
-    isValid &= parser.GetFloat(objEntt, entity);
-    Value& objEnd = document["endxyz"];
-    isValid &= parser.GetVec3(objEnd, m_endxyz);
-
-    if (!isValid)
-    {
-        // Invalid arguments
-        return false;
-    }
-
-    m_pTransform = SceneView::Get()->GetComponent<TransformComponent>(entity, "transform");
-
-    return true;
+    return m_pTransform->GetPosition() +  m_pTransform->GetForwardVector();
 }
 
-void OrientTo::Initialize(TransformComponent* pTransform, glm::vec3 endxyz)
+glm::vec3 OrientTo::m_GetMotionAcceleration()
 {
-    m_endxyz = endxyz;
-
-    m_pTransform = pTransform;
+    return m_pForce->GetCentrifugalAcceleration();
 }
 
-bool OrientTo::Update(double deltaTime)
+glm::vec3 OrientTo::m_GetMotionVelocity()
+{
+    return m_pForce->GetCentrifugalVelocity();
+}
+
+void OrientTo::m_SetMotionPoint(glm::vec3 value)
+{
+    // TODO: How to set the orientation from the offset from origin to target?
+    // m_pTransform->SetOrientation(value);
+}
+
+void OrientTo::m_SetMotionAcceleration(glm::vec3 value)
+{
+    m_pForce->SetCentrifugalAcceleration(value);
+}
+
+void OrientTo::m_SetMotionVelocity(glm::vec3 value)
+{
+    m_pForce->SetCentrifugalVelocity(-value);
+}
+
+void OrientTo::m_SetAccTime(glm::vec3 currPoint, glm::vec3 currVelocity)
 {
     using namespace glm;
+    using namespace myutils;
 
-    vec2 mouse = Input::MousePosition();
 
-    // Calculate offset to new position
-    float xoffset = mouse.x - m_lastX;
-    float yoffset = mouse.y - m_lastY;
-    m_lastX = mouse.x;
-    m_lastY = mouse.y;
-    xoffset *= deltaTime * deltaTime;
-    yoffset *= deltaTime * deltaTime;
+    vec3 normal = GetNormal(m_endxyz, currPoint);
+    vec3 forward = m_pTransform->GetForwardVector();
 
-    // Update the new rotation based on current rotation
-    quat transfQuat = m_pTransform->GetQuatOrientation();
-    quat yaw = angleAxis(-xoffset, vec3(UP_VECTOR));
-    quat pitch = angleAxis(-yoffset, vec3(RIGHT_VECTOR));
+    // TODO: Merge with motion and calculate easyin and out
+    vec3 velocity = myutils::CalculateVelocity(forward, normal,
+                                               m_easyInTime,
+                                               m_time - m_easyOutTime);
+    // Sensibility adjustment, this should come from parameters
+    velocity = -velocity * 0.07f;
 
-    transfQuat = yaw * transfQuat;
-    transfQuat = transfQuat * pitch;
-
-    m_pTransform->SetOrientation(transfQuat);
-
-    return true;
+    m_currPhase = ePhase::CONSTANT;
+    m_SetMotionAcceleration(vec3(0));
+    m_SetMotionVelocity(velocity);
 }
 
-bool OrientTo::IsDone(void)
-{
-    return true;
-}
-
-bool OrientTo::PreStart(void)
+void OrientTo::m_SetAccMaxVel(glm::vec3 currPoint, glm::vec3 targetPos)
 {
     using namespace glm;
+    using namespace myutils;
 
-    m_lastX = m_endxyz.x;
-    m_lastY = m_endxyz.y;
+    vec3 normal = GetNormal(targetPos, currPoint);
+    vec3 forward = m_pTransform->GetForwardVector();
 
-    return true;
-}
+    float xoffset = forward.x - normal.x;
+    float yoffset = normal.y - forward.y;
+    glm::vec3 targetOrientation = glm::vec3(xoffset, yoffset, 0.0f);
 
-bool OrientTo::PostEnd(void)
-{
-    return false;
+    m_SetMotionVelocity(m_maxVelocity * targetOrientation);
 }
