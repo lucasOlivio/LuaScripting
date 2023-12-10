@@ -51,6 +51,7 @@ void BroadPhaseCollision::ClearAABBs()
 	}
 
 	m_mapAABBs.clear();
+	m_mapActiveAABBs.clear();
 }
 
 uint BroadPhaseCollision::LocatePoint(glm::vec3 point)
@@ -63,8 +64,8 @@ uint BroadPhaseCollision::LocatePoint(glm::vec3 point)
 	// xxx,yyy,zzz
 	// For 32 bits, we'll multiply by 1000
 	unsigned int theIndex = (theX * 1000 * 1000) +
-							       (theY * 1000) +
-							              (theZ);
+		(theY * 1000) +
+		(theZ);
 
 	return theIndex;
 }
@@ -105,8 +106,8 @@ void BroadPhaseCollision::UpdateDynamicEntities()
 		cAABB* pAABB = pairAABB.second;
 
 		// First update all entities aabb location
-		for (itEntities it = pAABB->vecEntities.begin(); 
-			 it != pAABB->vecEntities.end();)
+		for (itEntities it = pAABB->vecEntities.begin();
+			it != pAABB->vecEntities.end();)
 		{
 			EntityID entityID = *it;
 
@@ -234,7 +235,7 @@ void BroadPhaseCollision::InsertEntityAABB(EntityID entityID, uint index)
 cAABB* BroadPhaseCollision::GetAABB(glm::vec3 point)
 {
 	uint idxAABB = LocatePoint(point);
-	
+
 	return GetAABB(idxAABB);
 }
 
@@ -254,7 +255,7 @@ cAABB* BroadPhaseCollision::m_GetOrCreateAABB(uint idxAABB)
 	pAABB = new cAABB();
 	pAABB->minXYZ = ReverseLocatePoint(idxAABB);
 	pAABB->maxXYZ = pAABB->minXYZ + m_lengthPerBox;
-	
+
 	pAABB->vecEntities = {};
 	pAABB->vecIdxTriangles = {};
 
@@ -301,8 +302,8 @@ void BroadPhaseCollision::m_InsertMeshTrianglesIndirect(EntityID entityID)
 	// TODO: Should get for each mesh? Then would have to update on animation change
 	// Get first mesh only from array
 	ModelComponent* pModel = pScene->GetComponent<ModelComponent>(entityID, "model");
-	
-	sMesh* pMesh       = pModel->GetMesh(0);
+
+	sMesh* pMesh = pModel->GetMesh(0);
 	glm::mat4 matModel = pTransform->GetTransform();
 
 	// for every triangle in the mesh insert into aabb

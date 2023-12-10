@@ -174,43 +174,54 @@ void Motion::m_SetAccTime(glm::vec3 currPoint, glm::vec3 currVelocity)
 {
     using namespace glm;
 
-    // Check which phase of the velocity curve its in
-    if (m_elapsedTime <= m_easyInTime &&
-        m_currPhase == ePhase::STARTUP) 
-    {
-        // Acceleration phase
-        vec3 acceleration = myutils::CalculateAcceleration(currPoint, m_easyInPoint,
-                                                           m_elapsedTime, m_easyInTime);
+    // TODO: For now no easy in or easy out phase
 
-        m_currPhase = ePhase::EASYIN;
-        m_SetMotionVelocity(vec3(0));
-        m_SetMotionAcceleration(acceleration);
-    }
-    else if (m_elapsedTime >= m_easyInTime &&
-             m_elapsedTime <= m_easyInTime + m_constantTime &&
-             m_currPhase != ePhase::CONSTANT) 
-    {
-        // Constant speed phase
-        vec3 velocity = myutils::CalculateVelocity(currPoint, m_easyOutPoint,
-                                                   m_easyInTime,
-                                                   m_time - m_easyOutTime);
-     
-        m_currPhase = ePhase::CONSTANT;
-        m_SetMotionAcceleration(vec3(0));
-        m_SetMotionVelocity(velocity);
-    }
-    else if (m_elapsedTime >= m_easyInTime + m_constantTime &&
-             m_elapsedTime <= m_time &&
-             m_currPhase != ePhase::EASYOUT) 
-    {
-        // Deceleration phase
-        vec3 acceleration = myutils::CalculateAcceleration(currPoint, m_endxyz,
-                                                           currVelocity,
-                                                           m_elapsedTime, m_time);
+    // Constant speed phase
+    vec3 velocity = myutils::CalculateVelocity(currPoint, m_easyOutPoint,
+        m_easyInTime,
+        m_time - m_easyOutTime);
 
-        m_currPhase = ePhase::EASYOUT;
-        m_SetMotionAcceleration(-acceleration);
-    }
+    m_currPhase = ePhase::CONSTANT;
+    m_SetMotionAcceleration(vec3(0));
+    m_SetMotionVelocity(velocity);
+
+    //// Check which phase of the velocity curve its in
+    //if (m_elapsedTime <= m_easyInTime &&
+    //    m_currPhase == ePhase::STARTUP) 
+    //{
+    //    // Acceleration phase
+    //    vec3 acceleration = myutils::CalculateAcceleration(currPoint, m_easyInPoint,
+    //                                                       m_elapsedTime, m_easyInTime);
+
+    //    m_currPhase = ePhase::EASYIN;
+    //    m_SetMotionVelocity(vec3(0));
+    //    m_SetMotionAcceleration(acceleration);
+    //}
+    //else if (m_elapsedTime >= m_easyInTime &&
+    //         m_elapsedTime <= m_easyInTime + m_constantTime &&
+    //         m_currPhase != ePhase::CONSTANT) 
+    //{
+    //    // Constant speed phase
+    //    vec3 velocity = myutils::CalculateVelocity(currPoint, m_easyOutPoint,
+    //                                               m_easyInTime,
+    //                                               m_time - m_easyOutTime);
+    // 
+    //    m_currPhase = ePhase::CONSTANT;
+    //    m_SetMotionAcceleration(vec3(0));
+    //    m_SetMotionVelocity(velocity);
+    //}
+    //else if (m_elapsedTime >= m_easyInTime + m_constantTime &&
+    //         m_elapsedTime <= m_time &&
+    //         m_currPhase != ePhase::EASYOUT) 
+    //{
+    //    // Deceleration phase
+    //    vec3 acceleration = myutils::CalculateAcceleration(currPoint, m_endxyz,
+    //                                                       currVelocity,
+    //                                                       m_elapsedTime, m_time);
+
+    //    m_currPhase = ePhase::EASYOUT;
+    //    m_SetMotionAcceleration(-acceleration);
+    //}
 }
 
 void Motion::m_SetAccMaxVel(glm::vec3 currPoint, glm::vec3 targetPos)

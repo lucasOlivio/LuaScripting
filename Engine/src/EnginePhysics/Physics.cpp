@@ -5,7 +5,11 @@
 #include "scene/SceneView.h"
 #include "EngineDebug/DebugSystem.h"
 #include "common/constants.h"
+#include "EnginePhysics/collisionTests.h"
 #include <glm/gtx/string_cast.hpp>
+
+typedef std::map<EntityID, sCollisions*>::iterator itColls;
+typedef std::pair<EntityID, sCollisions*> pairColls;
 
 Physics::Physics(CollisionEvent* pCollisionEvent)
 {
@@ -49,6 +53,9 @@ void Physics::Update(double deltaTime)
 	// Check all non-static entities for collision
 	m_CheckCollisions();
 
+	// Return transform to non-collision point
+	m_RepositionCollision();
+
 	// Apply respective response for each collision types
 	for (sCollisionData* pCollision : m_vecCollided)
 	{
@@ -60,7 +67,7 @@ void Physics::Update(double deltaTime)
 		if (pCollision->bodyTypeA != eBodyType::STATIC)
 		{
 			iComponent* pComp = pScene->GetComponent(pCollision->entityA, "force");
-			if(pComp)
+			if (pComp)
 			{
 				pForceA = (ForceComponent*)pComp;
 			}
@@ -75,9 +82,14 @@ void Physics::Update(double deltaTime)
 			}
 		}
 
-
 		m_ResolveCollision(pCollision, pTransformA, pTransformB, pForceA, pForceB);
 	}
+
+	for (pairColls pcoll : m_mapCollisions)
+	{
+		delete pcoll.second;
+	}
+	m_mapCollisions.clear();
 
 	// Trigger collision event for objects that collided
 	m_pCollisionEvent->TriggerCollisions(m_vecCollided);
@@ -107,6 +119,11 @@ bool Physics::IsRunning()
 void Physics::SetRunning(bool isRunning)
 {
 	m_isRunning = isRunning;
+
+	if (!isRunning)
+	{
+		m_pBroadPhaseCollision->ClearAABBs();
+	}
 }
 
 bool Physics::AABBAABB_Test(sAABB* aabbA, glm::mat4 matTransfA,
@@ -269,10 +286,10 @@ bool Physics::AABBAABB2D_Test(sAABB2D* aabb2dA, glm::mat4 matTransfA,
 	return true; // Collision detected
 }
 
-bool Physics::SphereMeshTriangles_Test(sSphere* sphereA, glm::vec3 sphereAPosition, 
-									   sMesh* meshB, glm::mat4 matTransfB, 
-									   glm::vec3& contactPointA, glm::vec3& contactPointB, 
-									   glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
+bool Physics::SphereMeshTriangles_Test(sSphere* sphereA, glm::vec3 sphereAPosition,
+	sMesh* meshB, glm::mat4 matTransfB,
+	glm::vec3& contactPointA, glm::vec3& contactPointB,
+	glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
 {
 	using namespace glm;
 	using namespace myutils;
@@ -307,7 +324,7 @@ bool Physics::SphereMeshTriangles_Test(sSphere* sphereA, glm::vec3 sphereAPositi
 
 		// Getting closest point in triangle
 		vec3 thisTriangleClosestPoint = ClosestPtPointTriangle(sphereAPosition,
-														vertsWorld[0], vertsWorld[1], vertsWorld[2]);
+			vertsWorld[0], vertsWorld[1], vertsWorld[2]);
 
 		// Is this the closest so far
 		float distanceToThisTriangle = distance(thisTriangleClosestPoint, sphereAPosition);
@@ -346,9 +363,9 @@ bool Physics::SphereMeshTriangles_Test(sSphere* sphereA, glm::vec3 sphereAPositi
 	return true;
 }
 
-bool Physics::SphereTriangle_Test(sSphere* sphereA, glm::vec3 sphereAPosition, 
-								  sTriangle triangleB, 
-								  glm::vec3& contactPointA, glm::vec3& contactPointB, 
+bool Physics::SphereTriangle_Test(sSphere* sphereA, glm::vec3 sphereAPosition,
+								  sTriangle triangleB,
+								  glm::vec3& contactPointA, glm::vec3& contactPointB,
 								  glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
 {
 	using namespace glm;
@@ -356,8 +373,8 @@ bool Physics::SphereTriangle_Test(sSphere* sphereA, glm::vec3 sphereAPosition,
 
 	// Getting closest point in triangle
 	vec3 closestPoint = ClosestPtPointTriangle(sphereAPosition,
-											   triangleB.vertices[0], triangleB.vertices[1],
-											   triangleB.vertices[2]);
+		triangleB.vertices[0], triangleB.vertices[1],
+		triangleB.vertices[2]);
 
 	// Is this the closest so far
 	float distanceToThisTriangle = distance(closestPoint, sphereAPosition);
@@ -375,10 +392,10 @@ bool Physics::SphereTriangle_Test(sSphere* sphereA, glm::vec3 sphereAPosition,
 	return true;
 }
 
-bool Physics::SphereSphere_Test(sSphere* pSphereA, glm::vec3 sphereAPosition, 
-								sSphere* pSphereB, glm::vec3 sphereBPosition, 
-								glm::vec3& contactPointA, glm::vec3& contactPointB, 
-								glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
+bool Physics::SphereSphere_Test(sSphere* pSphereA, glm::vec3 sphereAPosition,
+	sSphere* pSphereB, glm::vec3 sphereBPosition,
+	glm::vec3& contactPointA, glm::vec3& contactPointB,
+	glm::vec3& collisionNormalA, glm::vec3& collisionNormalB)
 {
 	// Calculate squared distance between centers
 	glm::vec3 d = sphereAPosition - sphereBPosition;
@@ -392,13 +409,51 @@ bool Physics::SphereSphere_Test(sSphere* pSphereA, glm::vec3 sphereAPosition,
 	}
 
 	contactPointA = myutils::GetSpheresContactPont(sphereAPosition, pSphereA->radius,
-												   sphereBPosition, pSphereB->radius);
+		sphereBPosition, pSphereB->radius);
 	contactPointB = myutils::GetSpheresContactPont(sphereBPosition, pSphereB->radius,
-												   sphereAPosition, pSphereA->radius);
+		sphereAPosition, pSphereA->radius);
 	collisionNormalA = myutils::GetNormal(contactPointB, sphereBPosition);
 	collisionNormalB = myutils::GetNormal(contactPointA, sphereAPosition);
 
 	return true;
+}
+
+void Physics::m_CreateOrAddCollision(EntityID entityId, EntityID entityCollided, 
+									 sTriangle triangle, glm::vec3 normal)
+{
+	using namespace glm;
+
+	itColls it = m_mapCollisions.find(entityId);
+	sCollisions* pColl;
+	if (it == m_mapCollisions.end())
+	{
+		pColl = new sCollisions();
+		pColl->mergedNormal = glm::vec3(0);
+
+		m_mapCollisions[entityId] = pColl;
+	}
+	else
+	{
+		pColl = it->second;
+	}
+
+	if (entityCollided > 0)
+	{
+		pColl->collidedEntities.push_back(entityCollided);
+	}
+	else
+	{
+		pColl->collidedTriangles.push_back(triangle);
+	}
+
+	// Get addition of vectors
+	glm::vec3 summed = (pColl->mergedNormal + normal);
+	// When getting normal of 0 glm set to NaN
+	if (summed != glm::vec3(0))
+	{
+		summed = normalize(summed);
+	}
+	pColl->mergedNormal = summed;
 }
 
 void Physics::m_ApplyForce(ForceComponent* pForce, TransformComponent* pTransform, double deltaTime)
@@ -411,16 +466,22 @@ void Physics::m_ApplyForce(ForceComponent* pForce, TransformComponent* pTransfor
 		return;
 	}
 
+	if (pForce->GetVelocity() == vec3(0.0f)
+		&& pForce->GetAcceleration() == vec3(0.0f))
+	{
+		return;
+	}
+
 	// Explicit forward Euler "integration step"
 	//	NewVelocity = LastVel + (Accel * DeltaTime)
 	//	NewPosition = LastPos + (Vel * DeltaTime)	
 
 	// Calculate new velocity this frame based on 
 	// delta time, acceleration and current velocity
-	vec3 velThisFrame = myutils::IncreaseVelocity(pForce->GetVelocity(), 
-												  pForce->GetAcceleration(), 
-												  pForce->GetDrag(),
-												  (float)deltaTime);
+	vec3 velThisFrame = myutils::IncreaseVelocity(pForce->GetVelocity(),
+		pForce->GetAcceleration(),
+		pForce->GetDrag(),
+		(float)deltaTime);
 	pForce->SetVelocity(velThisFrame);
 
 	// New object position
@@ -428,11 +489,38 @@ void Physics::m_ApplyForce(ForceComponent* pForce, TransformComponent* pTransfor
 
 	pTransform->Move(deltaPosition);
 
+	// HACK: Keeping the entity positive and inside the game world
+	vec3 newPos = pTransform->GetPosition();
+	if (newPos.x < 0.0f)
+	{
+		newPos.x = 0.0f;
+	}
+	if (newPos.y < 0.0f)
+	{
+		newPos.y = 0.0f;
+	}
+	if (newPos.z < 0.0f)
+	{
+		newPos.z = 0.0f;
+	}
+	if (newPos.x > 100.0f)
+	{
+		newPos.x = 100.0f;
+	}
+	if (newPos.y > 100.0f)
+	{
+		newPos.y = 100.0f;
+	}
+	if (newPos.z > 100.0f)
+	{
+		newPos.z = 100.0f;
+	}
+
 	// Apply centrifugal forces
 	// Same principle with movement velocity but applying adjusts to rotation
 	vec3 rotationVel = myutils::IncreaseVelocity(pForce->GetCentrifugalVelocity(),
-												 pForce->GetCentrifugalAcceleration(), 
-												 pForce->GetCentrifugalDrag(),
+												 pForce->GetCentrifugalAcceleration(),
+												 pForce->GetDrag(),
 												 (float)deltaTime);
 	pForce->SetCentrifugalVelocity(rotationVel);
 	// New object position
@@ -474,11 +562,11 @@ void Physics::m_CheckCollisions()
 
 			// Get all inside this aabb
 			m_CheckBroadPhaseCollision(idxaabb,
-									   vecTriangles);
+				vecTriangles);
 
 			// Check the detailed collisions
 			m_CheckNarrowPhaseCollision(entityA,
-										vecTriangles);
+				vecTriangles);
 		}
 
 		// Clear collision comparisons for next aabb
@@ -488,22 +576,58 @@ void Physics::m_CheckCollisions()
 	return;
 }
 
-void Physics::m_CheckBroadPhaseCollision(uint idxaabb, 
-										 std::vector<sTriangle>& vecTrianglesOut)
+void Physics::m_RepositionCollision()
+{
+	using namespace glm;
+
+	for (pairColls pairColl : m_mapCollisions)
+	{
+		EntityID entityId = pairColl.first;
+		sCollisions* pCollisions = pairColl.second;
+
+		SceneView* pScene = SceneView::Get();
+		TransformComponent* pTransform = pScene->GetComponent<TransformComponent>(entityId, "transform");
+		CollisionComponent* pCollision = pScene->GetComponent<CollisionComponent>(entityId, "collision");
+
+		vec3 oldPos	= pTransform->GetOldPosition();
+		vec3 newPos	= pTransform->GetPosition();
+		vec3 collPoint = vec3(0);
+
+		// TODO: Use strategy pattern to merge all collisions tests to avoid all these repetitions and iterations
+		// Get Which type is the entity
+		bool validPos = true;
+		if (pCollision->Get_eShape() == eShape::SPHERE)
+		{
+			sSphere* pSphere = pCollision->GetShape<sSphere>();
+
+			// TODO: This should be a complete test to avoid hitting something on the way back that wasnt on the list
+			// Now we must validate the position for all the entities and triangles that it collided
+			for (sTriangle triangle : pCollisions->collidedTriangles)
+			{
+				validPos &= GetValidPos(pSphere->radius, triangle.vertices, oldPos, newPos, 0);
+			}
+		}
+
+		pTransform->SetPosition(newPos);
+	}
+}
+
+void Physics::m_CheckBroadPhaseCollision(uint idxaabb,
+	std::vector<sTriangle>& vecTrianglesOut)
 {
 	cAABB* pAABB = m_pBroadPhaseCollision->GetAABB(idxaabb);
 	if (pAABB)
 	{
 		// There is an aabb so append the triangles to the vector to test
-		vecTrianglesOut.insert(vecTrianglesOut.end(), 
-							   pAABB->vecIdxTriangles.begin(), 
-							   pAABB->vecIdxTriangles.end());
+		vecTrianglesOut.insert(vecTrianglesOut.end(),
+			pAABB->vecIdxTriangles.begin(),
+			pAABB->vecIdxTriangles.end());
 	}
 
 	return;
 }
 
-void Physics::m_CheckNarrowPhaseCollision(EntityID entityA, 
+void Physics::m_CheckNarrowPhaseCollision(EntityID entityA,
 										  std::vector<sTriangle>& vecTrianglesIn)
 {
 	using namespace std;
@@ -566,9 +690,9 @@ void Physics::m_CheckNarrowPhaseCollision(EntityID entityA,
 			sSphere* pSphereB = pCollB->GetShape<sSphere>();
 
 			isCollision = SphereSphere_Test(pSphereA, pTransformA->GetPosition(),
-											pSphereB, pTransformB->GetPosition(),
-											contactPointA, contactPointB, 
-											collisionNormalA, collisionNormalB);
+				pSphereB, pTransformB->GetPosition(),
+				contactPointA, contactPointB,
+				collisionNormalA, collisionNormalB);
 		}
 		else
 		{
@@ -615,9 +739,9 @@ void Physics::m_CheckNarrowPhaseCollision(EntityID entityA,
 		sSphere* pSphere_A = pCollA->GetShape<sSphere>();
 
 		bool isCollision = SphereTriangle_Test(pSphere_A, pTransformA->GetPosition(),
-											   triangle,
-											   contactPointA, contactPointB,
-											   collisionNormalA, collisionNormalB);
+			triangle,
+			contactPointA, contactPointB,
+			collisionNormalA, collisionNormalB);
 
 		if (!isCollision)
 		{
@@ -644,15 +768,13 @@ void Physics::m_CheckNarrowPhaseCollision(EntityID entityA,
 
 		// Add to vector that will be later sent as notification
 		m_vecCollided.push_back(pCollision);
-
-		// TODO: we can only handle 1 collision right now, find a way to accumulate the opposite force
-		return;
+		m_CreateOrAddCollision(entityA, 0, triangle, collisionNormalB);
 	}
 }
 
 // TODO: Entity A will never be static body here right? because we just jump them
-void Physics::m_ResolveCollision(sCollisionData* pCollisionEvent, 
-								 TransformComponent* pTransformA, TransformComponent* pTransformB, 
+void Physics::m_ResolveCollision(sCollisionData* pCollisionEvent,
+								 TransformComponent* pTransformA, TransformComponent* pTransformB,
 								 ForceComponent* pForceA, ForceComponent* pForceB)
 {
 	using namespace glm;
@@ -686,31 +808,67 @@ void Physics::m_ResolveCollision(sCollisionData* pCollisionEvent,
 	}
 
 	DebugSystem* pDebug = DebugSystem::Get();
+	pDebug->AddSphere(pCollisionEvent->contactPointA, 0.05f, RED);
 
 	// Velocity and acceleration 0 in collision normal direction
-	if (pCollisionEvent->bodyTypeA == eBodyType::DYNAMIC && 
-		pCollisionEvent->bodyTypeB == eBodyType::STATIC)
+	//if (pCollisionEvent->bodyTypeA == eBodyType::DYNAMIC &&
+	//	pCollisionEvent->bodyTypeB == eBodyType::STATIC)
+	//{
+	//	myutils::CalculateProjectedDirection(pCollisionEvent->collisionNormalB, accelerationA);
+
+	//	pForceA->SetAcceleration(accelerationA);
+
+	//	myutils::CalculateProjectedDirection(pCollisionEvent->collisionNormalB, velocityA);
+
+	//	pForceA->SetVelocity(velocityA);
+	//}
+
+	//if (pCollisionEvent->bodyTypeB == eBodyType::DYNAMIC &&
+	//	pCollisionEvent->bodyTypeA == eBodyType::STATIC)
+	//{
+	//	myutils::CalculateProjectedDirection(pCollisionEvent->collisionNormalB, accelerationB);
+
+	//	pForceB->SetAcceleration(accelerationB);
+
+	//	myutils::CalculateProjectedDirection(pCollisionEvent->collisionNormalB, velocityB);
+
+	//	pForceB->SetVelocity(velocityB);
+	//}
+
+	vec3 contactNormal = glm::vec3(0);
+	itColls it = m_mapCollisions.find(pCollisionEvent->entityA);
+	if (it == m_mapCollisions.end())
 	{
-		myutils::CalculateProjectedDirection(pCollisionEvent->collisionNormalB, accelerationA);
+		it = m_mapCollisions.find(pCollisionEvent->entityB);
+		if (it == m_mapCollisions.end())
+		{
+			return;
+		}
+		else
+		{
+			contactNormal = it->second->mergedNormal;
+		}
+	}
+	else
+	{
+		contactNormal = it->second->mergedNormal;
+	}
 
-		pDebug->AddLine(pTransformA->GetPosition(), pTransformA->GetPosition() + (accelerationA * 10.0f), RED);
-		pForceA->SetAcceleration(accelerationA);
+	if (pCollisionEvent->bodyTypeA == eBodyType::DYNAMIC && pForceA)
+	{
+		myutils::ResolveVelocity(velocityA, velocityB, contactNormal,
+			pForceA->GetRestitution(), pForceA->GetInverseMass(), 0.0f);
 
-		myutils::CalculateProjectedDirection(pCollisionEvent->collisionNormalB, velocityA);
-
-		pDebug->AddLine(pTransformA->GetPosition(), pTransformA->GetPosition() + (velocityA * 10.0f), BLUE);
+		pForceA->SetAcceleration(glm::vec3(0));
 		pForceA->SetVelocity(velocityA);
 	}
 
-	if (pCollisionEvent->bodyTypeB == eBodyType::DYNAMIC && 
-		pCollisionEvent->bodyTypeA == eBodyType::STATIC)
+	if (pCollisionEvent->bodyTypeB == eBodyType::DYNAMIC && pForceB)
 	{
-		myutils::CalculateProjectedDirection(pCollisionEvent->collisionNormalB, accelerationB);
+		myutils::ResolveVelocity(velocityB, velocityA, contactNormal,
+			pForceB->GetRestitution(), pForceB->GetInverseMass(), 0.0f);
 
-		pForceB->SetAcceleration(accelerationB);
-
-		myutils::CalculateProjectedDirection(pCollisionEvent->collisionNormalB, velocityB);
-
+		pForceB->SetAcceleration(glm::vec3(0));
 		pForceB->SetVelocity(velocityB);
 	}
 }

@@ -54,6 +54,12 @@ void OrientTo::m_SetAccTime(glm::vec3 currPoint, glm::vec3 currVelocity)
     // Sensibility adjustment, this should come from parameters
     velocity = -velocity * 0.07f;
 
+    // HACK: Avoid pointing up for this one
+    if (velocity.y > 0)
+    {
+        velocity.y = 0.0f;
+    }
+
     m_currPhase = ePhase::CONSTANT;
     m_SetMotionAcceleration(vec3(0));
     m_SetMotionVelocity(velocity);
