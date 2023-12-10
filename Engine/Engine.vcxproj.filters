@@ -241,6 +241,9 @@
     <ClCompile Include="src\EnginePhysics\BroadPhaseCollision.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\EnginePhysics\collisionTests.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\EngineRenderer\CameraSystem.h">

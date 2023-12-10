@@ -22,6 +22,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="src\EnginePhysics\BroadPhaseCollision.cpp" />
     <ClCompile Include="src\EnginePhysics\cAABB.cpp" />
+    <ClCompile Include="src\EnginePhysics\collisionTests.cpp" />
     <ClCompile Include="src\EngineScripting\commands\FollowMouse.cpp" />
     <ClCompile Include="src\common\lua.cpp" />
     <ClCompile Include="src\EngineScripting\commands\AccelerateTowards.cpp" />

@@ -21,3 +21,10 @@ struct sCollisionData
 	glm::vec3 velocityAtCollisionA;
 	glm::vec3 velocityAtCollisionB;
 };
+
+struct sCollisions
+{
+	std::vector<EntityID> collidedEntities;
+	std::vector<sTriangle> collidedTriangles;
+	glm::vec3 mergedNormal;
+};
