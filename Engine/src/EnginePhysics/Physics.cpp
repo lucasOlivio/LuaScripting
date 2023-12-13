@@ -466,12 +466,6 @@ void Physics::m_ApplyForce(ForceComponent* pForce, TransformComponent* pTransfor
 		return;
 	}
 
-	if (pForce->GetVelocity() == vec3(0.0f)
-		&& pForce->GetAcceleration() == vec3(0.0f))
-	{
-		return;
-	}
-
 	// Explicit forward Euler "integration step"
 	//	NewVelocity = LastVel + (Accel * DeltaTime)
 	//	NewPosition = LastPos + (Vel * DeltaTime)	
@@ -489,38 +483,11 @@ void Physics::m_ApplyForce(ForceComponent* pForce, TransformComponent* pTransfor
 
 	pTransform->Move(deltaPosition);
 
-	// HACK: Keeping the entity positive and inside the game world
-	vec3 newPos = pTransform->GetPosition();
-	if (newPos.x < 0.0f)
-	{
-		newPos.x = 0.0f;
-	}
-	if (newPos.y < 0.0f)
-	{
-		newPos.y = 0.0f;
-	}
-	if (newPos.z < 0.0f)
-	{
-		newPos.z = 0.0f;
-	}
-	if (newPos.x > 100.0f)
-	{
-		newPos.x = 100.0f;
-	}
-	if (newPos.y > 100.0f)
-	{
-		newPos.y = 100.0f;
-	}
-	if (newPos.z > 100.0f)
-	{
-		newPos.z = 100.0f;
-	}
-
 	// Apply centrifugal forces
 	// Same principle with movement velocity but applying adjusts to rotation
 	vec3 rotationVel = myutils::IncreaseVelocity(pForce->GetCentrifugalVelocity(),
 												 pForce->GetCentrifugalAcceleration(),
-												 pForce->GetDrag(),
+												 pForce->GetCentrifugalDrag(),
 												 (float)deltaTime);
 	pForce->SetCentrifugalVelocity(rotationVel);
 	// New object position

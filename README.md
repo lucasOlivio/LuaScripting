@@ -19,5 +19,5 @@ Project 2 for "Game frameworks" class. Integrating lua to the engine to create g
 ## How to play
 
 - Press P to start playing
-- A/W/S/D to move
-- Mouse to control the camera
+- Press W to start the animation
+- Press SPACE to shoot
